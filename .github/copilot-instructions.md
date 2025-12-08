@@ -398,7 +398,7 @@ export default CustomerList;
 
 ## Future Considerations
 
-- Wave API integration (GraphQL layer)
+- Wave API integration (with custom GraphQL abstraction layer over Wave's REST API)
 - Inventory management features
 - Photo/document uploads to Azure Blob Storage
 - Customer portal (separate React app or integrated)
