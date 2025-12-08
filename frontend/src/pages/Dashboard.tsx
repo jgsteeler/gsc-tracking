@@ -1,8 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
 import { Users, Briefcase, DollarSign, TrendingUp } from 'lucide-react'
 
 export function Dashboard() {
+  const { toast } = useToast()
   // Mock data - will be replaced with real API calls
   const stats = [
     {
@@ -37,11 +40,24 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-        <p className="text-muted-foreground">
-          Welcome to GSC Small Engine Repair management system
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+          <p className="text-muted-foreground">
+            Welcome to GSC Small Engine Repair management system
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => {
+            toast({
+              title: "Welcome!",
+              description: "Toast notifications are now working.",
+            })
+          }}
+        >
+          Test Toast
+        </Button>
       </div>
 
       {/* Stats Grid */}
