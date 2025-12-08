@@ -1,0 +1,420 @@
+# GitHub Copilot Instructions for GSC Tracking
+
+This document provides comprehensive guidelines for GitHub Copilot when working on the GSC Small Engine Repair Business Management Application.
+
+## Project Overview
+
+GSC Tracking is a full-stack business management application for a small engine repair shop. It manages customers, jobs, equipment, expenses, and integrates with Wave accounting software. The project is designed to be extensible to other GSC divisions (GSC-PROD, GSC-AI, GSC-DEV).
+
+**Tech Stack:**
+- **Backend:** .NET 10 Web API (C#) with Entity Framework Core
+- **Frontend:** React 19 + Vite + TypeScript
+- **Database:** Azure SQL Database (or PostgreSQL)
+- **Authentication:** Auth0
+- **Hosting:** Azure App Service (containerized)
+- **Storage:** Azure Blob Storage
+
+## Repository Structure
+
+```
+gsc-tracking/
+├── backend/
+│   └── GscTracking.Api/          # .NET 10 Web API project
+│       ├── Controllers/           # API controllers
+│       ├── Models/                # Entity models
+│       ├── Data/                  # DbContext and migrations
+│       ├── Services/              # Business logic services
+│       ├── DTOs/                  # Data transfer objects
+│       └── Program.cs             # Application entry point
+├── frontend/
+│   ├── src/
+│   │   ├── components/           # React components
+│   │   ├── pages/                # Page components
+│   │   ├── hooks/                # Custom React hooks
+│   │   ├── services/             # API service layer
+│   │   ├── types/                # TypeScript type definitions
+│   │   └── utils/                # Utility functions
+│   └── public/                   # Static assets
+├── .github/
+│   ├── ISSUE_TEMPLATE/           # Issue templates
+│   └── copilot-instructions.md  # This file
+└── docs/                         # Documentation
+```
+
+## Build and Development Commands
+
+### Backend (.NET 10)
+```bash
+# Navigate to backend
+cd backend/GscTracking.Api
+
+# Restore dependencies
+dotnet restore
+
+# Build the project
+dotnet build
+
+# Run the API (development)
+dotnet run
+
+# Run tests (when available)
+dotnet test
+
+# Create database migration
+dotnet ef migrations add <MigrationName>
+
+# Apply database migrations
+dotnet ef database update
+```
+
+The API runs at `http://localhost:5091` (or `https://localhost:7075` with HTTPS profile).
+
+### Frontend (React + Vite)
+```bash
+# Navigate to frontend
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Lint the code
+npm run lint
+
+# Preview production build
+npm run preview
+```
+
+The frontend runs at `http://localhost:5173`.
+
+## Coding Standards and Conventions
+
+### .NET Backend
+
+**Naming Conventions:**
+- Use PascalCase for classes, methods, properties, and namespaces
+- Use camelCase for local variables and parameters
+- Use UPPER_CASE for constants
+- Prefix interfaces with "I" (e.g., `ICustomerService`)
+- Use descriptive, meaningful names
+
+**Code Organization:**
+- Keep controllers thin; move business logic to services
+- Use dependency injection for services
+- Separate concerns: Controllers → Services → Repositories → Data
+- Place validation logic in separate validators (use FluentValidation when added)
+
+**API Design:**
+- Follow RESTful conventions
+- Use plural nouns for resource endpoints (e.g., `/api/customers`, `/api/jobs`)
+- Use appropriate HTTP methods (GET, POST, PUT, DELETE)
+- Return appropriate status codes (200, 201, 204, 400, 404, 500)
+- Use DTOs for request/response models, not domain entities
+- API versioning: Use URL path versioning (e.g., `/api/v1/customers`) when needed
+
+**Error Handling:**
+- Use try-catch blocks in controllers
+- Return ProblemDetails for errors
+- Log exceptions with appropriate log levels
+- Return meaningful error messages to clients
+- Use custom exceptions for business logic errors
+
+**Entity Framework Core:**
+- Use Code First approach with migrations
+- Configure entities using Fluent API in `OnModelCreating`
+- Use async methods for all database operations
+- Implement proper navigation properties for relationships
+- Consider soft deletes for important entities (add `IsDeleted` and `DeletedAt` properties)
+
+**Validation:**
+- Use Data Annotations for simple validation
+- Use FluentValidation for complex validation rules (when added)
+- Validate at both client and server sides
+- Return 400 Bad Request with validation errors
+
+**Security:**
+- Never expose sensitive data in responses
+- Use [Authorize] attribute for protected endpoints
+- Validate all user inputs
+- Use parameterized queries (EF Core handles this)
+- Implement CORS properly (already configured for localhost:5173)
+
+### React/TypeScript Frontend
+
+**Naming Conventions:**
+- Use PascalCase for component files and component names (e.g., `CustomerList.tsx`)
+- Use camelCase for functions, variables, and file names (non-components)
+- Use kebab-case for CSS/SCSS files
+- Use UPPER_SNAKE_CASE for constants
+- Prefix custom hooks with "use" (e.g., `useCustomerData`)
+
+**Component Structure:**
+- Prefer functional components with hooks
+- Keep components small and focused (single responsibility)
+- Extract reusable logic into custom hooks
+- Use TypeScript for all components and functions
+- Define prop types using TypeScript interfaces
+
+**Type Safety:**
+- Define explicit types for all props, state, and function parameters
+- Avoid using `any` type; use `unknown` if type is truly unknown
+- Create shared type definitions in `src/types/`
+- Use type inference where appropriate
+- Define API response types that match backend DTOs
+
+**State Management:**
+- Use React hooks (useState, useEffect, useContext) for local state
+- Consider Context API for shared state across components
+- Use custom hooks for complex state logic
+- Keep state close to where it's used
+
+**API Integration:**
+- Create API service functions in `src/services/`
+- Use async/await for API calls
+- Handle loading, error, and success states
+- Use try-catch for error handling
+- Consider using React Query or SWR for data fetching (when added)
+
+**Styling:**
+- Use CSS modules or styled-components (to be determined)
+- Follow mobile-first responsive design
+- Use consistent spacing and color variables
+- When shadcn/ui is added, use those components as the foundation
+
+**Form Handling:**
+- Use React Hook Form (when added)
+- Use Zod for validation schemas (when added)
+- Provide clear validation error messages
+- Disable submit button while submitting
+- Show loading indicators during submission
+
+**Error Handling:**
+- Display user-friendly error messages
+- Log errors to console in development
+- Use error boundaries for component-level error handling
+- Provide fallback UI for errors
+
+## Testing Guidelines
+
+### Backend Tests
+- Write unit tests for services and business logic
+- Write integration tests for API endpoints
+- Use xUnit as the testing framework
+- Mock dependencies using Moq
+- Aim for >80% code coverage on critical paths
+- Test happy path and error scenarios
+
+### Frontend Tests
+- Write unit tests for utility functions and hooks
+- Write component tests using React Testing Library
+- Write integration tests for user flows
+- Use Jest as the test runner
+- Test user interactions, not implementation details
+- Aim for >70% code coverage
+
+## Database Guidelines
+
+**Schema Design:**
+- Use singular names for tables (e.g., Customer, Job, not Customers, Jobs)
+- Use `Id` as primary key name (PascalCase)
+- Use foreign keys with appropriate names (e.g., `CustomerId`)
+- Add indexes for frequently queried columns
+- Use appropriate data types (varchar vs nvarchar, datetime2, etc.)
+- Add NOT NULL constraints where appropriate
+- Include audit fields: `CreatedAt`, `UpdatedAt`, `DeletedAt`
+
+**Migrations:**
+- Create migrations with descriptive names
+- Review generated migrations before applying
+- Never modify applied migrations
+- Add new migrations for schema changes
+- Test migrations in development before production
+
+## Authentication and Authorization
+
+**Auth0 Integration (when implemented):**
+- Store tokens securely (HttpOnly cookies or secure storage)
+- Refresh tokens before expiration
+- Implement proper logout functionality
+- Use Auth0 user roles for authorization
+- Backend: Validate JWT tokens on protected endpoints
+- Frontend: Include JWT in Authorization header for API calls
+
+## Performance Best Practices
+
+**Backend:**
+- Use async/await for I/O operations
+- Implement pagination for list endpoints
+- Use eager loading (.Include) or explicit loading to avoid N+1 queries
+- Cache frequently accessed data when appropriate
+- Use projection (Select) to return only needed fields
+
+**Frontend:**
+- Lazy load routes and heavy components
+- Optimize images and assets
+- Implement virtual scrolling for long lists
+- Debounce search inputs
+- Memoize expensive computations with useMemo
+- Use React.memo for components that don't need frequent re-renders
+
+## Key Documentation References
+
+- [Business Analysis Document](../business-management-app-analysis.md) - Comprehensive requirements and architecture
+- [Setup Instructions](../SETUP-INSTRUCTIONS.md) - GitHub project setup guide
+- [Issues Specifications](../ISSUES.md) - Detailed issue descriptions
+- [Backend README](../backend/README.md) - Backend-specific documentation
+- [Frontend README](../frontend/README.md) - Frontend-specific documentation
+
+## Development Workflow
+
+1. **Starting New Work:**
+   - Create a new branch from main
+   - Follow the issue template and acceptance criteria
+   - Review relevant documentation before coding
+
+2. **Making Changes:**
+   - Write code following the conventions above
+   - Add/update tests for your changes
+   - Run linters and fix any issues
+   - Test locally before committing
+
+3. **Before Committing:**
+   - Run backend: `dotnet build` and `dotnet test`
+   - Run frontend: `npm run build` and `npm run lint`
+   - Ensure all tests pass
+   - Review your changes
+
+4. **Pull Request:**
+   - Provide clear description of changes
+   - Reference related issues
+   - Ensure CI/CD passes
+   - Request reviews as needed
+
+## Common Patterns and Examples
+
+### Backend API Endpoint Example
+```csharp
+[ApiController]
+[Route("api/[controller]")]
+public class CustomersController : ControllerBase
+{
+    private readonly ICustomerService _customerService;
+    
+    public CustomersController(ICustomerService customerService)
+    {
+        _customerService = customerService;
+    }
+    
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CustomerDto>>> GetCustomers()
+    {
+        try
+        {
+            var customers = await _customerService.GetAllCustomersAsync();
+            return Ok(customers);
+        }
+        catch (Exception ex)
+        {
+            // Log exception
+            return StatusCode(500, "An error occurred while retrieving customers.");
+        }
+    }
+    
+    [HttpGet("{id}")]
+    public async Task<ActionResult<CustomerDto>> GetCustomer(int id)
+    {
+        var customer = await _customerService.GetCustomerByIdAsync(id);
+        if (customer == null)
+        {
+            return NotFound();
+        }
+        return Ok(customer);
+    }
+}
+```
+
+### Frontend Component Example
+```typescript
+import { useState, useEffect } from 'react';
+import { Customer } from '../types/customer';
+import { customerService } from '../services/customerService';
+
+interface CustomerListProps {
+  onCustomerSelect?: (customer: Customer) => void;
+}
+
+const CustomerList: React.FC<CustomerListProps> = ({ onCustomerSelect }) => {
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        setLoading(true);
+        const data = await customerService.getAll();
+        setCustomers(data);
+      } catch (err) {
+        setError('Failed to load customers');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div className="customer-list">
+      {customers.map(customer => (
+        <div key={customer.id} onClick={() => onCustomerSelect?.(customer)}>
+          {customer.name}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default CustomerList;
+```
+
+## Important Notes
+
+- **Code Quality:** Prioritize readable, maintainable code over clever solutions
+- **Documentation:** Add comments for complex logic; code should be self-documenting otherwise
+- **Dependencies:** Only add necessary dependencies; review licenses and security
+- **Security:** Never commit secrets, API keys, or sensitive data
+- **Git:** Write clear, descriptive commit messages; keep commits focused
+- **Breaking Changes:** Coordinate breaking changes with team; update documentation
+
+## Future Considerations
+
+- Wave API integration (GraphQL layer)
+- Inventory management features
+- Photo/document uploads to Azure Blob Storage
+- Customer portal (separate React app or integrated)
+- Multi-division support (multi-tenancy)
+- Advanced reporting and analytics
+- Mobile responsiveness and PWA features
+
+## Getting Help
+
+- Review existing code for patterns and conventions
+- Check the business analysis document for requirements context
+- Refer to the issues list for detailed feature specifications
+- Consult .NET and React documentation for framework-specific questions
+- Ask for clarification on ambiguous requirements
+
+---
+
+**Last Updated:** 2025-12-08  
+**Maintained By:** GSC Development Team
