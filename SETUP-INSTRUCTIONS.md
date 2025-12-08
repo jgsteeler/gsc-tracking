@@ -149,9 +149,10 @@ Implement complete customer management functionality including Create, Read, Upd
 
 ## Technical Notes
 
-- Use Prisma/TypeORM for database models
+- Use Entity Framework Core for database models and migrations
 - Implement REST API endpoints: GET /api/customers, POST /api/customers, PUT /api/customers/:id, DELETE /api/customers/:id
-- Use React Hook Form with Zod validation
+- Use React Hook Form with Zod validation (frontend)
+- Use FluentValidation or Data Annotations (backend .NET validation)
 - Use shadcn/ui components: Table, Dialog, Form, Input, Button
 - Consider soft delete vs hard delete
 

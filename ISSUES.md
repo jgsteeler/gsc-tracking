@@ -30,9 +30,10 @@ Implement complete customer management functionality including Create, Read, Upd
 - [ ] Responsive design using shadcn/ui components
 
 **Technical Notes:**
-- Use Prisma/TypeORM for database models
+- Use Entity Framework Core for database models and migrations
 - Implement REST API endpoints: GET /api/customers, POST /api/customers, PUT /api/customers/:id, DELETE /api/customers/:id
-- Use React Hook Form with Zod validation
+- Use React Hook Form with Zod validation (frontend)
+- Use FluentValidation or Data Annotations (backend .NET validation)
 - Use shadcn/ui components: Table, Dialog, Form, Input, Button
 - Consider soft delete vs hard delete
 
@@ -66,11 +67,12 @@ Implement complete job management functionality including Create, Read, Update, 
 - [ ] Responsive design using shadcn/ui components
 
 **Technical Notes:**
-- Use Prisma/TypeORM for database models with proper relations
+- Use Entity Framework Core for database models with proper relations (navigation properties)
 - Implement REST API endpoints: GET /api/jobs, POST /api/jobs, PUT /api/jobs/:id, DELETE /api/jobs/:id, GET /api/jobs/customer/:customerId
-- Use React Hook Form with Zod validation
+- Use React Hook Form with Zod validation (frontend)
+- Use FluentValidation or Data Annotations (backend .NET validation)
 - Use shadcn/ui components: Table, Dialog, Form, Input, Select, Badge for status
-- Status field should use enum/constants
+- Status field should use C# enum
 
 **Priority:** Critical (blocking)
 
@@ -102,11 +104,11 @@ Implement expense and cost tracking functionality to record all costs associated
 - [ ] Responsive design using shadcn/ui components
 
 **Technical Notes:**
-- Use Prisma/TypeORM for database models with job relation
+- Use Entity Framework Core for database models with job relation (navigation properties)
 - Implement REST API endpoints: GET /api/jobs/:jobId/expenses, POST /api/jobs/:jobId/expenses, PUT /api/expenses/:id, DELETE /api/expenses/:id
 - Calculate totals on backend and cache/store for performance
 - Use shadcn/ui components: Table, Dialog, Form, Input, Select
-- Consider expense categories/types as enum
+- Consider expense categories/types as C# enum
 
 **Priority:** High
 
@@ -139,10 +141,11 @@ Implement CSV import and export functionality for expenses, estimates, invoices,
 - [ ] Documentation of CSV format/schema
 
 **Technical Notes:**
-- Use libraries like papaparse (frontend) or csv-parser (backend)
+- Use papaparse for frontend CSV parsing
+- Use CsvHelper library for .NET backend CSV operations
 - Implement endpoints: GET /api/export/expenses, GET /api/export/jobs, POST /api/import/expenses
 - Include proper headers in CSV files
-- Validate data types and required fields during import
+- Validate data types and required fields during import (FluentValidation)
 - Consider batch processing for large files
 - Use shadcn/ui components: Button, FileUpload, Table for preview
 
@@ -213,12 +216,13 @@ Implement robust form validation on both frontend and backend using Zod schemas 
 - [ ] Document validation rules in API documentation
 
 **Technical Notes:**
-- Create shared Zod schemas in a common directory that can be used by both frontend and backend
-- Use @hookform/resolvers/zod for React Hook Form integration
-- Implement validation middleware for Express/Fastify
+- Frontend: Use Zod schemas with React Hook Form and @hookform/resolvers/zod
+- Backend: Use FluentValidation or Data Annotations for .NET API validation
+- Consider sharing validation rules via TypeScript types generated from C# models (using tools like NSwag or OpenAPI Generator)
 - Common validations: email format, phone format, required fields, min/max lengths, number ranges
 - Use shadcn/ui Form components which integrate with React Hook Form
-- Consider creating a custom validation hook for reusability
+- Implement validation middleware in .NET API pipeline
+- Consider creating custom validators for reusable validation logic
 
 **Priority:** High
 
