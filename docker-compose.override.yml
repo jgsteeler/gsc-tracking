@@ -1,5 +1,3 @@
-version: '3.8'
-
 # This file provides development-specific overrides for docker-compose.yml
 # It enables hot reload, volume mounts, and development tools
 

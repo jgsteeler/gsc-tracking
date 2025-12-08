@@ -587,13 +587,24 @@ If you encounter issues not covered here:
 
 ## CI/CD Integration
 
-Docker containers are designed for CI/CD pipelines:
+Docker containers are designed for CI/CD pipelines. A GitHub Actions workflow is included in `.github/workflows/docker-build.yml`.
 
-### Building in CI
+### Automated Builds
+
+The workflow automatically:
+- Builds Docker images on push to main/develop branches
+- Builds images for pull requests (without pushing)
+- Tags images with branch name, PR number, commit SHA
+- Pushes images to GitHub Container Registry (ghcr.io)
+- Uses build cache for faster builds
+
+### Manual CI Commands
+
+#### Building in CI
 
 ```bash
 # Build all services
-docker-compose build
+docker compose build
 
 # Tag images for registry
 docker tag gsc-tracking-backend:latest <registry>/gsc-tracking-backend:$VERSION
@@ -604,22 +615,36 @@ docker push <registry>/gsc-tracking-backend:$VERSION
 docker push <registry>/gsc-tracking-frontend:$VERSION
 ```
 
-### Testing in CI
+#### Testing in CI
 
 ```bash
 # Start services in background
-docker-compose up -d
+docker compose up -d
 
 # Wait for services to be healthy
-docker-compose ps
+docker compose ps
 
 # Run tests
-docker-compose exec -T backend dotnet test
-docker-compose exec -T frontend npm run test
+docker compose exec -T backend dotnet test
+docker compose exec -T frontend npm run test
 
 # Clean up
-docker-compose down -v
+docker compose down -v
 ```
+
+### Container Registry Setup
+
+The project is configured to use GitHub Container Registry (ghcr.io) by default. To use a different registry:
+
+1. Update the `REGISTRY` environment variable in `.github/workflows/docker-build.yml`
+2. Add registry credentials to GitHub Secrets
+3. Update the login action in the workflow
+
+Example registries:
+- **GitHub Container Registry**: `ghcr.io` (default, free for public repos)
+- **Docker Hub**: `docker.io`
+- **Azure Container Registry**: `<name>.azurecr.io`
+- **Amazon ECR**: `<account>.dkr.ecr.<region>.amazonaws.com`
 
 ## Additional Resources
 

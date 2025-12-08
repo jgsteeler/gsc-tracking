@@ -11,8 +11,8 @@ RUN npm ci
 # Copy source files
 COPY . .
 
-# Build the application
-RUN npm run build
+# Build the application (using npx to ensure binaries are found)
+RUN npx tsc -b && npx vite build
 
 # Production stage
 FROM nginx:alpine AS final
