@@ -7,10 +7,29 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 - **[Business Analysis](./business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
 - **[GitHub Issues](./ISSUES.md)** - Complete specifications for 25 project issues
 - **[Setup Instructions](./SETUP-INSTRUCTIONS.md)** - Step-by-step guide for creating labels, milestones, and issues
+- **[Docker Guide](./DOCKER.md)** - Complete Docker and Docker Compose documentation
 
 ## 🎯 Quick Start
 
-### Running the Application
+### Option 1: Docker (Recommended)
+
+The easiest way to run the full stack with database:
+
+```bash
+# Copy environment variables
+cp .env.example .env
+
+# Start all services (database, backend, frontend)
+docker-compose up
+```
+
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:8080
+- **Database**: PostgreSQL on localhost:5432
+
+See [DOCKER.md](./DOCKER.md) for complete Docker documentation.
+
+### Option 2: Local Development
 
 **Backend (.NET 10 Web API):**
 ```bash
@@ -37,8 +56,9 @@ The app will be available at `http://localhost:5173`
 
 - **Backend:** .NET 10 Web API (C#) with Entity Framework Core
 - **Frontend:** React + Vite + TypeScript
-- **Database:** Azure SQL Database or PostgreSQL
+- **Database:** PostgreSQL (Docker) / Azure SQL Database
 - **Authentication:** Auth0
+- **Containerization:** Docker & Docker Compose
 - **Hosting:** Azure App Service (containerized) or alternatives
 - **Storage:** Azure Blob Storage or alternatives
 

@@ -1,0 +1,39 @@
+version: '3.8'
+
+# This file provides development-specific overrides for docker-compose.yml
+# It enables hot reload, volume mounts, and development tools
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+      target: development
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+    volumes:
+      # Mount source code for hot reload
+      - ./backend:/app
+      # Exclude build artifacts from being overwritten
+      - /app/GscTracking.Api/bin
+      - /app/GscTracking.Api/obj
+    command: ["dotnet", "watch", "run", "--project", "GscTracking.Api/GscTracking.Api.csproj", "--urls", "http://+:8080", "--no-launch-profile"]
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+      target: development
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+    volumes:
+      # Mount source code for hot reload
+      - ./frontend:/app
+      # Exclude node_modules from being overwritten
+      - /app/node_modules
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "8080"]
+    ports:
+      - "${FRONTEND_PORT:-5173}:8080"
