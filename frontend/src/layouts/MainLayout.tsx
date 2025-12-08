@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import { Menu, X, LayoutDashboard, Users, Briefcase } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import packageJson from '../../package.json'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -21,7 +22,7 @@ export function MainLayout() {
         <div className="flex flex-col flex-grow pt-5 bg-card border-r overflow-y-auto">
           <div className="flex items-center flex-shrink-0 px-4 flex-col items-start">
             <h1 className="text-xl font-bold">GSC Tracking</h1>
-            <span className="text-xs text-muted-foreground mt-1">v0.0.0</span>
+            <span className="text-xs text-muted-foreground mt-1">v{packageJson.version}</span>
           </div>
           <div className="mt-8 flex-grow flex flex-col">
             <nav className="flex-1 px-2 space-y-1">
@@ -67,7 +68,7 @@ export function MainLayout() {
         <div className="flex items-center justify-between bg-card border-b px-4 py-3">
           <div>
             <h1 className="text-lg font-bold">GSC Tracking</h1>
-            <span className="text-xs text-muted-foreground">v0.0.0</span>
+            <span className="text-xs text-muted-foreground">v{packageJson.version}</span>
           </div>
           <Button
             variant="ghost"
