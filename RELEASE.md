@@ -30,7 +30,7 @@ When you merge code to the `main` branch:
 
 | Component | Version | Location |
 |-----------|---------|----------|
-| Frontend  | 0.0.0   | `frontend/package.json` |
+| Frontend  | 0.1.0   | `frontend/package.json` |
 | Backend   | 0.1.0   | `backend/GscTracking.Api/GscTracking.Api.csproj` |
 
 ## Commit Message Format

@@ -10,7 +10,7 @@ This guide provides step-by-step instructions to test the Release Please workflo
 
 ## Test Scenario 1: Frontend Patch Release
 
-This tests a minor bug fix in the frontend (0.0.0 → 0.0.1).
+This tests a minor bug fix in the frontend (0.1.0 → 0.1.1).
 
 ```bash
 # 1. Create a test branch
@@ -31,9 +31,9 @@ git push origin test-frontend-patch
 ```
 
 **Expected Result:**
-- Release Please creates a PR titled "chore(main): release frontend 0.0.1"
+- Release Please creates a PR titled "chore(main): release frontend 0.1.1"
 - CHANGELOG.md shows the bug fix
-- package.json updated to 0.0.1
+- package.json updated to 0.1.1
 
 ## Test Scenario 2: Backend Minor Release
 
@@ -64,7 +64,7 @@ git push origin test-backend-feature
 
 ## Test Scenario 3: Breaking Change (Major Release)
 
-This tests a breaking change in the frontend (0.0.1 → 1.0.0).
+This tests a breaking change in the frontend (0.1.1 → 1.0.0).
 
 ```bash
 # 1. Create a test branch
@@ -153,7 +153,7 @@ git push origin test-docs-only
 After merging a Release PR:
 
 1. **Check Tags**: Go to Repository > Tags
-   - Should see new tags like `frontend-v0.0.1` or `backend-v0.2.0`
+   - Should see new tags like `frontend-v0.1.1` or `backend-v0.2.0`
 
 2. **Check Releases**: Go to Repository > Releases
    - Should see new release with generated notes
@@ -201,8 +201,8 @@ If a release was created incorrectly:
 
 1. **Delete the Git Tag**:
    ```bash
-   git tag -d frontend-v0.0.1
-   git push origin :refs/tags/frontend-v0.0.1
+   git tag -d frontend-v0.1.1
+   git push origin :refs/tags/frontend-v0.1.1
    ```
 
 2. **Delete the GitHub Release**:
