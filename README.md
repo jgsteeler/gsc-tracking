@@ -5,6 +5,7 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 ## 📋 Project Documentation
 
 - **[Business Analysis](./business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
+- **[Hosting Evaluation](./docs/HOSTING-EVALUATION.md)** - Analysis of hosting alternatives (Azure, Fly.io, Railway, Netlify, Cloudflare) with cost estimates and recommendations
 - **[GitHub Issues](./ISSUES.md)** - Complete specifications for 25 project issues
 - **[Setup Instructions](./SETUP-INSTRUCTIONS.md)** - Step-by-step guide for creating labels, milestones, and issues
 - **[Docker Guide](./DOCKER.md)** - Complete Docker and Docker Compose documentation
