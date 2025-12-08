@@ -10,6 +10,25 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 
 ## 🎯 Quick Start
 
+### Running the Application
+
+**Backend (.NET 10 Web API):**
+```bash
+cd backend/GscTracking.Api
+dotnet run
+```
+The API will be available at `https://localhost:5001`
+
+**Frontend (React + Vite):**
+```bash
+cd frontend
+npm install  # First time only
+npm run dev
+```
+The app will be available at `http://localhost:5173`
+
+### Project Setup
+
 1. Review the [business analysis document](./business-management-app-analysis.md) for project context
 2. Follow the [setup instructions](./SETUP-INSTRUCTIONS.md) to create GitHub labels and milestones
 3. Create issues from the [ISSUES.md](./ISSUES.md) specifications
@@ -24,6 +43,18 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 - **Storage:** Azure Blob Storage or alternatives
 
 ## 📊 Project Structure
+
+```
+gsc-tracking/
+├── backend/               # .NET 10 Web API
+│   └── GscTracking.Api/  # Main API project
+├── frontend/             # React + Vite + TypeScript
+│   └── src/             # Source files
+├── .github/             # GitHub configuration and templates
+└── docs/                # Documentation files
+```
+
+### Development Roadmap
 
 - **MVP Features:** 6 core features for minimum viable product
 - **Roadmap Features:** 11 enhanced features for future phases
