@@ -1,0 +1,99 @@
+name: Infrastructure & DevOps
+description: Create an issue for infrastructure setup or DevOps tasks
+title: "[INFRA] "
+labels: ["infrastructure", "devops"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this infrastructure issue!
+        
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Provide a clear and detailed description of the infrastructure task
+      placeholder: Describe what needs to be set up or configured
+    validations:
+      required: true
+      
+  - type: textarea
+    id: objectives
+    attributes:
+      label: Objectives
+      description: What are the goals of this infrastructure change?
+      placeholder: |
+        - Enable automated deployments
+        - Improve security
+        - Reduce costs
+    validations:
+      required: true
+      
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: List the requirements that must be met for this to be considered complete
+      placeholder: |
+        - [ ] Service is provisioned and accessible
+        - [ ] Documentation is updated
+        - [ ] Security best practices are implemented
+    validations:
+      required: true
+      
+  - type: textarea
+    id: technical-details
+    attributes:
+      label: Technical Details
+      description: Technical specifications and implementation details
+      placeholder: Services, configurations, scripts, tools, etc.
+    validations:
+      required: false
+      
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What type of infrastructure task is this?
+      options:
+        - Hosting/Deployment
+        - Authentication/Security
+        - Database
+        - CI/CD Pipeline
+        - Monitoring/Logging
+        - Storage
+        - Containerization
+        - Other
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: Priority level for this infrastructure task
+      options:
+        - Critical (blocking)
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+      
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List any issues or resources that must be available first
+      placeholder: "Depends on #123, requires Azure subscription, etc."
+    validations:
+      required: false
+      
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other context, documentation links, or references
+      placeholder: Links to documentation, cost estimates, alternatives considered, etc.
+    validations:
+      required: false

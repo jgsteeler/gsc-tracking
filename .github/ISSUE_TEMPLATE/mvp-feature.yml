@@ -1,0 +1,70 @@
+name: MVP Feature
+description: Create an issue for a Minimum Viable Product feature
+title: "[MVP] "
+labels: ["mvp", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this MVP feature request!
+        
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Provide a clear and detailed description of the feature
+      placeholder: Describe what this feature does and why it's needed for the MVP
+    validations:
+      required: true
+      
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: List the requirements that must be met for this feature to be considered complete
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+      
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: Technical Notes
+      description: Any technical implementation details or considerations
+      placeholder: Database models, API endpoints, UI components, etc.
+    validations:
+      required: false
+      
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List any issues or features that must be completed before this one
+      placeholder: "Depends on #123, #456"
+    validations:
+      required: false
+      
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature for the MVP?
+      options:
+        - Critical (blocking)
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+      
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, or references
+      placeholder: Links to documentation, similar implementations, etc.
+    validations:
+      required: false

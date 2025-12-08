@@ -1,0 +1,152 @@
+# GitHub Labels Configuration
+# This file defines all labels used in the GSC tracking repository
+# Labels can be created using GitHub CLI: gh label create "label-name" --description "Description" --color "hexcode"
+
+# Priority Labels
+- name: "priority: critical"
+  description: "Critical issues that block progress"
+  color: "d73a4a"
+
+- name: "priority: high"
+  description: "High priority issues"
+  color: "ff9800"
+
+- name: "priority: medium"
+  description: "Medium priority issues"
+  color: "ffc107"
+
+- name: "priority: low"
+  description: "Low priority issues"
+  color: "8bc34a"
+
+# Category Labels
+- name: "mvp"
+  description: "Minimum Viable Product features"
+  color: "0052cc"
+
+- name: "roadmap"
+  description: "Post-MVP roadmap features"
+  color: "5319e7"
+
+- name: "infrastructure"
+  description: "Infrastructure and DevOps tasks"
+  color: "1d76db"
+
+- name: "enhancement"
+  description: "New features or improvements"
+  color: "a2eeef"
+
+- name: "bug"
+  description: "Something isn't working"
+  color: "d73a4a"
+
+- name: "documentation"
+  description: "Documentation improvements"
+  color: "0075ca"
+
+- name: "security"
+  description: "Security-related issues"
+  color: "ee0701"
+
+# Technical Labels
+- name: "backend"
+  description: "Backend/API work"
+  color: "c5def5"
+
+- name: "frontend"
+  description: "Frontend/UI work"
+  color: "bfdadc"
+
+- name: "database"
+  description: "Database related changes"
+  color: "d4c5f9"
+
+- name: "devops"
+  description: "DevOps and deployment"
+  color: "fbca04"
+
+- name: "testing"
+  description: "Testing related tasks"
+  color: "7057ff"
+
+- name: "ui/ux"
+  description: "User interface and experience"
+  color: "e99695"
+
+- name: "api"
+  description: "API design or changes"
+  color: "0e8a16"
+
+- name: "integration"
+  description: "Third-party integrations"
+  color: "f9d0c4"
+
+- name: "mobile"
+  description: "Mobile-specific features"
+  color: "d876e3"
+
+- name: "analytics"
+  description: "Analytics and reporting"
+  color: "0075ca"
+
+- name: "ai/ml"
+  description: "AI/Machine learning features"
+  color: "006b75"
+
+- name: "storage"
+  description: "File storage and cloud storage"
+  color: "c2e0c6"
+
+- name: "architecture"
+  description: "Architecture and design decisions"
+  color: "5319e7"
+
+# Status Labels
+- name: "status: blocked"
+  description: "Blocked by another issue or external dependency"
+  color: "d73a4a"
+
+- name: "status: in-progress"
+  description: "Currently being worked on"
+  color: "0e8a16"
+
+- name: "status: needs-review"
+  description: "Needs code review or feedback"
+  color: "fbca04"
+
+- name: "status: needs-testing"
+  description: "Implementation complete, needs testing"
+  color: "ff9800"
+
+- name: "good first issue"
+  description: "Good for newcomers to the project"
+  color: "7057ff"
+
+- name: "help wanted"
+  description: "Extra attention needed from the community"
+  color: "008672"
+
+# Community Labels
+- name: "community"
+  description: "Community contributions and engagement"
+  color: "0e8a16"
+
+- name: "question"
+  description: "Further information is requested"
+  color: "d876e3"
+
+- name: "discussion"
+  description: "Discussion or decision needed"
+  color: "cc317c"
+
+- name: "duplicate"
+  description: "This issue or pull request already exists"
+  color: "cfd3d7"
+
+- name: "wontfix"
+  description: "This will not be worked on"
+  color: "ffffff"
+
+- name: "invalid"
+  description: "This doesn't seem right"
+  color: "e4e669"
