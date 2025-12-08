@@ -8,6 +8,7 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 - **[GitHub Issues](./ISSUES.md)** - Complete specifications for 25 project issues
 - **[Setup Instructions](./SETUP-INSTRUCTIONS.md)** - Step-by-step guide for creating labels, milestones, and issues
 - **[Docker Guide](./DOCKER.md)** - Complete Docker and Docker Compose documentation
+- **[Release Process](./RELEASE.md)** - Semantic versioning and automated release workflow
 
 ## 🎯 Quick Start
 
