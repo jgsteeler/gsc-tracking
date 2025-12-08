@@ -1,0 +1,18 @@
+{
+  "packages": {
+    "frontend": {
+      "release-type": "node",
+      "package-name": "frontend",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true
+    },
+    "backend": {
+      "release-type": "simple",
+      "package-name": "backend",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true
+    }
+  }
+}
