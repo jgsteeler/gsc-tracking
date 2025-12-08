@@ -19,8 +19,9 @@ export function MainLayout() {
       {/* Desktop Sidebar */}
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         <div className="flex flex-col flex-grow pt-5 bg-card border-r overflow-y-auto">
-          <div className="flex items-center flex-shrink-0 px-4">
+          <div className="flex items-center flex-shrink-0 px-4 flex-col items-start">
             <h1 className="text-xl font-bold">GSC Tracking</h1>
+            <span className="text-xs text-muted-foreground mt-1">v0.0.0</span>
           </div>
           <div className="mt-8 flex-grow flex flex-col">
             <nav className="flex-1 px-2 space-y-1">
@@ -45,13 +46,29 @@ export function MainLayout() {
               })}
             </nav>
           </div>
+          <div className="flex-shrink-0 px-4 py-4 border-t">
+            <p className="text-xs text-muted-foreground">
+              © 2025 Gibson Service Company, LLC
+            </p>
+            <a
+              href="https://gibsonservice.co"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-primary hover:underline"
+            >
+              Learn More
+            </a>
+          </div>
         </div>
       </div>
 
       {/* Mobile Header */}
       <div className="md:hidden">
         <div className="flex items-center justify-between bg-card border-b px-4 py-3">
-          <h1 className="text-lg font-bold">GSC Tracking</h1>
+          <div>
+            <h1 className="text-lg font-bold">GSC Tracking</h1>
+            <span className="text-xs text-muted-foreground">v0.0.0</span>
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -95,7 +112,7 @@ export function MainLayout() {
       )}
 
       {/* Main Content */}
-      <div className="md:pl-64 flex flex-col flex-1">
+      <div className="md:pl-64 flex flex-col min-h-screen">
         <main className="flex-1">
           <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
@@ -103,6 +120,19 @@ export function MainLayout() {
             </div>
           </div>
         </main>
+        <footer className="border-t bg-card py-4 px-4 sm:px-6 md:px-8">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-sm text-muted-foreground">
+            <p>© 2025 Gibson Service Company, LLC</p>
+            <a
+              href="https://gibsonservice.co"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline mt-2 sm:mt-0"
+            >
+              Learn More
+            </a>
+          </div>
+        </footer>
       </div>
     </div>
   )
