@@ -1,0 +1,17 @@
+# Development Dockerfile with hot reload support
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS development
+WORKDIR /app
+
+# Install dotnet tools for hot reload
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="${PATH}:/root/.dotnet/tools"
+
+# Copy csproj and restore dependencies
+COPY GscTracking.Api/GscTracking.Api.csproj GscTracking.Api/
+RUN dotnet restore "GscTracking.Api/GscTracking.Api.csproj"
+
+# Expose port
+EXPOSE 8080
+
+# Default command (can be overridden in docker-compose)
+CMD ["dotnet", "watch", "run", "--project", "GscTracking.Api/GscTracking.Api.csproj", "--urls", "http://+:8080", "--no-launch-profile"]
