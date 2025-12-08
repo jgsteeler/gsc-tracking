@@ -7,6 +7,7 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 - **[Business Analysis](./business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
 - **[GitHub Issues](./ISSUES.md)** - Complete specifications for 25 project issues
 - **[Setup Instructions](./SETUP-INSTRUCTIONS.md)** - Step-by-step guide for creating labels, milestones, and issues
+- **[Release Process](./RELEASE.md)** - Semantic versioning and automated release workflow
 
 ## 🎯 Quick Start
 
