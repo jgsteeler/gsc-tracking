@@ -41,7 +41,7 @@ services:
     networks:
       - gsc-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/hello || exit 1"]
+      test: ["CMD-SHELL", "timeout 5 bash -c '</dev/tcp/localhost/8080' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -63,7 +63,7 @@ services:
     networks:
       - gsc-network
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1"]
+      test: ["CMD-SHELL", "timeout 5 bash -c '</dev/tcp/localhost/8080' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
