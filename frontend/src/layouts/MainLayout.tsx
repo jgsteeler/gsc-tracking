@@ -47,19 +47,6 @@ export function MainLayout() {
               })}
             </nav>
           </div>
-          <div className="flex-shrink-0 px-4 py-4 border-t">
-            <p className="text-xs text-muted-foreground">
-              © 2025 Gibson Service Company, LLC
-            </p>
-            <a
-              href="https://gibsonservice.co"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-primary hover:underline"
-            >
-              Learn More
-            </a>
-          </div>
         </div>
       </div>
 
