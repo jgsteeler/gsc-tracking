@@ -295,6 +295,189 @@ The frontend runs at `http://localhost:5173`.
    - Ensure CI/CD passes
    - Request reviews as needed
 
+## Git Commit and PR Conventions
+
+This project uses **Conventional Commits** to enable automated releases with Release Please and maintain a clear, searchable Git history.
+
+### Commit Message Format
+
+Every commit message **MUST** follow this structure:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Examples:**
+```
+feat(customer): add customer search functionality
+fix(api): resolve null reference in job controller
+docs(readme): update setup instructions
+chore(deps): upgrade Entity Framework to 9.0.1
+```
+
+### Commit Types
+
+Use these standardized commit types:
+
+| Type       | Description                                      | Version Bump |
+|------------|--------------------------------------------------|--------------|
+| `feat`     | New feature                                      | Minor        |
+| `fix`      | Bug fix                                          | Patch        |
+| `docs`     | Documentation only changes                       | None         |
+| `style`    | Code style changes (formatting, no logic change) | None         |
+| `refactor` | Code restructuring (no behavior change)          | None         |
+| `perf`     | Performance improvements                         | Patch        |
+| `test`     | Adding or updating tests                         | None         |
+| `build`    | Build system or external dependency changes      | None         |
+| `ci`       | CI/CD configuration changes                      | None         |
+| `chore`    | Other changes (tooling, configs, etc.)           | None         |
+| `revert`   | Reverts a previous commit                        | Depends      |
+
+### Scope (Optional)
+
+Scope specifies the area of the codebase affected:
+
+- `customer` - Customer management features
+- `job` - Job tracking features
+- `equipment` - Equipment management
+- `expense` - Expense tracking
+- `api` - API layer changes
+- `db` - Database changes
+- `auth` - Authentication/authorization
+- `ui` - UI/UX changes
+- `deps` - Dependency updates
+
+**Examples with scope:**
+```
+feat(job): add job status filtering
+fix(customer): correct email validation regex
+refactor(api): extract common error handling
+```
+
+### Commit Description Rules
+
+1. **Use imperative mood**: "add feature" not "added feature" or "adds feature"
+2. **Start with lowercase**: unless it's a proper noun
+3. **No period at the end**
+4. **Keep it under 72 characters**
+5. **Be specific and descriptive**
+
+**Good:**
+- `feat(auth): add JWT token refresh mechanism`
+- `fix(job): prevent duplicate job creation`
+- `docs(api): add OpenAPI documentation`
+
+**Bad:**
+- `Added some stuff` (vague, wrong tense)
+- `Fix bug` (not specific)
+- `Updated files.` (period at end, not descriptive)
+
+### Breaking Changes
+
+For breaking changes that require major version bump:
+
+1. Add `!` after type/scope: `feat(api)!: remove deprecated endpoints`
+2. OR add `BREAKING CHANGE:` in the footer:
+
+```
+feat(api): restructure customer endpoint response
+
+BREAKING CHANGE: Customer API now returns nested address object instead of flat fields.
+Migration guide available in docs/migrations/v2.md
+```
+
+### Commit Body (Optional)
+
+Use the body to explain:
+- **Why** the change was made
+- **What** problem it solves
+- **How** it differs from previous behavior
+
+**Example:**
+```
+fix(job): prevent race condition in status updates
+
+Job status updates could be lost when multiple requests
+arrived simultaneously. Added optimistic locking using
+Entity Framework's RowVersion to ensure consistency.
+
+Fixes #123
+```
+
+### Commit Footer
+
+Use footers to:
+- Reference issues: `Fixes #123`, `Closes #456`, `Refs #789`
+- Note breaking changes: `BREAKING CHANGE: description`
+- Add co-authors: `Co-authored-by: Name <email>`
+
+### Pull Request Requirements
+
+1. **Title Format**: Use conventional commit format
+   - `feat(customer): add bulk import from CSV`
+   - `fix(api): resolve CORS issues with frontend`
+
+2. **Description Must Include:**
+   - Summary of changes
+   - Motivation and context
+   - Related issues (use `Fixes #123` or `Closes #456`)
+   - Testing performed
+   - Breaking changes (if any)
+
+3. **PR Labels**: Add appropriate labels matching commit type
+   - `enhancement` for `feat`
+   - `bug` for `fix`
+   - `documentation` for `docs`
+
+### Examples of Good Commits
+
+```bash
+# Feature addition
+feat(customer): add customer notes field
+feat(job): implement job photo attachments
+feat(api): add pagination to customer list endpoint
+
+# Bug fixes
+fix(auth): correct token expiration handling
+fix(customer): validate phone number format
+fix(job): prevent negative labor hours
+
+# Documentation
+docs(readme): add Azure deployment guide
+docs(api): document authentication flow
+
+# Refactoring
+refactor(customer): extract validation logic to service
+refactor(api): simplify error handling middleware
+
+# Performance
+perf(db): add index on job status column
+perf(api): implement response caching
+
+# Dependencies
+chore(deps): update React to 19.2.1
+build(deps): bump .NET SDK to 10.0.1
+
+# Breaking changes
+feat(api)!: change customer ID from int to GUID
+
+BREAKING CHANGE: Customer IDs are now GUIDs instead of integers.
+Update all API calls to use the new format.
+```
+
+### Validation
+
+These commit conventions are **enforced** for:
+- Automated changelog generation
+- Semantic versioning with Release Please
+- Clear project history and easier debugging
+
+All commits will be validated, and PRs with non-conforming commits may be rejected.
+
 ## Common Patterns and Examples
 
 ### Backend API Endpoint Example
@@ -393,8 +576,8 @@ export default CustomerList;
 - **Documentation:** Add comments for complex logic; code should be self-documenting otherwise
 - **Dependencies:** Only add necessary dependencies; review licenses and security
 - **Security:** Never commit secrets, API keys, or sensitive data
-- **Git:** Write clear, descriptive commit messages; keep commits focused
-- **Breaking Changes:** Coordinate breaking changes with team; update documentation
+- **Git Commits:** MUST follow Conventional Commits format (see Git Commit and PR Conventions section)
+- **Breaking Changes:** Mark with `!` or `BREAKING CHANGE:` footer; coordinate with team; update documentation
 
 ## Future Considerations
 
