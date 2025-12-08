@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://github.com/jgsteeler/gsc-tracking/blob/main/business-management-app-analysis.md
+    about: Read the full business management app analysis and requirements
+  - name: Ask a Question
+    url: https://github.com/jgsteeler/gsc-tracking/discussions
+    about: Ask questions and discuss ideas with the community
