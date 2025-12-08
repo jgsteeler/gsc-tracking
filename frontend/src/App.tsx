@@ -12,17 +12,29 @@ function App() {
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    // Call the backend API
-    fetch('https://localhost:5001/api/hello')
-      .then(response => response.json())
-      .then((data: ApiResponse) => {
-        setApiMessage(data.message);
-        setError('');
-      })
-      .catch(() => {
-        setError('Unable to connect to API. Make sure the backend is running.');
-        setApiMessage('');
-      });
+    // Call the backend API (try HTTPS first, fallback to HTTP)
+    const apiUrls = [
+      'https://localhost:7075/api/hello',
+      'http://localhost:5091/api/hello'
+    ];
+
+    const tryFetch = async () => {
+      for (const url of apiUrls) {
+        try {
+          const response = await fetch(url);
+          const data: ApiResponse = await response.json();
+          setApiMessage(data.message);
+          setError('');
+          return;
+        } catch {
+          // Try next URL
+        }
+      }
+      setError('Unable to connect to API. Make sure the backend is running at http://localhost:5091 or https://localhost:7075');
+      setApiMessage('');
+    };
+
+    tryFetch();
   }, []);
 
   return (

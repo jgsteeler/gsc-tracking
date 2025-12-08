@@ -15,14 +15,21 @@ cd backend/GscTracking.Api
 dotnet run
 ```
 
-The API will start at `https://localhost:5001` (or the port shown in the console).
+The API will start at:
+- HTTP: `http://localhost:5091`
+- HTTPS: `https://localhost:7075`
+
+By default, the HTTP profile is used. To use HTTPS:
+```bash
+dotnet run --launch-profile https
+```
 
 ### Testing the API
 
 Open your browser or use curl:
 
 ```bash
-curl https://localhost:5001/api/hello
+curl http://localhost:5091/api/hello
 ```
 
 You should see:

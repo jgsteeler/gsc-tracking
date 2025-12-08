@@ -17,7 +17,7 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 cd backend/GscTracking.Api
 dotnet run
 ```
-The API will be available at `https://localhost:5001`
+The API will be available at `http://localhost:5091` (or `https://localhost:7075` with HTTPS profile)
 
 **Frontend (React + Vite):**
 ```bash
