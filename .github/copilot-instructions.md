@@ -2,6 +2,33 @@
 
 This document provides comprehensive guidelines for GitHub Copilot when working on the GSC Small Engine Repair Business Management Application.
 
+## ⚠️ CRITICAL: Commit Message Format
+
+**EVERY COMMIT MUST FOLLOW CONVENTIONAL COMMITS FORMAT**
+
+This is **REQUIRED** for Release Please to work. All commits are validated by commitlint.
+
+### Required Format
+```
+<type>(<scope>): <description>
+```
+
+### Examples
+```
+feat(customer): add search functionality
+fix(api): resolve null reference  
+docs(readme): update setup guide
+chore: add commitlint configuration
+```
+
+### NEVER use these formats:
+- ❌ "Initial plan"
+- ❌ "WIP"
+- ❌ "Update files"
+- ❌ "Fix bug"
+
+See [COMMIT_GUIDELINES.md](../COMMIT_GUIDELINES.md) for complete details.
+
 ## Project Overview
 
 GSC Tracking is a full-stack business management application for a small engine repair shop. It manages customers, jobs, equipment, expenses, and integrates with Wave accounting software. The project is designed to be extensible to other GSC divisions (GSC-PROD, GSC-AI, GSC-DEV).

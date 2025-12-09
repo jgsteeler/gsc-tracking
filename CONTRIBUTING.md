@@ -2,14 +2,30 @@
 
 Thank you for your interest in contributing! Please read these guidelines to help us maintain a welcoming and productive environment.
 
+## ⚠️ Required Reading
+
+**BEFORE making any commits, read [COMMIT_GUIDELINES.md](./COMMIT_GUIDELINES.md)**
+
+All commits MUST follow Conventional Commits format. This is strictly enforced by commitlint and required for automated releases.
+
 ## How to Contribute
 
 - **Fork the repository** and create your branch from `main`.
-- **Write clear, descriptive commit messages** using Conventional Commits (see `.github/copilot-instructions.md`).
+- **Write clear, descriptive commit messages** using Conventional Commits - see [COMMIT_GUIDELINES.md](./COMMIT_GUIDELINES.md).
 - **Open a pull request** with a clear title and description. Reference related issues (e.g., `Fixes #27`).
 - **Follow the code style and conventions** described in `.github/copilot-instructions.md` and project READMEs.
 - **Add or update tests** for your changes.
 - **Run linters and ensure all tests pass** before submitting.
+
+## Setting Up Your Environment
+
+1. Clone the repository
+2. Install dependencies: `npm install` (at repository root)
+3. Configure the commit template (optional but recommended):
+   ```bash
+   git config commit.template .gitmessage
+   ```
+4. Husky will automatically set up git hooks on first install
 
 ## Issue Workflow
 

@@ -84,7 +84,9 @@ gsc-tracking/
 
 ## 🤝 Contributing
 
-This is an open-source project. Issue templates and contribution guidelines are available in `.github/ISSUE_TEMPLATE/`.
+This is an open-source project. See [CONTRIBUTING.md](./CONTRIBUTING.md) for complete guidelines.
+
+**⚠️ Important:** All commits MUST follow [Conventional Commits](./COMMIT_GUIDELINES.md) format. This is enforced by commitlint and required for automated releases.
 
 ## 📄 License
 
