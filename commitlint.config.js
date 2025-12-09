@@ -45,7 +45,7 @@ module.exports = {
     'subject-empty': [2, 'never'],
     // Ensure subject doesn't end with a period
     'subject-full-stop': [2, 'never', '.'],
-    // Ensure subject is in lowercase
+    // Ensure subject starts with lowercase (imperative mood)
     'subject-case': [2, 'always', 'lower-case'],
     // Ensure header is not too long
     'header-max-length': [2, 'always', 72],
