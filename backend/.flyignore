@@ -1,0 +1,42 @@
+# Fly.io ignore file - excludes files from deployment context
+
+# Build artifacts (built during Docker build)
+**/bin/
+**/obj/
+**/out/
+**/TestResults/
+
+# IDE and editor files
+.vscode/
+.vs/
+.idea/
+*.user
+*.suo
+*.sln.docstates
+
+# OS files
+.DS_Store
+Thumbs.db
+.DS_Store?
+
+# Environment files (use secrets instead)
+.env
+.env.*
+*.env
+
+# Development files
+README.md
+*.md
+CHANGELOG.md
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker development
+docker-compose*
+Dockerfile.dev
+
+# Documentation
+docs/

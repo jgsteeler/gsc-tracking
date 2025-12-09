@@ -1,0 +1,44 @@
+name: Deploy Backend to Fly.io
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-flyio.yml'
+  workflow_dispatch:
+
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+jobs:
+  deploy:
+    name: Deploy to Fly.io
+    runs-on: ubuntu-latest
+    
+    # Only run if FLY_API_TOKEN is configured
+    if: ${{ secrets.FLY_API_TOKEN != '' }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Fly.io CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy to Fly.io
+        working-directory: ./backend
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Deployment Summary
+        run: |
+          echo "## 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The backend API has been deployed to Fly.io!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **App Name:** gsc-tracking-api" >> $GITHUB_STEP_SUMMARY
+          echo "- **Region:** iad (Northern Virginia)" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL:** https://gsc-tracking-api.fly.dev" >> $GITHUB_STEP_SUMMARY
+          echo "- **Health Check:** https://gsc-tracking-api.fly.dev/api/hello" >> $GITHUB_STEP_SUMMARY
