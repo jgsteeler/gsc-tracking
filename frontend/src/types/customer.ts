@@ -9,15 +9,7 @@ export interface Customer {
   updatedAt: string
 }
 
-export interface CreateCustomerDto {
-  name: string
-  email: string
-  phone: string
-  address: string
-  notes?: string
-}
-
-export interface UpdateCustomerDto {
+export interface CustomerRequestDto {
   name: string
   email: string
   phone: string

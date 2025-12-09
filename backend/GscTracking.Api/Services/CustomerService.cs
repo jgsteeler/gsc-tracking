@@ -68,15 +68,15 @@ public class CustomerService : ICustomerService
         };
     }
 
-    public async Task<CustomerDto> CreateCustomerAsync(CreateCustomerDto createCustomerDto)
+    public async Task<CustomerDto> CreateCustomerAsync(CustomerRequestDto customerRequest)
     {
         var customer = new Customer
         {
-            Name = createCustomerDto.Name,
-            Email = createCustomerDto.Email,
-            Phone = createCustomerDto.Phone,
-            Address = createCustomerDto.Address,
-            Notes = createCustomerDto.Notes,
+            Name = customerRequest.Name,
+            Email = customerRequest.Email,
+            Phone = customerRequest.Phone,
+            Address = customerRequest.Address,
+            Notes = customerRequest.Notes,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
@@ -97,7 +97,7 @@ public class CustomerService : ICustomerService
         };
     }
 
-    public async Task<CustomerDto?> UpdateCustomerAsync(int id, UpdateCustomerDto updateCustomerDto)
+    public async Task<CustomerDto?> UpdateCustomerAsync(int id, CustomerRequestDto customerRequest)
     {
         var customer = await _context.Customer
             .FirstOrDefaultAsync(c => c.Id == id);
@@ -107,11 +107,11 @@ public class CustomerService : ICustomerService
             return null;
         }
 
-        customer.Name = updateCustomerDto.Name;
-        customer.Email = updateCustomerDto.Email;
-        customer.Phone = updateCustomerDto.Phone;
-        customer.Address = updateCustomerDto.Address;
-        customer.Notes = updateCustomerDto.Notes;
+        customer.Name = customerRequest.Name;
+        customer.Email = customerRequest.Email;
+        customer.Phone = customerRequest.Phone;
+        customer.Address = customerRequest.Address;
+        customer.Notes = customerRequest.Notes;
         customer.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();

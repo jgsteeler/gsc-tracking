@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import type { Customer, CreateCustomerDto, UpdateCustomerDto } from '@/types/customer'
+import type { Customer, CustomerRequestDto } from '@/types/customer'
 import { customerService } from '@/services/customerService'
 
 export function useCustomers(searchTerm?: string) {
@@ -24,13 +24,13 @@ export function useCustomers(searchTerm?: string) {
     fetchCustomers()
   }, [fetchCustomers])
 
-  const createCustomer = async (data: CreateCustomerDto): Promise<Customer> => {
+  const createCustomer = async (data: CustomerRequestDto): Promise<Customer> => {
     const newCustomer = await customerService.create(data)
     setCustomers((prev) => [...prev, newCustomer])
     return newCustomer
   }
 
-  const updateCustomer = async (id: number, data: UpdateCustomerDto): Promise<Customer> => {
+  const updateCustomer = async (id: number, data: CustomerRequestDto): Promise<Customer> => {
     const updatedCustomer = await customerService.update(id, data)
     setCustomers((prev) =>
       prev.map((customer) => (customer.id === id ? updatedCustomer : customer))

@@ -3,9 +3,9 @@ using GscTracking.Api.DTOs;
 
 namespace GscTracking.Api.Validators;
 
-public class UpdateCustomerDtoValidator : AbstractValidator<UpdateCustomerDto>
+public class CustomerRequestDtoValidator : AbstractValidator<CustomerRequestDto>
 {
-    public UpdateCustomerDtoValidator()
+    public CustomerRequestDtoValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Name is required")

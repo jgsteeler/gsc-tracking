@@ -16,7 +16,7 @@ builder.Services.AddControllers();
 
 // Add FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateCustomerDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CustomerRequestDtoValidator>();
 
 // Add DbContext
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

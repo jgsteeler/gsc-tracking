@@ -36,7 +36,6 @@ public class CustomersController : ControllerBase
             return StatusCode(500, new { message = "An error occurred while retrieving customers." });
         }
     }
-
     /// <summary>
     /// Get a specific customer by ID
     /// </summary>
@@ -60,14 +59,13 @@ public class CustomersController : ControllerBase
             return StatusCode(500, new { message = "An error occurred while retrieving the customer." });
         }
     }
-
     /// <summary>
     /// Create a new customer
     /// </summary>
-    /// <param name="createCustomerDto">Customer data</param>
+    /// <param name="customerRequest">Customer data</param>
     /// <returns>Created customer</returns>
     [HttpPost]
-    public async Task<ActionResult<CustomerDto>> CreateCustomer([FromBody] CreateCustomerDto createCustomerDto)
+    public async Task<ActionResult<CustomerDto>> CreateCustomer([FromBody] CustomerRequestDto customerRequest)
     {
         try
         {
@@ -75,8 +73,7 @@ public class CustomersController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-
-            var customer = await _customerService.CreateCustomerAsync(createCustomerDto);
+            var customer = await _customerService.CreateCustomerAsync(customerRequest);
             return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
         }
         catch (Exception ex)
@@ -85,15 +82,14 @@ public class CustomersController : ControllerBase
             return StatusCode(500, new { message = "An error occurred while creating the customer." });
         }
     }
-
     /// <summary>
     /// Update an existing customer
     /// </summary>
     /// <param name="id">Customer ID</param>
-    /// <param name="updateCustomerDto">Updated customer data</param>
+    /// <param name="customerRequest">Updated customer data</param>
     /// <returns>Updated customer</returns>
     [HttpPut("{id}")]
-    public async Task<ActionResult<CustomerDto>> UpdateCustomer(int id, [FromBody] UpdateCustomerDto updateCustomerDto)
+    public async Task<ActionResult<CustomerDto>> UpdateCustomer(int id, [FromBody] CustomerRequestDto customerRequest)
     {
         try
         {
@@ -101,8 +97,7 @@ public class CustomersController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-
-            var customer = await _customerService.UpdateCustomerAsync(id, updateCustomerDto);
+            var customer = await _customerService.UpdateCustomerAsync(id, customerRequest);
             if (customer == null)
             {
                 return NotFound(new { message = $"Customer with ID {id} not found." });
@@ -115,7 +110,6 @@ public class CustomersController : ControllerBase
             return StatusCode(500, new { message = "An error occurred while updating the customer." });
         }
     }
-
     /// <summary>
     /// Delete a customer (soft delete)
     /// </summary>

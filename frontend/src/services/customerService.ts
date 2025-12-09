@@ -1,4 +1,4 @@
-import type { Customer, CreateCustomerDto, UpdateCustomerDto } from '@/types/customer'
+import type { Customer, CustomerRequestDto } from '@/types/customer'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5091/api'
 
@@ -24,7 +24,7 @@ export const customerService = {
     return response.json()
   },
 
-  async create(data: CreateCustomerDto): Promise<Customer> {
+  async create(data: CustomerRequestDto): Promise<Customer> {
     const response = await fetch(`${API_BASE_URL}/customers`, {
       method: 'POST',
       headers: {
@@ -40,7 +40,7 @@ export const customerService = {
     return response.json()
   },
 
-  async update(id: number, data: UpdateCustomerDto): Promise<Customer> {
+  async update(id: number, data: CustomerRequestDto): Promise<Customer> {
     const response = await fetch(`${API_BASE_URL}/customers/${id}`, {
       method: 'PUT',
       headers: {
