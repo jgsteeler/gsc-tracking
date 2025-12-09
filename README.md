@@ -89,3 +89,25 @@ This is an open-source project. Issue templates and contribution guidelines are 
 ## 📄 License
 
 TBD - Choose appropriate license (MIT, Apache 2.0, etc.)
+
+# GSC Tracking - Backend API
+
+.NET 10 Web API for the GSC Small Engine Repair business management application.
+
+## Repository Documentation
+
+- [LICENSE](./LICENSE)
+- [CONTRIBUTING.md](./CONTRIBUTING.md)
+- [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
+- [MANUAL_CONFIGURATION_GUIDE.md](./MANUAL_CONFIGURATION_GUIDE.md)
+- [Setup Instructions](./SETUP-INSTRUCTIONS.md)
+- [Business Analysis](./business-management-app-analysis.md)
+- [.github/copilot-instructions.md](./.github/copilot-instructions.md)
+
+## Prerequisites
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+
+## Getting Started
+
+...existing code...
