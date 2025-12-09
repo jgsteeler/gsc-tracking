@@ -78,7 +78,7 @@ The deployment is handled by GitHub Actions using the workflow defined in `.gith
 flyctl auth login
 
 # Generate a deploy token (valid for 1 year)
-flyctl tokens create deploy -x 8760h
+flyctl tokens create deploy --expiry 8760h
 ```
 
 This creates a deploy token valid for 1 year. Copy the token output.

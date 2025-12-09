@@ -82,7 +82,7 @@ flyctl launch --no-deploy --name gsc-tracking-api --region iad
 
 ```bash
 # Generate a deploy token (valid for 1 year)
-flyctl tokens create deploy -x 8760h
+flyctl tokens create deploy --expiry 8760h
 ```
 
 **Copy the token output** (it looks like: `FlyV1 ey...`)
