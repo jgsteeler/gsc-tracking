@@ -15,9 +15,9 @@ primary_region = 'iad'
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = 'stop'
+  auto_stop_machines = 'stop'      # Use 'suspend' for faster wake times in production
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 0         # Set to 1 for production to avoid cold starts
   processes = ['app']
 
   [[http_service.checks]]

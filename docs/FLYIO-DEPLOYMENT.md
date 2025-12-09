@@ -77,11 +77,13 @@ The deployment is handled by GitHub Actions using the workflow defined in `.gith
 # Login to Fly.io
 flyctl auth login
 
-# Generate a deploy token
-flyctl tokens create deploy -x 999999h
+# Generate a deploy token (valid for 1 year)
+flyctl tokens create deploy -x 8760h
 ```
 
-This creates a long-lived token (valid for ~114 years). Copy the token output.
+This creates a deploy token valid for 1 year. Copy the token output.
+
+**Security Note:** For better security, rotate tokens annually. Set a calendar reminder to regenerate and update the token before expiration.
 
 ### 3. Add Token to GitHub Secrets
 
@@ -457,6 +459,11 @@ Costs are based on actual usage (billed per second):
 - No charges when app is idle
 - Only pay when app is running
 - Great for development/staging environments
+
+**Important:** The default configuration uses `auto_stop_machines = 'stop'` with `min_machines_running = 0`, which means:
+- ✅ **Best for:** Development/testing (free tier, zero cost when idle)
+- ⚠️ **Cold starts:** First request after idle period takes 3-5 seconds
+- 💡 **For production:** Consider `auto_stop_machines = 'suspend'` (faster wake) or `min_machines_running = 1` (no cold starts, ~$2/month)
 
 ### Monitor Costs
 

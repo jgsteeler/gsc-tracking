@@ -24,7 +24,7 @@ To enable automatic deployment to Fly.io, complete these steps:
 1. Visit https://fly.io/app/sign-up
 2. Sign up with GitHub (recommended) or email
 3. Verify your email address
-4. Add a credit card (required but free tier has no charges)
+4. Add a credit card (required for verification; you will only be charged if usage exceeds free tier limits)
 
 **Free Tier Includes:**
 - 3 shared-cpu VMs (256MB RAM each)
@@ -81,11 +81,13 @@ flyctl launch --no-deploy --name gsc-tracking-api --region iad
 ### Step 4: Generate and Add Deploy Token (5 minutes)
 
 ```bash
-# Generate a long-lived deploy token
-flyctl tokens create deploy -x 999999h
+# Generate a deploy token (valid for 1 year)
+flyctl tokens create deploy -x 8760h
 ```
 
 **Copy the token output** (it looks like: `FlyV1 ey...`)
+
+**Security Note:** Set a calendar reminder to rotate this token annually.
 
 Add to GitHub:
 1. Go to your GitHub repository
