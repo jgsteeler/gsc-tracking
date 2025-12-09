@@ -11,8 +11,35 @@ env:
   IMAGE_PREFIX: ${{ github.repository }}
 
 jobs:
+  # Detect which paths have changed
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for file changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - '.github/workflows/docker-build.yml'
+            frontend:
+              - 'frontend/**'
+              - '.github/workflows/docker-build.yml'
+
   build-backend:
     name: Build Backend Docker Image
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -58,6 +85,8 @@ jobs:
 
   build-frontend:
     name: Build Frontend Docker Image
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
