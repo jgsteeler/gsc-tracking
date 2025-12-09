@@ -47,9 +47,10 @@ public class CustomerService : ICustomerService
 
     public async Task<CustomerDto?> GetCustomerByIdAsync(int id)
     {
-        var customer = await _context.Customer.FindAsync(id);
+        var customer = await _context.Customer
+            .FirstOrDefaultAsync(c => c.Id == id);
         
-        if (customer == null || customer.IsDeleted)
+        if (customer == null)
         {
             return null;
         }
@@ -98,9 +99,10 @@ public class CustomerService : ICustomerService
 
     public async Task<CustomerDto?> UpdateCustomerAsync(int id, UpdateCustomerDto updateCustomerDto)
     {
-        var customer = await _context.Customer.FindAsync(id);
+        var customer = await _context.Customer
+            .FirstOrDefaultAsync(c => c.Id == id);
         
-        if (customer == null || customer.IsDeleted)
+        if (customer == null)
         {
             return null;
         }
@@ -129,9 +131,10 @@ public class CustomerService : ICustomerService
 
     public async Task<bool> DeleteCustomerAsync(int id)
     {
-        var customer = await _context.Customer.FindAsync(id);
+        var customer = await _context.Customer
+            .FirstOrDefaultAsync(c => c.Id == id);
         
-        if (customer == null || customer.IsDeleted)
+        if (customer == null)
         {
             return false;
         }

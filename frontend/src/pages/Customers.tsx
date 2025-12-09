@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -31,12 +31,15 @@ export function Customers() {
 
   const handleSearch = (value: string) => {
     setSearchTerm(value)
-    // Simple debounce
+  }
+  
+  // Debounce search term
+  useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearch(value)
+      setDebouncedSearch(searchTerm)
     }, 300)
     return () => clearTimeout(timer)
-  }
+  }, [searchTerm])
 
   const handleAddCustomer = () => {
     setSelectedCustomer(null)
