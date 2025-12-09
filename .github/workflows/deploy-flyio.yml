@@ -19,6 +19,9 @@ jobs:
     # Only run if FLY_API_TOKEN is configured
     if: ${{ secrets.FLY_API_TOKEN }}
     
+    permissions:
+      contents: read
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
