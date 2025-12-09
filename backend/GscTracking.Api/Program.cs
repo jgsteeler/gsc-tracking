@@ -1,8 +1,30 @@
+using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using GscTracking.Api.Data;
+using GscTracking.Api.Services;
+using GscTracking.Api.Validators;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Add controllers
+builder.Services.AddControllers();
+
+// Add FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateCustomerDtoValidator>();
+
+// Add DbContext
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(connectionString));
+
+// Add services
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 // Add CORS policy for frontend development
 builder.Services.AddCors(options =>
@@ -28,6 +50,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
+
+// Map controllers
+app.MapControllers();
 
 // Hello World endpoint for GSC Tracking API
 app.MapGet("/api/hello", () => new { 
