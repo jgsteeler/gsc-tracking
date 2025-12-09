@@ -7,6 +7,7 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 - **[Business Analysis](./business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
 - **[Hosting Evaluation](./docs/HOSTING-EVALUATION.md)** - Analysis of hosting alternatives (Azure, Fly.io, Railway, Netlify, Cloudflare) with cost estimates and recommendations
 - **[Fly.io Deployment](./docs/FLYIO-DEPLOYMENT.md)** - Complete guide for deploying the backend to Fly.io
+- **[Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md)** - Step-by-step checklist for first-time Fly.io setup
 - **[GitHub Issues](./ISSUES.md)** - Complete specifications for 25 project issues
 - **[Setup Instructions](./SETUP-INSTRUCTIONS.md)** - Step-by-step guide for creating labels, milestones, and issues
 - **[Docker Guide](./DOCKER.md)** - Complete Docker and Docker Compose documentation
@@ -101,12 +102,16 @@ The backend API is automatically deployed to Fly.io when changes are pushed to t
 
 ### Setting Up Deployment
 
-1. Create a Fly.io account at https://fly.io/app/sign-up
-2. Generate an API token: `flyctl tokens create deploy`
-3. Add the token as `FLY_API_TOKEN` in GitHub repository secrets
-4. Push to `main` or manually trigger the workflow
+Follow the [Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md) for step-by-step instructions:
 
-See the [complete deployment guide](./docs/FLYIO-DEPLOYMENT.md) for detailed instructions.
+1. Create a Fly.io account at https://fly.io/app/sign-up
+2. Install Fly.io CLI: `brew install flyctl` (or see checklist for other OS)
+3. Create the app: `flyctl launch --no-deploy --name gsc-tracking-api`
+4. Generate an API token: `flyctl tokens create deploy`
+5. Add the token as `FLY_API_TOKEN` in GitHub repository secrets
+6. Push to `main` or manually trigger the workflow
+
+See the [complete deployment guide](./docs/FLYIO-DEPLOYMENT.md) for detailed instructions and troubleshooting.
 
 ## 🤝 Contributing
 
