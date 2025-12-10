@@ -7,23 +7,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html', 'cobertura'],
-      exclude: [
-        'node_modules/',
-        'src/test/',
-        '**/*.config.*',
-        '**/.*rc.*',
-        '**/*.d.ts',
-      ],
+      '@': path.resolve(__dirname, 'src'),
     },
   },
 })
