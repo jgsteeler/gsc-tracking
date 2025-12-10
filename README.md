@@ -8,6 +8,7 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 
 - **[Business Analysis](./business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
 - **[Hosting Evaluation](./docs/HOSTING-EVALUATION.md)** - Analysis of hosting alternatives (Azure, Fly.io, Railway, Netlify, Cloudflare) with cost estimates and recommendations
+- **[Netlify Deployment](./docs/NETLIFY-DEPLOYMENT.md)** - Complete guide for deploying the frontend to Netlify with deploy preview staging
 - **[Fly.io Deployment](./docs/FLYIO-DEPLOYMENT.md)** - Complete guide for deploying the backend to Fly.io
 - **[Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md)** - Step-by-step checklist for first-time Fly.io setup
 - **[GitHub Issues](./ISSUES.md)** - Complete specifications for 25 project issues
@@ -92,15 +93,21 @@ This project follows **GitHub Flow** with automatic deployments to staging and p
 
 ### Environments
 
-**Production:**
-- **URL:** https://gsc-tracking-api.fly.dev
-- **Health Check:** https://gsc-tracking-api.fly.dev/api/hello
-- **Trigger:** Merge to `main` branch
+**Frontend (Netlify):**
+- **Production URL:** https://gsc-tracking.netlify.app (or custom domain)
+- **Staging:** Deploy previews from PRs (e.g., `https://deploy-preview-{PR}--gsc-tracking.netlify.app`)
+- **Trigger:** 
+  - Production: Push to `main` branch
+  - Staging: Open/update pull request to `main` branch
 
-**Staging (PR Previews):**
-- **URL:** https://gsc-tracking-api-staging.fly.dev
+**Backend (Fly.io):**
+- **Production URL:** https://gsc-tracking-api.fly.dev
+- **Health Check:** https://gsc-tracking-api.fly.dev/api/hello
+- **Staging URL:** https://gsc-tracking-api-staging.fly.dev
 - **Health Check:** https://gsc-tracking-api-staging.fly.dev/api/hello
-- **Trigger:** Open/update pull request to `main` branch
+- **Trigger:**
+  - Production: Push to `main` branch
+  - Staging: Open/update pull request to `main` branch
 
 ### GitHub Flow Workflow
 
@@ -111,7 +118,22 @@ This project follows **GitHub Flow** with automatic deployments to staging and p
 
 ### Setting Up Deployment
 
-Follow the [Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md) for step-by-step instructions:
+**Frontend Deployment (Netlify):**
+
+Complete setup guide: [Netlify Deployment Guide](./docs/NETLIFY-DEPLOYMENT.md)
+
+1. Create a Netlify account at https://app.netlify.com/signup
+2. Connect GitHub repository to Netlify
+3. Configure build settings:
+   - Base directory: `frontend`
+   - Build command: `npm run build`
+   - Publish directory: `frontend/dist`
+4. Set environment variables (production vs. deploy previews)
+5. Deploy automatically on push to `main`
+
+**Backend Deployment (Fly.io):**
+
+Complete setup guide: [Fly.io Deployment Guide](./docs/FLYIO-DEPLOYMENT.md)
 
 1. Create a Fly.io account at https://fly.io/app/sign-up
 2. Install Fly.io CLI: `brew install flyctl` (or see checklist for other OS)
@@ -121,8 +143,6 @@ Follow the [Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md) fo
 4. Generate an API token: `flyctl tokens create deploy --expiry 8760h`
 5. Add the token as `FLY_API_TOKEN` in GitHub repository secrets
 6. Create a PR to test staging deployment, or push to `main` for production
-
-See the [complete deployment guide](./docs/FLYIO-DEPLOYMENT.md) for detailed instructions and troubleshooting.
 
 ## 🤝 Contributing
 
