@@ -79,6 +79,8 @@ Before you begin, ensure you have:
 
 ## Initial Setup
 
+> **Already have a Netlify site deployed?** See [NETLIFY-EXISTING-SITE-SETUP.md](./NETLIFY-EXISTING-SITE-SETUP.md) for instructions on adding staging deploy previews to your existing site.
+
 ### Step 1: Create Netlify Account
 
 1. Go to https://app.netlify.com/signup
@@ -508,8 +510,10 @@ After deploying to Netlify:
 
 - [ ] **Update Backend CORS:**
   - Add Netlify domains to backend CORS allow list
-  - Production: `https://gsc-tracking.netlify.app`
-  - Deploy previews: `https://*.netlify.app`
+  - Production: `https://gsc-tracking-ui.netlify.app` (or your site name)
+  - Staging: `https://staging--gsc-tracking-ui.netlify.app`
+  - Deploy previews: Use pattern matching (see [CORS-AUTH0-CONSIDERATIONS.md](./CORS-AUTH0-CONSIDERATIONS.md))
+  - **Note:** Wildcards like `https://*.netlify.app` may not work reliably with Auth0
 
 - [ ] **Document for Team:**
   - Share this guide with team members
@@ -520,13 +524,21 @@ After deploying to Netlify:
 
 ## Additional Resources
 
+**GSC Tracking Documentation:**
+- **Existing Site Setup:** [NETLIFY-EXISTING-SITE-SETUP.md](./NETLIFY-EXISTING-SITE-SETUP.md) - Add staging to existing Netlify deployment
+- **CORS/Auth0 Considerations:** [CORS-AUTH0-CONSIDERATIONS.md](./CORS-AUTH0-CONSIDERATIONS.md) - Wildcard issues and solutions
+- **Quick Start:** [NETLIFY-QUICK-START.md](./NETLIFY-QUICK-START.md) - Quick reference guide
+- **Setup Checklist:** [NETLIFY-SETUP-CHECKLIST.md](./NETLIFY-SETUP-CHECKLIST.md) - Step-by-step checklist
+- **Deploy Preview Strategy:** [DEPLOY-PREVIEW-AS-STAGING.md](./DEPLOY-PREVIEW-AS-STAGING.md) - Using previews as staging
+- **Fly.io Backend Deployment:** [FLYIO-DEPLOYMENT.md](./FLYIO-DEPLOYMENT.md)
+- **Hosting Evaluation:** [HOSTING-EVALUATION.md](./HOSTING-EVALUATION.md)
+
+**Netlify Official Documentation:**
 - **Netlify Documentation:** https://docs.netlify.com/
 - **Netlify CLI:** https://docs.netlify.com/cli/get-started/
 - **Deploy Previews:** https://docs.netlify.com/site-deploys/deploy-previews/
 - **Environment Variables:** https://docs.netlify.com/environment-variables/overview/
 - **Custom Domains:** https://docs.netlify.com/domains-https/custom-domains/
-- **Fly.io Backend Deployment:** [FLYIO-DEPLOYMENT.md](./FLYIO-DEPLOYMENT.md)
-- **Hosting Evaluation:** [HOSTING-EVALUATION.md](./HOSTING-EVALUATION.md)
 
 ---
 

@@ -8,9 +8,17 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 
 - **[Business Analysis](./business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
 - **[Hosting Evaluation](./docs/HOSTING-EVALUATION.md)** - Analysis of hosting alternatives (Azure, Fly.io, Railway, Netlify, Cloudflare) with cost estimates and recommendations
+
+**Frontend Deployment (Netlify):**
 - **[Netlify Deployment](./docs/NETLIFY-DEPLOYMENT.md)** - Complete guide for deploying the frontend to Netlify with deploy preview staging
+- **[Existing Site Setup](./docs/NETLIFY-EXISTING-SITE-SETUP.md)** - Add staging previews to existing Netlify site
+- **[CORS/Auth0 Considerations](./docs/CORS-AUTH0-CONSIDERATIONS.md)** - Wildcard issues and solutions for deploy previews
+
+**Backend Deployment:**
 - **[Fly.io Deployment](./docs/FLYIO-DEPLOYMENT.md)** - Complete guide for deploying the backend to Fly.io
 - **[Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md)** - Step-by-step checklist for first-time Fly.io setup
+
+**Project Management:**
 - **[GitHub Issues](./ISSUES.md)** - Complete specifications for 25 project issues
 - **[Setup Instructions](./SETUP-INSTRUCTIONS.md)** - Step-by-step guide for creating labels, milestones, and issues
 - **[Docker Guide](./DOCKER.md)** - Complete Docker and Docker Compose documentation
