@@ -3,9 +3,10 @@ import { customerService } from './customerService';
 import type { Customer, CustomerRequestDto } from '@/types/customer';
 
 // Mock fetch
-global.fetch = vi.fn();
+const mockFetch = vi.fn();
+global.fetch = mockFetch as unknown as typeof fetch;
 
-function createFetchResponse(data: any, ok = true, status = 200) {
+function createFetchResponse(data: unknown, ok = true, status = 200) {
   return {
     ok,
     status,
@@ -32,7 +33,7 @@ describe('customerService', () => {
         },
       ];
 
-      (global.fetch as any).mockResolvedValueOnce(
+      mockFetch.mockResolvedValueOnce(
         createFetchResponse(mockCustomers)
       );
 
@@ -46,7 +47,7 @@ describe('customerService', () => {
 
     it('should fetch customers with search parameter', async () => {
       const mockCustomers: Customer[] = [];
-      (global.fetch as any).mockResolvedValueOnce(
+      mockFetch.mockResolvedValueOnce(
         createFetchResponse(mockCustomers)
       );
 
@@ -58,7 +59,7 @@ describe('customerService', () => {
     });
 
     it('should throw error when fetch fails', async () => {
-      (global.fetch as any).mockResolvedValueOnce(
+      mockFetch.mockResolvedValueOnce(
         createFetchResponse(null, false, 500)
       );
 
@@ -80,7 +81,7 @@ describe('customerService', () => {
         updatedAt: new Date().toISOString(),
       };
 
-      (global.fetch as any).mockResolvedValueOnce(
+      mockFetch.mockResolvedValueOnce(
         createFetchResponse(mockCustomer)
       );
 
@@ -93,7 +94,7 @@ describe('customerService', () => {
     });
 
     it('should throw error when customer not found', async () => {
-      (global.fetch as any).mockResolvedValueOnce(
+      mockFetch.mockResolvedValueOnce(
         createFetchResponse(null, false, 404)
       );
 
@@ -119,7 +120,7 @@ describe('customerService', () => {
         updatedAt: new Date().toISOString(),
       };
 
-      (global.fetch as any).mockResolvedValueOnce(
+      mockFetch.mockResolvedValueOnce(
         createFetchResponse(mockCustomer)
       );
 
@@ -144,7 +145,7 @@ describe('customerService', () => {
         address: '999 New St',
       };
 
-      (global.fetch as any).mockResolvedValueOnce(
+      mockFetch.mockResolvedValueOnce(
         createFetchResponse({ message: 'Validation error' }, false, 400)
       );
 
@@ -170,7 +171,7 @@ describe('customerService', () => {
         updatedAt: new Date().toISOString(),
       };
 
-      (global.fetch as any).mockResolvedValueOnce(
+      mockFetch.mockResolvedValueOnce(
         createFetchResponse(mockCustomer)
       );
 
@@ -195,7 +196,7 @@ describe('customerService', () => {
         address: 'Updated Address',
       };
 
-      (global.fetch as any).mockResolvedValueOnce(
+      mockFetch.mockResolvedValueOnce(
         createFetchResponse({ message: 'Not found' }, false, 404)
       );
 
@@ -207,7 +208,7 @@ describe('customerService', () => {
 
   describe('delete', () => {
     it('should delete a customer', async () => {
-      (global.fetch as any).mockResolvedValueOnce(
+      mockFetch.mockResolvedValueOnce(
         createFetchResponse(null, true, 204)
       );
 
@@ -222,7 +223,7 @@ describe('customerService', () => {
     });
 
     it('should throw error when delete fails', async () => {
-      (global.fetch as any).mockResolvedValueOnce(
+      mockFetch.mockResolvedValueOnce(
         createFetchResponse(null, false, 404)
       );
 
