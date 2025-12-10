@@ -2,13 +2,13 @@
 
 This document provides comprehensive guidelines for GitHub Copilot when working on the GSC Small Engine Repair Business Management Application.
 
-## ⚠️ CRITICAL: Commit Message Format
+## ⚠️ IMPORTANT: PR Title Format
 
-**EVERY COMMIT MUST FOLLOW CONVENTIONAL COMMITS FORMAT**
+**PR TITLES MUST FOLLOW CONVENTIONAL COMMITS FORMAT**
 
-This is **REQUIRED** for Release Please to work. All commits are validated by commitlint.
+This is **REQUIRED** for Release Please to work properly.
 
-### Required Format
+### Required Format for PR Titles
 ```
 <type>(<scope>): <description>
 ```
@@ -21,13 +21,8 @@ docs(readme): update setup guide
 chore: add commitlint configuration
 ```
 
-### NEVER use these formats:
-- ❌ "Initial plan"
-- ❌ "WIP"
-- ❌ "Update files"
-- ❌ "Fix bug"
-
-See [COMMIT_GUIDELINES.md](../COMMIT_GUIDELINES.md) for complete details.
+### Best Practice for Commits
+While not strictly required, following Conventional Commits for individual commits is recommended for clear history. See [COMMIT_GUIDELINES.md](../COMMIT_GUIDELINES.md) for complete details.
 
 ## Project Overview
 

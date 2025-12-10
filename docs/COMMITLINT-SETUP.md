@@ -4,14 +4,14 @@ This document explains the commitlint setup implemented in this repository to en
 
 ## Why This Was Needed
 
-**Problem:** Release Please requires all commits to follow the Conventional Commits specification to:
-- Automatically determine version bumps
-- Generate accurate changelogs
-- Create semantic releases
+**Problem:** Release Please works best when PR titles and important commits follow the Conventional Commits specification for:
+- Automatically determining version bumps
+- Generating accurate changelogs
+- Creating semantic releases
 
-Copilot agent was creating commits like "Initial plan" which didn't follow this format, breaking the automated release process.
+**Solution:** Implement PR title validation and provide tools for developers who want to follow best practices with individual commits.
 
-**Solution:** Implement automatic validation of commit messages at multiple levels.
+**Note:** Release Please does NOT require every commit to be conventional - only PR titles need to follow the format. However, conventional commits are recommended for clear history.
 
 ## Components
 

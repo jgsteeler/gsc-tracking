@@ -4,7 +4,9 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/) t
 
 ## ⚠️ IMPORTANT
 
-**ALL commits MUST follow the Conventional Commits format. This is enforced by commitlint and is required for Release Please to work properly.**
+**PR TITLES MUST follow the Conventional Commits format. This is required for Release Please to work properly.**
+
+Individual commit messages following this format is a **best practice** for clear history, but not strictly enforced. However, it's highly recommended to use conventional commits for important changes that should appear in the changelog.
 
 ## Format
 
