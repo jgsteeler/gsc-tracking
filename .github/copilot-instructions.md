@@ -2,6 +2,31 @@
 
 This document provides comprehensive guidelines for GitHub Copilot when working on the GSC Small Engine Repair Business Management Application.
 
+## ⚠️ IMPORTANT: PR Title Format
+
+**PR TITLES MUST FOLLOW CONVENTIONAL COMMITS FORMAT**
+
+This is **REQUIRED** for Release Please to work properly.
+
+### Required Format for PR Titles
+```
+<type>(<scope>): <description>
+```
+
+### Examples
+```
+feat(customer): add search functionality
+fix(api): resolve null reference  
+docs(readme): update setup guide
+chore(ci): add commitlint configuration
+feat(infra): add Docker support
+```
+
+**Note:** Scopes are optional and not restricted. Use any scope that clearly describes the area of change (e.g., customer, api, ci, infra, db, auth, ui).
+
+### Best Practice for Commits
+While not strictly required, following Conventional Commits for individual commits is recommended for clear history. See [COMMIT_GUIDELINES.md](../COMMIT_GUIDELINES.md) for complete details.
+
 ## Project Overview
 
 GSC Tracking is a full-stack business management application for a small engine repair shop. It manages customers, jobs, equipment, expenses, and integrates with Wave accounting software. The project is designed to be extensible to other GSC divisions (GSC-PROD, GSC-AI, GSC-DEV).
