@@ -1,34 +1,35 @@
-# fly.staging.toml - Staging environment configuration for PR previews
+# fly.toml app configuration file generated for gsc-tracking-api-staging on 2025-12-09T20:08:50-06:00
 #
-# This configuration is used for staging deployments on pull requests.
-# See https://fly.io/docs/reference/configuration/ for more information.
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
 app = 'gsc-tracking-api-staging'
 primary_region = 'iad'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
 
 [env]
-  ASPNETCORE_ENVIRONMENT = "Staging"
-  ASPNETCORE_URLS = "http://+:8080"
+  ASPNETCORE_ENVIRONMENT = 'Staging'
+  ASPNETCORE_URLS = 'http://+:8080'
 
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = 'stop'      # Scale to zero when idle (cost optimization)
+  auto_stop_machines = 'stop'
   auto_start_machines = true
-  min_machines_running = 0         # No minimum instances for staging
+  min_machines_running = 0
   processes = ['app']
 
   [[http_service.checks]]
-    interval = "15s"
-    timeout = "10s"
-    grace_period = "30s"
-    method = "GET"
-    path = "/api/hello"
+    interval = '15s'
+    timeout = '10s'
+    grace_period = '30s'
+    method = 'GET'
+    path = '/api/hello'
 
 [[vm]]
   memory = '256mb'
   cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 256
