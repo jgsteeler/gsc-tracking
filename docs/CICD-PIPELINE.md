@@ -82,6 +82,33 @@ GSC Tracking follows **GitHub Flow**, a simplified workflow that emphasizes:
 - **Pull requests**: All changes go through PRs for review
 - **Continuous deployment**: Merging to `main` deploys to production
 
+### Why GitHub Flow Instead of GitLab Flow?
+
+The original issue mentioned GitLab Flow, but the project uses **GitHub Flow** because:
+
+1. **Simplicity**: Single main branch reduces complexity
+2. **Continuous Deployment**: Direct deployment from main to production
+3. **Staging via PRs**: PR-based staging deployments provide testing without extra branches
+4. **Small Team**: Better suited for small teams and rapid iteration
+5. **Native GitHub Integration**: Works seamlessly with GitHub Actions
+
+**GitLab Flow** would add environment branches (e.g., `staging`, `production`) but isn't necessary given:
+- Fly.io handles staging/production via configuration files (`fly.staging.toml` vs `fly.toml`)
+- PR-based staging deployments achieve the same testing goals
+- Release Please manages versioning without needing release branches
+
+**Comparison:**
+
+| Feature | GitHub Flow | GitLab Flow |
+|---------|-------------|-------------|
+| **Main Branch** | ✅ Single `main` | ✅ Single `main` |
+| **Environment Branches** | ❌ No | ✅ `staging`, `production` |
+| **Deployment** | From `main` | From env branches |
+| **Complexity** | Low | Medium |
+| **Best For** | Small teams, rapid deployment | Larger teams, controlled releases |
+
+If more granular control is needed in the future, the project can migrate to GitLab Flow by adding environment branches.
+
 ### Workflow Steps
 
 1. **Create a feature branch** from `main`:

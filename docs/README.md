@@ -4,7 +4,75 @@ This directory contains project documentation for the GSC Small Engine Repair Bu
 
 ## Available Documents
 
-### [HOSTING-EVALUATION.md](./HOSTING-EVALUATION.md)
+### CI/CD and Deployment
+
+#### [CICD-PIPELINE.md](./CICD-PIPELINE.md)
+**Status:** ✅ Complete  
+**Last Updated:** 2025-12-10
+
+Comprehensive CI/CD pipeline documentation covering the complete automated build, test, and deployment workflow.
+
+**Includes:**
+- CI/CD architecture and workflow diagrams
+- GitHub Flow branching strategy (vs GitLab Flow comparison)
+- All 4 GitHub Actions workflows explained in detail
+- Environment variables and secrets configuration
+- Deployment processes (staging and production)
+- Rollback procedures and troubleshooting
+- Test integration examples for future implementation
+- Azure App Service deployment alternative
+
+**Workflows Documented:**
+- `validate-pr.yml` - PR title validation
+- `docker-build.yml` - Docker image building
+- `deploy-flyio.yml` - Fly.io deployment
+- `release-please.yml` - Automated releases
+
+#### [CICD-VALIDATION.md](./CICD-VALIDATION.md)
+**Status:** ✅ Complete  
+**Last Updated:** 2025-12-10
+
+Validation report for CI/CD pipeline implementation against original requirements.
+
+**Includes:**
+- Acceptance criteria validation
+- Implementation details for each workflow
+- Rationale for GitHub Flow vs GitLab Flow
+- Rationale for Fly.io vs Azure App Service
+- Security considerations
+- Performance optimizations
+- Gaps and future enhancements
+- Approval recommendation
+
+#### [FLYIO-DEPLOYMENT.md](./FLYIO-DEPLOYMENT.md)
+**Status:** ✅ Complete  
+**Last Updated:** 2025-12-08
+
+Detailed guide for deploying the backend API to Fly.io.
+
+**Includes:**
+- Fly.io setup and configuration
+- Deployment workflow explanation
+- Manual deployment procedures
+- Configuration files (fly.toml, fly.staging.toml)
+- Troubleshooting guide
+
+#### [DEPLOYMENT-SETUP-CHECKLIST.md](./DEPLOYMENT-SETUP-CHECKLIST.md)
+**Status:** ✅ Complete  
+**Last Updated:** 2025-12-08
+
+Step-by-step checklist for first-time Fly.io deployment setup.
+
+**Includes:**
+- Fly.io account and CLI setup
+- App creation for staging and production
+- GitHub secrets configuration
+- Testing deployment workflow
+- Verification steps
+
+### Infrastructure and Hosting
+
+#### [HOSTING-EVALUATION.md](./HOSTING-EVALUATION.md)
 **Status:** ✅ Complete  
 **Last Updated:** 2025-12-08
 
@@ -74,7 +142,19 @@ Brief description of what this document covers...
 ...
 ```
 
+## Documentation Index
+
+| Document | Category | Purpose |
+|----------|----------|---------|
+| [CICD-PIPELINE.md](./CICD-PIPELINE.md) | CI/CD | Complete CI/CD workflow guide |
+| [CICD-VALIDATION.md](./CICD-VALIDATION.md) | CI/CD | Pipeline validation report |
+| [FLYIO-DEPLOYMENT.md](./FLYIO-DEPLOYMENT.md) | Deployment | Fly.io deployment guide |
+| [DEPLOYMENT-SETUP-CHECKLIST.md](./DEPLOYMENT-SETUP-CHECKLIST.md) | Deployment | First-time setup checklist |
+| [HOSTING-EVALUATION.md](./HOSTING-EVALUATION.md) | Infrastructure | Platform comparison |
+| [COMMITLINT-SETUP.md](./COMMITLINT-SETUP.md) | Development | Commitlint configuration |
+| [TESTING-COMMITLINT.md](./TESTING-COMMITLINT.md) | Development | Commitlint testing guide |
+
 ---
 
-**Last Updated:** 2025-12-08  
+**Last Updated:** 2025-12-10  
 **Maintained By:** GSC Development Team
