@@ -28,16 +28,6 @@ jobs:
             ci
             chore
             revert
-          scopes: |
-            customer
-            job
-            equipment
-            expense
-            api
-            db
-            auth
-            ui
-            deps
           requireScope: false
           subjectPattern: ^[a-z].+$
           subjectPatternError: |

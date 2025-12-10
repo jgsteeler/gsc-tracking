@@ -5,13 +5,14 @@
  * Format: <type>(<scope>): <subject>
  * 
  * Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
- * Scope: optional, can be customer, job, equipment, expense, api, db, auth, ui, deps, etc.
+ * Scope: optional, can be any descriptive scope (customer, api, ci, infra, db, etc.)
  * 
  * Examples:
  * - feat(customer): add customer search functionality
  * - fix(api): resolve null reference in job controller
  * - docs(readme): update setup instructions
- * - chore(deps): upgrade Entity Framework to 9.0.1
+ * - chore(ci): upgrade commitlint to 9.0.1
+ * - feat(infra): add Docker support
  */
 
 module.exports = {

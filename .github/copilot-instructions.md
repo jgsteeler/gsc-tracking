@@ -18,8 +18,11 @@ This is **REQUIRED** for Release Please to work properly.
 feat(customer): add search functionality
 fix(api): resolve null reference  
 docs(readme): update setup guide
-chore: add commitlint configuration
+chore(ci): add commitlint configuration
+feat(infra): add Docker support
 ```
+
+**Note:** Scopes are optional and not restricted. Use any scope that clearly describes the area of change (e.g., customer, api, ci, infra, db, auth, ui).
 
 ### Best Practice for Commits
 While not strictly required, following Conventional Commits for individual commits is recommended for clear history. See [COMMIT_GUIDELINES.md](../COMMIT_GUIDELINES.md) for complete details.

@@ -47,8 +47,9 @@ chore(deps): upgrade Entity Framework to 9.0.1
 
 ## Scope (Optional)
 
-Scope specifies the area of the codebase affected:
+Scope specifies the area of the codebase affected. Use any scope that clearly describes the area:
 
+**Common Examples:**
 - `customer` - Customer management features
 - `job` - Job tracking features
 - `equipment` - Equipment management
@@ -58,6 +59,11 @@ Scope specifies the area of the codebase affected:
 - `auth` - Authentication/authorization
 - `ui` - UI/UX changes
 - `deps` - Dependency updates
+- `ci` - CI/CD pipeline changes
+- `infra` - Infrastructure changes
+- `config` - Configuration changes
+
+**Note:** Scopes are not restricted to this list. Use any descriptive scope that makes sense for your change.
 
 ### Examples with scope
 
