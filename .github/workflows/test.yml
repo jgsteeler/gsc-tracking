@@ -19,7 +19,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Check for file changes
         uses: dorny/paths-filter@v3
         id: filter
@@ -43,41 +42,33 @@ jobs:
     defaults:
       run:
         working-directory: backend/GscTracking.Api.Tests
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-
       - name: Restore dependencies
         run: dotnet restore
         working-directory: backend
-
       - name: Build
         run: dotnet build --no-restore --configuration Release
         working-directory: backend
-
       - name: Run tests with coverage
         run: dotnet test --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./TestResults
         working-directory: backend/GscTracking.Api.Tests
-
       - name: Generate coverage report
         run: |
           dotnet tool install -g dotnet-reportgenerator-globaltool
           reportgenerator -reports:"TestResults/*/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:"Cobertura;TextSummary"
           cat coveragereport/Summary.txt
         working-directory: backend/GscTracking.Api.Tests
-
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         with:
           name: backend-coverage
           path: backend/GscTracking.Api.Tests/coveragereport
-
       - name: Check coverage threshold
         run: |
           COVERAGE=$(grep -oP 'Line coverage: \K[0-9.]+' coveragereport/Summary.txt)
@@ -100,33 +91,26 @@ jobs:
     defaults:
       run:
         working-directory: frontend
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-
       - name: Install dependencies
         run: npm ci
-
       - name: Run lint
         run: npm run lint
-
       - name: Run tests with coverage
         run: npm run test:coverage -- --run
-
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage
           path: frontend/coverage
-
       - name: Check coverage threshold
         run: |
           if [ -f coverage/coverage-summary.json ]; then
