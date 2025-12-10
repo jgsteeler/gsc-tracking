@@ -57,6 +57,13 @@ _ReSharper*/
 *.db-shm
 *.db-wal
 
+# Test results and coverage
+TestResults/
+coveragereport/
+*.trx
+*.coverage
+*.coveragexml
+
 # Azure Functions
 local.settings.json
 

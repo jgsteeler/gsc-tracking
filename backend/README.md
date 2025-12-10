@@ -41,6 +41,36 @@ You should see:
 }
 ```
 
+## Running Tests
+
+### Run all tests
+```bash
+cd backend/GscTracking.Api.Tests
+dotnet test
+```
+
+### Run tests with code coverage
+```bash
+cd backend/GscTracking.Api.Tests
+dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults
+```
+
+### Generate coverage report
+```bash
+cd backend/GscTracking.Api.Tests
+dotnet tool install -g dotnet-reportgenerator-globaltool
+reportgenerator -reports:"TestResults/*/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:"Html;TextSummary"
+# View the report
+open coveragereport/index.html  # macOS
+# or
+xdg-open coveragereport/index.html  # Linux
+```
+
+### Current Coverage
+- **Controllers**: 100% coverage (CustomersController)
+- **Services**: 100% coverage (CustomerService)
+- **Overall**: ~28% (excluding migrations, Program.cs, and validators)
+
 ### Development
 
 The API is configured with:
