@@ -43,23 +43,7 @@ feat: Add Feature     ❌ Subject must start with lowercase
 feat: add feature.    ❌ No period at end
 ```
 
-### 2. Husky (`.husky/`)
-
-**What:** Git hooks manager that runs scripts on git events.
-
-**Setup:**
-- Initialized with `npx husky init`
-- Creates `.husky/` directory with hooks
-- Automatically configured on `npm install` via `prepare` script
-
-**commit-msg Hook (`.husky/commit-msg`):**
-```bash
-npx --no -- commitlint --edit "$1"
-```
-
-This hook runs on every commit attempt and validates the message before allowing the commit.
-
-### 3. Git Commit Template (`.gitmessage`)
+### 2. Git Commit Template (`.gitmessage`)
 
 **What:** A template that appears when you run `git commit` (without -m).
 
@@ -74,21 +58,7 @@ git config commit.template .gitmessage
 - Provides helpful reminders
 - Guides developers to write proper commits
 
-### 4. GitHub Actions Workflows
-
-#### `.github/workflows/commitlint.yml`
-
-**What:** Validates all commit messages in pull requests.
-
-**When It Runs:**
-- On pull request to main
-- On push to main
-
-**What It Does:**
-1. Checks out code
-2. Installs dependencies
-3. Runs commitlint on all commits in the PR
-4. Fails CI if any commit doesn't follow format
+### 3. GitHub Actions Workflow
 
 #### `.github/workflows/validate-pr.yml`
 
@@ -105,7 +75,7 @@ git config commit.template .gitmessage
 - Provides helpful error messages
 - Allows same types and scopes as commitlint
 
-### 5. Documentation
+### 4. Documentation
 
 #### `COMMIT_GUIDELINES.md`
 Comprehensive guide for developers with:
@@ -140,14 +110,11 @@ Testing procedures with:
    cd gsc-tracking
    ```
 
-2. **Install dependencies:**
+2. **Install dependencies (optional):**
    ```bash
    npm install
    ```
-   This automatically:
-   - Installs commitlint and husky
-   - Sets up git hooks
-   - Configures commit-msg hook
+   This installs commitlint for manual validation if needed.
 
 3. **Configure commit template (optional but recommended):**
    ```bash
@@ -166,40 +133,11 @@ If you already have the repository cloned:
    git pull origin main
    ```
 
-2. **Install new dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Verify setup:**
-   ```bash
-   # Check that husky is configured
-   ls .husky/commit-msg
-   
-   # Test commitlint
-   echo "feat(test): test message" | npx commitlint
-   ```
+2. **Verify PR title validation:**
+   - Open a PR and check that the title follows Conventional Commits
+   - CI will validate the PR title automatically
 
 ## How It Works
-
-### Local Commit Flow
-
-```
-Developer runs: git commit -m "message"
-       ↓
-Husky intercepts the commit
-       ↓
-Runs .husky/commit-msg hook
-       ↓
-Commitlint validates message
-       ↓
-   Valid? ────Yes──→ Commit succeeds ✅
-     ↓
-    No
-     ↓
-Commit rejected with error ❌
-(Shows what's wrong and how to fix)
-```
 
 ### PR Validation Flow
 
@@ -241,51 +179,36 @@ Validates PR title       Validates all commits
 - New contributors understand conventions quickly
 
 ### 4. Prevents Mistakes Early
-- Invalid commits caught before push
+- Invalid PR titles caught in CI
 - Clear error messages guide developers
-- No broken commits in history
+- Ensures Release Please works correctly
 
 ## Troubleshooting
 
 ### "Command not found: commitlint"
 
-**Solution:** Install dependencies
+**Solution:** Install dependencies (if you want to use commitlint locally)
 ```bash
 npm install
 ```
 
-### Husky hook not running
+### PR Title Validation Failing
 
-**Solution:** Reinstall husky
-```bash
-rm -rf .husky
-npm install
-```
+**Solution:** Update PR title to follow Conventional Commits format
+- Example: `feat(customer): add search functionality`
+- See COMMIT_GUIDELINES.md for format details
 
-### Want to bypass the hook (EMERGENCY ONLY)
+### Manual Commit Validation (Optional)
 
-**⚠️ Warning:** This breaks the automated release process. Only use in emergencies.
+If you want to validate commits locally before pushing:
 
 ```bash
-git commit -m "message" --no-verify
+# Test a commit message
+echo "feat(customer): add search" | npx commitlint
+
+# Or test your last commit
+npx commitlint --from HEAD~1
 ```
-
-Then immediately fix the commit message:
-```bash
-git commit --amend -m "feat(scope): proper message"
-```
-
-### CI failing on commits
-
-1. Check the commit messages in your PR
-2. Each must follow: `type(scope): description`
-3. Fix any invalid commits:
-   ```bash
-   git rebase -i HEAD~N  # N = number of commits to fix
-   # Change 'pick' to 'reword' for commits to fix
-   # Save and follow prompts to fix messages
-   git push --force-with-lease
-   ```
 
 ## Maintenance
 
@@ -293,12 +216,6 @@ git commit --amend -m "feat(scope): proper message"
 
 ```bash
 npm update @commitlint/cli @commitlint/config-conventional
-```
-
-### Updating Husky
-
-```bash
-npm update husky
 ```
 
 ### Modifying Rules
@@ -337,9 +254,7 @@ This setup ensures all commits in the repository follow Conventional Commits, en
 - ✅ Better collaboration
 - ✅ Early error detection
 
-The validation happens at three levels:
-1. **Local:** Git hook blocks bad commits
-2. **PR Title:** GitHub Action validates PR title
-3. **PR Commits:** GitHub Action validates all commits
-
-This multi-layered approach ensures no non-conventional commits make it into the repository.
+PR title validation ensures Release Please works correctly:
+1. **PR Title:** GitHub Action validates PR title format (Required)
+2. **Optional:** Developers can use commitlint locally for commit validation
+3. **Best Practice:** Following Conventional Commits for important commits improves changelog quality
