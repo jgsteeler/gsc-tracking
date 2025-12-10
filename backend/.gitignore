@@ -52,6 +52,11 @@ _ReSharper*/
 *.mdf
 *.ldf
 
+# SQLite database
+*.db
+*.db-shm
+*.db-wal
+
 # Azure Functions
 local.settings.json
 
