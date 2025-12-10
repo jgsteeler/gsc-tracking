@@ -6,6 +6,8 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 
 - **[Business Analysis](./business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
 - **[Hosting Evaluation](./docs/HOSTING-EVALUATION.md)** - Analysis of hosting alternatives (Azure, Fly.io, Railway, Netlify, Cloudflare) with cost estimates and recommendations
+- **[Fly.io Deployment](./docs/FLYIO-DEPLOYMENT.md)** - Complete guide for deploying the backend to Fly.io
+- **[Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md)** - Step-by-step checklist for first-time Fly.io setup
 - **[GitHub Issues](./ISSUES.md)** - Complete specifications for 25 project issues
 - **[Setup Instructions](./SETUP-INSTRUCTIONS.md)** - Step-by-step guide for creating labels, milestones, and issues
 - **[Docker Guide](./DOCKER.md)** - Complete Docker and Docker Compose documentation
@@ -81,6 +83,44 @@ gsc-tracking/
 - **MVP Features:** 6 core features for minimum viable product
 - **Roadmap Features:** 11 enhanced features for future phases
 - **Infrastructure:** 8 setup and DevOps tasks
+
+## 🚀 Deployment
+
+This project follows **GitHub Flow** with automatic deployments to staging and production environments.
+
+### Environments
+
+**Production:**
+- **URL:** https://gsc-tracking-api.fly.dev
+- **Health Check:** https://gsc-tracking-api.fly.dev/api/hello
+- **Trigger:** Merge to `main` branch
+
+**Staging (PR Previews):**
+- **URL:** https://gsc-tracking-api-staging.fly.dev
+- **Health Check:** https://gsc-tracking-api-staging.fly.dev/api/hello
+- **Trigger:** Open/update pull request to `main` branch
+
+### GitHub Flow Workflow
+
+1. **Create a feature branch** and make your changes
+2. **Open a pull request** → Automatically deploys to staging
+3. **Test your changes** on the staging URL (posted in PR comments)
+4. **Merge to main** → Automatically deploys to production
+
+### Setting Up Deployment
+
+Follow the [Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md) for step-by-step instructions:
+
+1. Create a Fly.io account at https://fly.io/app/sign-up
+2. Install Fly.io CLI: `brew install flyctl` (or see checklist for other OS)
+3. Create both apps:
+   - Production: `flyctl launch --no-deploy --name gsc-tracking-api --config fly.toml`
+   - Staging: `flyctl launch --no-deploy --name gsc-tracking-api-staging --config fly.staging.toml`
+4. Generate an API token: `flyctl tokens create deploy --expiry 8760h`
+5. Add the token as `FLY_API_TOKEN` in GitHub repository secrets
+6. Create a PR to test staging deployment, or push to `main` for production
+
+See the [complete deployment guide](./docs/FLYIO-DEPLOYMENT.md) for detailed instructions and troubleshooting.
 
 ## 🤝 Contributing
 
