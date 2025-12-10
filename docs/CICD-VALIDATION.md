@@ -88,33 +88,53 @@ If GitLab Flow is required, it can be implemented by:
 **Status:** ALTERNATIVE PLATFORM (Fly.io)
 
 **Rationale for Change:**
-The project deploys to **Fly.io** instead of Azure App Service based on evaluation:
+The project uses a **hybrid deployment strategy** instead of Azure-only:
 
-| Factor | Fly.io | Azure App Service |
-|--------|--------|-------------------|
-| **Cost** | Free tier: 3 shared VMs | Free tier: Limited hours |
-| **Setup Complexity** | Low (CLI-based) | Medium (Portal config) |
-| **Docker Support** | Native, Docker-first | Requires ACR setup |
-| **Database** | Built-in PostgreSQL | Separate service needed |
-| **Global Deployment** | Built-in edge network | Requires Front Door |
-| **Best For** | Small projects, startups | Enterprise, Azure ecosystem |
+**Backend:** Fly.io (instead of Azure App Service)
+**Frontend:** Netlify (instead of Azure Static Web Apps)
 
-**Fly.io Implementation:**
-- ✅ Production environment: gsc-tracking-api.fly.dev
-- ✅ Staging environment: gsc-tracking-api-staging.fly.dev
+**Platform Comparison:**
+
+| Component | MVP Platform | Azure Alternative | Rationale for MVP Choice |
+|-----------|-------------|-------------------|-------------------------|
+| **Backend** | Fly.io | Azure App Service | Free tier, Docker-first, built-in Postgres |
+| **Frontend** | Netlify | Azure Static Web Apps | Optimized for React/Vite, deploy previews, global CDN |
+| **Database** | Fly.io Postgres | Azure SQL | Integrated with Fly.io, simple setup |
+| **Cost (MVP)** | $0-50/mo | $75-150/mo | Significant cost savings |
+
+**Current MVP Implementation:**
+
+**Backend (Fly.io):**
+- ✅ Production: gsc-tracking-api.fly.dev
+- ✅ Staging: gsc-tracking-api-staging.fly.dev (shared)
 - ✅ Automatic deployment on PR and merge
 - ✅ Health check endpoints configured
-- ✅ Secrets configured (FLY_API_TOKEN, STAGING_FLY_API_TOKEN)
+- ✅ Secrets: FLY_API_TOKEN, STAGING_FLY_API_TOKEN
 
-**Azure App Service Option:**
-- ✅ Azure deployment workflow template provided in documentation
-- ✅ Step-by-step guide for Azure deployment
+**Frontend (Netlify):**
+- ✅ Production: Primary Netlify site
+- ✅ Staging: Deploy Previews (unique per PR)
+- ✅ Automatic deployment via Netlify GitHub integration
+- ✅ Global CDN distribution
+- ✅ Atomic deploys with instant rollback
+
+**Post-MVP Scaling Plan:**
+- ✅ Documented in [CICD-PIPELINE.md](./CICD-PIPELINE.md#post-mvp-scaling-plan)
+- ✅ Migration strategy: Keep staging on Fly.io/Netlify, move production to Azure
+- ✅ Cost analysis: MVP ($0-50/mo) → Hybrid ($115-200/mo) → Full Azure ($225-400/mo)
+- ✅ Timeline: 8-week migration plan provided
+- ✅ Trigger points documented (traffic, SLA, compliance needs)
+
+**Azure Integration:**
+- ✅ Azure deployment workflow template provided
+- ✅ Step-by-step migration guide
 - ✅ Required secrets documented
-- ✅ Comparison table included
+- ✅ Infrastructure setup checklist
 
 **Reference:**
-- See [HOSTING-EVALUATION.md](./HOSTING-EVALUATION.md) for detailed platform comparison
-- Azure deployment guide in [CICD-PIPELINE.md](./CICD-PIPELINE.md#azure-app-service-deployment-alternative)
+- [HOSTING-EVALUATION.md](./HOSTING-EVALUATION.md) - Detailed platform comparison
+- [CICD-PIPELINE.md](./CICD-PIPELINE.md#post-mvp-scaling-plan) - Post-MVP scaling plan
+- [CICD-PIPELINE.md](./CICD-PIPELINE.md#azure-app-service-deployment-post-mvp) - Azure deployment guide
 
 ### ✅ 5. Configure environment variables and secrets for CI/CD
 
@@ -124,12 +144,15 @@ The project deploys to **Fly.io** instead of Azure App Service based on evaluati
 | Secret Name | Purpose | Used By |
 |-------------|---------|---------|
 | `GITHUB_TOKEN` | Auto-provided by GitHub | All workflows |
-| `FLY_API_TOKEN` | Production deployment | deploy-flyio.yml |
-| `STAGING_FLY_API_TOKEN` | Staging deployment | deploy-flyio.yml |
+| `FLY_API_TOKEN` | Backend production deployment | deploy-flyio.yml |
+| `STAGING_FLY_API_TOKEN` | Backend staging deployment | deploy-flyio.yml |
+
+**Note:** Frontend (Netlify) deployment uses Netlify's native GitHub integration and doesn't require GitHub secrets. Configuration is managed through Netlify dashboard.
 
 **Documentation:**
 - ✅ How to generate Fly.io tokens
 - ✅ Where to configure secrets in GitHub
+- ✅ Netlify configuration guide (dashboard and netlify.toml)
 - ✅ Environment variables for Docker Compose (.env.example)
 - ✅ Application configuration (appsettings.json)
 

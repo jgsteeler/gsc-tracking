@@ -23,18 +23,29 @@ The GSC Tracking project uses GitHub Actions for continuous integration and cont
 - **Deployment**: Automatic deployment to staging and production environments
 - **Release Management**: Automated versioning and changelog generation
 
-### Current Deployment Platform
+### Current Deployment Platform (MVP)
 
-**Fly.io** is the current deployment platform for both staging and production environments. The original plan included Azure App Service, but after evaluation (see [HOSTING-EVALUATION.md](./HOSTING-EVALUATION.md)), Fly.io was chosen for:
-- Cost-effectiveness (generous free tier)
-- Simplicity of deployment
-- Docker-first approach
-- Global edge network
-- Built-in PostgreSQL support
+The GSC Tracking application uses a **hybrid deployment strategy** for the MVP:
 
-**Note:** Azure App Service deployment workflows can be added if needed in the future. The Docker images are already built and pushed to GitHub Container Registry, making it straightforward to deploy to any container platform.
+**Backend API:**
+- **Platform:** Fly.io
+- **Staging:** gsc-tracking-api-staging.fly.dev (PR-based deployment)
+- **Production:** gsc-tracking-api.fly.dev (merge to main)
 
-### CI/CD Architecture
+**Frontend:**
+- **Platform:** Netlify
+- **Staging:** Deploy Previews (per-PR preview environments)
+- **Production:** Primary Netlify site (merge to main)
+
+**Rationale for Hybrid Approach:**
+- **Fly.io for Backend:** Docker-first, cost-effective, built-in PostgreSQL
+- **Netlify for Frontend:** Optimized for React/Vite, global CDN, instant cache invalidation, atomic deploys, branch-based previews
+- **Cost Efficiency:** Both platforms offer generous free tiers for MVP
+- **Optimal DX:** Each platform is purpose-built for its workload
+
+**Note:** Docker images for both backend and frontend are built and pushed to GitHub Container Registry (ghcr.io) to maintain deployment flexibility. See [HOSTING-EVALUATION.md](./HOSTING-EVALUATION.md) for detailed platform comparison.
+
+### CI/CD Architecture (MVP)
 
 ```
 ┌─────────────────┐
@@ -49,28 +60,26 @@ The GSC Tracking project uses GitHub Actions for continuous integration and cont
 └────────┬────────┘◄─── Code Quality Checks (when configured)
          │
          │ (Deploy to Staging on PR)
-         ▼
-┌─────────────────┐
-│ Staging Env     │
-│ (Fly.io)        │◄─── Automatic deployment
-│ PR Preview      │◄─── Shared staging environment
-└─────────────────┘
-         │
+         ├───────────────────────┬───────────────────────┐
+         ▼                       ▼                       ▼
+┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐
+│ Backend Staging │   │Frontend Staging │   │ Docker Images   │
+│ (Fly.io)        │   │ (Netlify)       │   │ (ghcr.io)       │
+│ Shared env      │   │ Deploy Preview  │   │ Test build      │
+└─────────────────┘   └─────────────────┘   └─────────────────┘
+         │                       │
          │ (After Review & Approval)
-         ▼
-┌─────────────────┐
+         ▼                       ▼
+┌─────────────────┐   
 │  Merge to Main  │
 └────────┬────────┘
          │
-         ├─► Docker Build & Push (main branch)
-         ├─► Deploy to Production (Fly.io)
-         └─► Release Please (create release PR)
-         │
-         ▼
-┌─────────────────┐
-│  Production     │
-│   (Fly.io)      │
-└─────────────────┘
+         ├───────────────────────┬───────────────────────┬──────────────────
+         ▼                       ▼                       ▼
+┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐
+│Backend Production│   │Frontend Production│  │ Release Please  │
+│ (Fly.io)        │   │ (Netlify)       │   │ Version/Tag     │
+└─────────────────┘   └─────────────────┘   └─────────────────┘
 ```
 
 ## Branching Strategy (GitHub Flow)
@@ -223,7 +232,7 @@ type=semver,pattern={{major}}.{{minor}}
 type=sha                  # Commit SHA
 ```
 
-### 3. Fly.io Deployment (`deploy-flyio.yml`)
+### 3. Backend Deployment - Fly.io (`deploy-flyio.yml`)
 
 **Triggers:**
 - Push to `main` (backend changes)
@@ -247,7 +256,7 @@ type=sha                  # Commit SHA
 - Uses `FLY_API_TOKEN` secret
 - Creates deployment summary
 
-**Environment URLs:**
+**Backend Environment URLs:**
 - **Staging**: https://gsc-tracking-api-staging.fly.dev
 - **Production**: https://gsc-tracking-api.fly.dev
 
@@ -255,7 +264,49 @@ type=sha                  # Commit SHA
 - **Staging**: https://gsc-tracking-api-staging.fly.dev/api/hello
 - **Production**: https://gsc-tracking-api.fly.dev/api/hello
 
-### 4. Release Please (`release-please.yml`)
+### 4. Frontend Deployment - Netlify
+
+**Platform:** Netlify  
+**Repository:** Connected via Netlify dashboard  
+**Build Command:** `npm run build` (from frontend directory)  
+**Publish Directory:** `frontend/dist`
+
+**Deployment Process:**
+
+#### Staging (Deploy Previews)
+- **Trigger:** Automatically on every pull request
+- **Environment:** Unique preview URL per PR
+- **URL Pattern:** `deploy-preview-{pr-number}--{site-name}.netlify.app`
+- **Features:**
+  - Isolated environment for each PR
+  - Automatic deployment on PR updates
+  - Instant rollback capability
+  - Comments on PR with preview URL (via Netlify bot)
+
+#### Production
+- **Trigger:** Automatically on merge to `main`
+- **Environment:** Primary Netlify site
+- **URL:** `{site-name}.netlify.app` or custom domain
+- **Features:**
+  - Atomic deploys with instant rollback
+  - Global CDN distribution
+  - Automatic HTTPS via Let's Encrypt
+  - Instant cache invalidation
+
+**Configuration:**
+
+Netlify deployment is configured via:
+1. **Netlify Dashboard:** Site settings and build configuration
+2. **netlify.toml** (if created): Build settings, redirects, headers
+3. **GitHub Integration:** Automatic deployment on commits
+
+**Frontend Environment URLs:**
+- **Staging**: Deploy preview URLs (unique per PR)
+- **Production**: Primary Netlify site URL
+
+**Note:** Frontend deployment is handled entirely by Netlify's native GitHub integration, not via GitHub Actions workflows. This provides optimal performance and deployment speed for static sites.
+
+### 5. Release Please (`release-please.yml`)
 
 **Triggers:**
 - Push to `main` branch
@@ -303,6 +354,8 @@ Configure these secrets in GitHub repository settings (`Settings > Secrets and v
 | `STAGING_FLY_API_TOKEN` | Fly.io staging API token | `deploy-flyio.yml` (staging) |
 | `GITHUB_TOKEN` | Automatic GitHub token | All workflows (auto-provided) |
 
+**Note:** Netlify deployment uses Netlify's native GitHub integration and doesn't require GitHub secrets. Authentication is handled through the Netlify dashboard connection.
+
 #### How to Generate Fly.io Tokens
 
 ```bash
@@ -335,6 +388,67 @@ env:
   FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 ```
 
+### Netlify Configuration
+
+Netlify deployment is configured through:
+
+#### 1. Site Settings (Netlify Dashboard)
+
+Navigate to: **Site settings > Build & deploy > Continuous Deployment**
+
+**Build Settings:**
+```yaml
+Base directory: frontend
+Build command: npm run build
+Publish directory: frontend/dist
+```
+
+**Environment Variables:**
+Navigate to: **Site settings > Build & deploy > Environment variables**
+
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `VITE_API_URL` | `https://gsc-tracking-api.fly.dev` | Production API URL |
+| `NODE_VERSION` | `20` | Node.js version |
+
+**Deploy Previews:**
+Navigate to: **Site settings > Build & deploy > Deploy contexts**
+- ✅ Enable **Deploy previews** for pull requests
+- ✅ Enable **Branch deploys** (optional, for feature branches)
+
+#### 2. Optional: netlify.toml Configuration
+
+Create `frontend/netlify.toml` for version-controlled configuration:
+
+```toml
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[context.production.environment]
+  VITE_API_URL = "https://gsc-tracking-api.fly.dev"
+
+[context.deploy-preview.environment]
+  VITE_API_URL = "https://gsc-tracking-api-staging.fly.dev"
+```
+
 ### Application Environment Variables
 
 For local development and Docker, configure in `.env` file:
@@ -349,8 +463,9 @@ cp .env.example .env
 See [.env.example](../.env.example) for all available variables.
 
 For production deployment, environment variables are configured in:
-- **Fly.io**: `backend/fly.toml` and `backend/fly.staging.toml`
-- **Azure**: Azure Portal > App Service > Configuration (if using Azure)
+- **Backend (Fly.io)**: `backend/fly.toml` and `backend/fly.staging.toml`
+- **Frontend (Netlify)**: Netlify dashboard > Environment variables
+- **Azure (Post-MVP)**: Azure Portal > App Service > Configuration
 
 ## Deployment Process
 
@@ -358,31 +473,38 @@ For production deployment, environment variables are configured in:
 
 #### Staging Deployment (Pull Requests)
 
-1. **Create/update a PR** to `main` branch
-2. **Backend changes** trigger:
+**Backend:**
+1. **Create/update a PR** to `main` branch with backend changes
+2. **Automatic deployment** triggers:
    - Docker build (test only, no push)
    - Deployment to Fly.io staging
    - Comment on PR with staging URL
-3. **Test your changes** at: https://gsc-tracking-api-staging.fly.dev
-4. **Staging environment** is shared across all PRs
+3. **Test backend** at: https://gsc-tracking-api-staging.fly.dev
+4. **Note:** Staging environment is shared across all PRs
+
+**Frontend:**
+1. **Create/update a PR** to `main` branch with frontend changes
+2. **Netlify Deploy Preview** automatically creates:
+   - Unique preview environment for this PR
+   - Isolated testing environment
+   - Preview URL posted as comment on PR (via Netlify bot)
+3. **Test frontend** at: `deploy-preview-{pr-number}--{site-name}.netlify.app`
+4. **Note:** Each PR gets its own isolated preview environment
 
 **Staging Deployment Flow:**
 ```
-PR to main (backend changes)
-    ↓
-Build Docker image (test)
-    ↓
-Deploy to Fly.io staging
-    ↓
-Comment on PR with URL
-    ↓
-Test changes
-    ↓
-Merge when ready
+PR to main
+    ├─► Backend: Docker build → Fly.io staging (shared)
+    └─► Frontend: Build → Netlify preview (isolated per PR)
+         ↓
+    Test changes
+         ↓
+    Merge when ready
 ```
 
 #### Production Deployment (Main Branch)
 
+**Backend:**
 1. **Merge PR to main** (after approval)
 2. **Automatic deployment** triggers:
    - Docker images built and pushed to ghcr.io
@@ -391,17 +513,21 @@ Merge when ready
 3. **Production URL**: https://gsc-tracking-api.fly.dev
 4. **Health check** automatically runs
 
+**Frontend:**
+1. **Merge PR to main** (after approval)
+2. **Netlify production deployment** triggers:
+   - Build frontend application
+   - Deploy to production site
+   - Atomic deployment with instant rollback capability
+3. **Production URL**: Primary Netlify site URL
+
 **Production Deployment Flow:**
 ```
 Merge to main
-    ↓
-Build & Push Docker Images
-    ↓
-Deploy to Fly.io Production
-    ↓
-Health Check
-    ↓
-Release Please PR
+    ├─► Backend: Build & Push → Fly.io Production → Health Check
+    └─► Frontend: Build → Netlify Production → CDN Distribution
+         ↓
+    Release Please PR
 ```
 
 ### Manual Deployments
@@ -706,9 +832,134 @@ If you encounter issues not covered here:
 3. **Search existing issues**: Check GitHub issues for similar problems
 4. **Open an issue**: Create a new issue with workflow logs and error details
 
-## Azure App Service Deployment (Alternative)
+## Post-MVP Scaling Plan
 
-While the current deployment uses Fly.io, you can add Azure App Service deployment to the CI/CD pipeline. Here's how:
+### Overview
+
+As the application scales beyond MVP, the deployment strategy can be upgraded to leverage Azure's enterprise features while maintaining cost-effective staging environments.
+
+### Recommended Post-MVP Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                        STAGING (DEV/TEST)                     │
+├──────────────────────────────────────────────────────────────┤
+│  Backend: Fly.io Staging        Frontend: Netlify Previews   │
+│  Database: Fly.io Postgres      Cost: ~$40-50/month          │
+└──────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────┐
+│                      PRODUCTION (SCALED)                      │
+├──────────────────────────────────────────────────────────────┤
+│  Backend: Azure App Service     Frontend: Netlify Production │
+│  Database: Azure SQL Database   Storage: Azure Blob Storage  │
+│  Cost: ~$75-215/month                                        │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Rationale for Hybrid Staging/Production
+
+**Keep Staging on Fly.io + Netlify:**
+- ✅ Cost-effective for testing environments
+- ✅ Fast deployment and iteration
+- ✅ Generous free tiers reduce staging costs
+- ✅ Same tech stack as MVP for consistency
+
+**Move Production to Azure:**
+- ✅ Enterprise-grade reliability and SLA (99.95%)
+- ✅ Better performance at scale (vertical and horizontal scaling)
+- ✅ Integrated Azure services (SQL, Blob Storage, Key Vault, App Insights)
+- ✅ Advanced monitoring and diagnostics
+- ✅ Better compliance and security features
+- ✅ Proximity to Azure services reduces latency
+- ✅ Native .NET optimization and support
+
+**Keep Frontend on Netlify (All Environments):**
+- ✅ Purpose-built for static sites and SPAs
+- ✅ Global CDN with 300+ edge locations
+- ✅ Atomic deploys with instant rollback
+- ✅ Built-in deploy previews for staging
+- ✅ Excellent DX and fast deployment times
+- ✅ Cost-effective compared to Azure Static Web Apps
+
+### Migration Path
+
+#### Phase 1: Current MVP (Now)
+```yaml
+Backend:  Fly.io → Fly.io
+Frontend: Netlify → Netlify
+Database: Fly.io Postgres
+```
+
+#### Phase 2: Hybrid Approach (Post-MVP)
+```yaml
+Backend:  Fly.io (Staging) → Azure App Service (Production)
+Frontend: Netlify (All) → Netlify (All)
+Database: Fly.io Postgres (Staging) → Azure SQL (Production)
+```
+
+#### Phase 3: Full Azure (Optional, for Enterprise)
+```yaml
+Backend:  Azure App Service → Azure App Service
+Frontend: Azure Static Web Apps → Azure Static Web Apps
+Database: Azure SQL → Azure SQL
+```
+
+### Cost Comparison
+
+| Environment | Current MVP | Post-MVP Hybrid | Full Azure |
+|-------------|-------------|-----------------|------------|
+| **Staging** | $0-50/mo | $40-50/mo | $75-100/mo |
+| **Production** | $0-50/mo | $75-150/mo | $150-300/mo |
+| **Total** | $0-100/mo | $115-200/mo | $225-400/mo |
+
+### When to Scale
+
+**Trigger Points for Moving to Azure:**
+- Monthly traffic exceeds Fly.io free tier (160GB data transfer)
+- Need for 99.95%+ SLA and support
+- Require advanced monitoring and diagnostics (Application Insights)
+- Compliance requirements (HIPAA, SOC 2, etc.)
+- Team size grows and needs Azure DevOps integration
+- Database size exceeds Fly.io Postgres limits (3GB free tier)
+- Need for advanced Azure services (Cognitive Services, Functions, Logic Apps)
+
+### Implementation Timeline
+
+**Weeks 1-2: Preparation**
+- [ ] Set up Azure subscription and resource groups
+- [ ] Create Azure App Service and SQL Database (production tier)
+- [ ] Configure Azure Key Vault for secrets
+- [ ] Set up Application Insights
+
+**Weeks 3-4: Infrastructure**
+- [ ] Deploy backend to Azure App Service (staging first)
+- [ ] Migrate database to Azure SQL (test with staging data)
+- [ ] Configure Azure Blob Storage for files
+- [ ] Set up Azure CDN if needed
+
+**Weeks 5-6: CI/CD Integration**
+- [ ] Create Azure deployment workflow (see below)
+- [ ] Configure GitHub secrets for Azure credentials
+- [ ] Test deployment pipeline to Azure staging
+- [ ] Validate health checks and monitoring
+
+**Week 7: Production Migration**
+- [ ] Deploy backend to Azure App Service production
+- [ ] Migrate production database to Azure SQL
+- [ ] Update DNS and environment variables
+- [ ] Monitor closely for issues
+
+**Week 8: Optimization**
+- [ ] Review Application Insights metrics
+- [ ] Optimize performance and costs
+- [ ] Update documentation
+- [ ] Train team on Azure tools
+
+## Azure App Service Deployment (Post-MVP)
+
+When ready to migrate production to Azure App Service, use the following workflow and configuration.
 
 ### Prerequisites
 
