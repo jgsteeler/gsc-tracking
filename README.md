@@ -10,18 +10,33 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 ## 📋 Project Documentation
 
 ### Core Documentation
+
 - **[Business Analysis](./business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
 - **[GitHub Issues](./ISSUES.md)** - Complete specifications for 25 project issues
 - **[Setup Instructions](./SETUP-INSTRUCTIONS.md)** - Step-by-step guide for creating labels, milestones, and issues
 
 ### CI/CD and Deployment
+
 - **[CI/CD Pipeline](./docs/CICD-PIPELINE.md)** - Complete CI/CD documentation with workflows, branching strategy, and troubleshooting
 - **[Release Process](./RELEASE.md)** - Semantic versioning and automated release workflow
+
+**Frontend Deployment (Netlify):**
+
+- **[Netlify Deployment](./docs/NETLIFY-DEPLOYMENT.md)** - Complete guide for deploying the frontend to Netlify with deploy preview staging
+- **[Existing Site Setup](./docs/NETLIFY-EXISTING-SITE-SETUP.md)** - Add staging previews to existing Netlify site
+- **[CORS/Auth0 Considerations](./docs/CORS-AUTH0-CONSIDERATIONS.md)** - Wildcard issues and solutions for deploy previews
+
+**Backend Deployment:**
+
 - **[Fly.io Deployment](./docs/FLYIO-DEPLOYMENT.md)** - Complete guide for deploying the backend to Fly.io
 - **[Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md)** - Step-by-step checklist for first-time Fly.io setup
+
+**Project Management:**
+
 - **[Hosting Evaluation](./docs/HOSTING-EVALUATION.md)** - Analysis of hosting alternatives with cost estimates and recommendations
 
 ### Development
+
 - **[Docker Guide](./DOCKER.md)** - Complete Docker and Docker Compose documentation
 - **[Contributing Guidelines](./CONTRIBUTING.md)** - How to contribute to the project
 - **[Commit Guidelines](./COMMIT_GUIDELINES.md)** - Conventional Commits format requirements
@@ -40,8 +55,8 @@ cp .env.example .env
 docker-compose up
 ```
 
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8080
+- **Frontend**: <http://localhost:5173>
+- **Backend API**: <http://localhost:8080>
 - **Database**: PostgreSQL on localhost:5432
 
 See [DOCKER.md](./DOCKER.md) for complete Docker documentation.
@@ -49,18 +64,22 @@ See [DOCKER.md](./DOCKER.md) for complete Docker documentation.
 ### Option 2: Local Development
 
 **Backend (.NET 10 Web API):**
+
 ```bash
 cd backend/GscTracking.Api
 dotnet run
 ```
+
 The API will be available at `http://localhost:5091` (or `https://localhost:7075` with HTTPS profile)
 
 **Frontend (React + Vite):**
+
 ```bash
 cd frontend
 npm install  # First time only
 npm run dev
 ```
+
 The app will be available at `http://localhost:5173`
 
 ### Project Setup
@@ -99,41 +118,21 @@ gsc-tracking/
 
 ## 🚀 CI/CD and Deployment
 
-This project uses **GitHub Actions** for continuous integration and deployment with **GitHub Flow** branching strategy. The application uses a **hybrid deployment approach** optimized for the MVP.
+This project follows **GitHub Flow** with automatic deployments to staging and production environments.
 
-### CI/CD Pipeline
+### Environments
 
-The automated pipeline includes:
-- ✅ **PR Validation**: Conventional Commits format enforcement
-- ✅ **Docker Build**: Automatic image building and publishing to GitHub Container Registry
-- ✅ **Automated Deployment**: Backend to Fly.io, Frontend to Netlify
-- ✅ **Deploy Previews**: Isolated frontend previews for each PR via Netlify
-- ✅ **Release Management**: Automated versioning and changelog generation with Release Please
+**Production:**
 
-📖 **Full Documentation**: [CI/CD Pipeline Guide](./docs/CICD-PIPELINE.md)
+- **URL:** <https://gsc-tracking-api.fly.dev>
+- **Health Check:** <https://gsc-tracking-api.fly.dev/api/hello>
+- **Trigger:** Merge to `main` branch
 
-### Deployment Architecture (MVP)
+**Staging (PR Previews):**
 
-**Backend API** (Fly.io)
-- **Production:** https://gsc-tracking-api.fly.dev
-- **Staging:** https://gsc-tracking-api-staging.fly.dev (shared)
-- **Trigger:** PR creates staging, merge to `main` deploys production
-- **Features:** Docker-based, built-in PostgreSQL, global edge network
-
-**Frontend** (Netlify)
-- **Production:** Primary Netlify site URL
-- **Staging:** Unique deploy preview per PR
-- **Trigger:** Automatic deployment on PR and merge to `main`
-- **Features:** Global CDN, atomic deploys, instant rollback, isolated PR previews
-
-### Post-MVP Scaling
-
-For production scaling needs, the architecture can be upgraded:
-- **Staging:** Keep on Fly.io + Netlify (cost-effective)
-- **Production:** Migrate backend to Azure App Service (enterprise-grade)
-- **Frontend:** Continue on Netlify (optimized for static sites)
-
-See [Post-MVP Scaling Plan](./docs/CICD-PIPELINE.md#post-mvp-scaling-plan) for detailed migration strategy.
+- **URL:** <https://gsc-tracking-api-staging.fly.dev>
+- **Health Check:** <https://gsc-tracking-api-staging.fly.dev/api/hello>
+- **Trigger:** Open/update pull request to `main` branch
 
 ### GitHub Flow Workflow
 
@@ -149,9 +148,24 @@ See [Post-MVP Scaling Plan](./docs/CICD-PIPELINE.md#post-mvp-scaling-plan) for d
 
 **Backend (Fly.io):**
 
-Follow the [Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md) for step-by-step instructions:
+**Frontend Deployment (Netlify):**
 
-1. Create a Fly.io account at https://fly.io/app/sign-up
+Complete setup guide: [Netlify Deployment Guide](./docs/NETLIFY-DEPLOYMENT.md)
+
+1. Create a Netlify account at <https://app.netlify.com/signup>
+2. Connect GitHub repository to Netlify
+3. Configure build settings:
+   - Base directory: `frontend`
+   - Build command: `npm run build`
+   - Publish directory: `frontend/dist`
+4. Set environment variables (production vs. deploy previews)
+5. Deploy automatically on push to `main`
+
+**Backend Deployment (Fly.io):**
+
+Complete setup guide: [Fly.io Deployment Guide](./docs/FLYIO-DEPLOYMENT.md)
+
+1. Create a Fly.io account at <https://fly.io/app/sign-up>
 2. Install Fly.io CLI: `brew install flyctl` (or see checklist for other OS)
 3. Create both apps:
    - Production: `flyctl launch --no-deploy --name gsc-tracking-api --config fly.toml`
@@ -159,19 +173,6 @@ Follow the [Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md) fo
 4. Generate an API token: `flyctl tokens create deploy --expiry 8760h`
 5. Add the token as `FLY_API_TOKEN` in GitHub repository secrets
 6. Create a PR to test staging deployment, or push to `main` for production
-
-**Frontend (Netlify):**
-
-1. Create a Netlify account at https://netlify.com
-2. Connect your GitHub repository via Netlify dashboard
-3. Configure build settings:
-   - **Base directory:** `frontend`
-   - **Build command:** `npm run build`
-   - **Publish directory:** `frontend/dist`
-4. Enable **Deploy Previews** for pull requests
-5. Set environment variable: `VITE_API_URL` to your backend API URL
-
-See [CICD-PIPELINE.md](./docs/CICD-PIPELINE.md#netlify-configuration) for detailed Netlify setup.
 
 See the [complete deployment guide](./docs/FLYIO-DEPLOYMENT.md) for detailed instructions and troubleshooting.
 
@@ -206,4 +207,5 @@ TBD - Choose appropriate license (MIT, Apache 2.0, etc.)
 ## Getting Started
 
 ...existing code...
+
 # Test
