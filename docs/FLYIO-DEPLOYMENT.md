@@ -18,21 +18,43 @@ This guide covers deploying the GSC Tracking backend API to [Fly.io](https://fly
 
 ## Overview
 
-The GSC Tracking backend is deployed to Fly.io using:
+The GSC Tracking backend is deployed to Fly.io using a **GitHub Flow** approach with separate staging and production environments.
+
+### Production Environment
 
 - **Platform:** Fly.io
 - **Region:** `iad` (Northern Virginia, USA)
 - **App Name:** `gsc-tracking-api`
 - **URL:** https://gsc-tracking-api.fly.dev
 - **Health Check:** https://gsc-tracking-api.fly.dev/api/hello
+- **Configuration:** `backend/fly.toml`
 
-### Deployment Triggers
+### Staging Environment (PR Previews)
 
-Automatic deployment occurs when:
-- Code is pushed to the `main` branch
-- Changes are made in the `backend/` directory
+- **Platform:** Fly.io
+- **Region:** `iad` (Northern Virginia, USA)
+- **App Name:** `gsc-tracking-api-staging`
+- **URL:** https://gsc-tracking-api-staging.fly.dev
+- **Health Check:** https://gsc-tracking-api-staging.fly.dev/api/hello
+- **Configuration:** `backend/fly.staging.toml`
+
+### Deployment Triggers (GitHub Flow)
+
+**Staging Deployment** (automatic PR previews):
+- Pull request is opened with changes to `backend/` directory
+- Changes are made to an existing pull request targeting `main`
 - Changes are made to `.github/workflows/deploy-flyio.yml`
-- Manual workflow dispatch is triggered
+- Deploys to `gsc-tracking-api-staging` for testing
+- PR is automatically commented with staging URL
+
+**Production Deployment**:
+- Code is merged to the `main` branch
+- Changes exist in the `backend/` directory
+- Changes are made to `.github/workflows/deploy-flyio.yml`
+- Deploys to `gsc-tracking-api` production environment
+
+**Manual Deployment**:
+- Workflow can be manually triggered via GitHub Actions UI
 
 The deployment is handled by GitHub Actions using the workflow defined in `.github/workflows/deploy-flyio.yml`.
 
@@ -94,38 +116,81 @@ This creates a deploy token valid for 1 year. Copy the token output.
 5. Value: Paste the token from step 2
 6. Click **Add secret**
 
-### 4. Create Fly.io App (First Time Only)
+### 4. Create Fly.io Apps (First Time Only)
+
+You need to create both production and staging apps:
 
 ```bash
 cd backend
-flyctl launch --no-deploy --name gsc-tracking-api --region iad
+
+# Create production app
+flyctl launch --no-deploy --name gsc-tracking-api --region iad --config fly.toml
+
+# Create staging app
+flyctl launch --no-deploy --name gsc-tracking-api-staging --region iad --config fly.staging.toml
 ```
 
-This creates the app in Fly.io without deploying. The configuration is already defined in `backend/fly.toml`.
+This creates both apps in Fly.io without deploying. The configurations are already defined in `backend/fly.toml` and `backend/fly.staging.toml`.
 
-**Note:** The app name `gsc-tracking-api` must be globally unique on Fly.io. If taken, choose a different name and update `backend/fly.toml` and this documentation.
+**Important Notes:**
+- The app names must be globally unique on Fly.io. If taken, choose different names and update:
+  - `backend/fly.toml` (app = 'your-production-name')
+  - `backend/fly.staging.toml` (app = 'your-staging-name')
+  - `.github/workflows/deploy-flyio.yml` (update URLs in comments)
+  - This documentation
+- Both apps run in the same region (`iad`) for consistency
 
 ---
 
 ## Deployment Methods
 
-### Method 1: Automatic Deployment (Recommended)
+### Method 1: GitHub Flow (Recommended)
 
-Push changes to the `main` branch:
+This project follows **GitHub Flow** with automatic deployments:
+
+**Step 1: Create a Feature Branch and Pull Request**
 
 ```bash
+# Create a feature branch
+git checkout -b feature/new-endpoint
+
+# Make your changes
 git add .
 git commit -m "feat(api): add new endpoint"
+git push origin feature/new-endpoint
+
+# Open a pull request on GitHub
+```
+
+When you open a PR, GitHub Actions will automatically:
+1. Build the Docker image
+2. Deploy to **staging** environment (`gsc-tracking-api-staging`)
+3. Run health checks
+4. Comment on the PR with the staging URL
+
+**Step 2: Test in Staging**
+
+- Review the PR comment for the staging URL
+- Test your changes at: https://gsc-tracking-api-staging.fly.dev
+- Make additional commits to the PR as needed (auto-deploys to staging)
+
+**Step 3: Merge to Production**
+
+```bash
+# After PR approval, merge to main
+# This can be done via GitHub UI or:
+git checkout main
+git merge feature/new-endpoint
 git push origin main
 ```
 
-GitHub Actions will automatically:
+When merged to `main`, GitHub Actions will automatically:
 1. Build the Docker image
-2. Deploy to Fly.io
+2. Deploy to **production** environment (`gsc-tracking-api`)
 3. Run health checks
 4. Show deployment summary
 
-Monitor the deployment:
+Monitor deployments:
 - Go to **Actions** tab in GitHub
 - Click on the latest **"Deploy Backend to Fly.io"** workflow run
 
@@ -138,11 +203,11 @@ cd backend
 # Login to Fly.io
 flyctl auth login
 
-# Deploy
-flyctl deploy
+# Deploy to production (using fly.toml)
+flyctl deploy --config fly.toml --remote-only
 
-# Or deploy without local Docker build (uses Fly.io builders)
-flyctl deploy --remote-only
+# Or deploy to staging (using fly.staging.toml)
+flyctl deploy --config fly.staging.toml --remote-only
 ```
 
 ### Method 3: Manual Workflow Trigger

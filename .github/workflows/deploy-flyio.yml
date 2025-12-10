@@ -6,18 +6,54 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/deploy-flyio.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-flyio.yml'
   workflow_dispatch:
 
 env:
   FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
 jobs:
-  deploy:
-    name: Deploy to Fly.io
+  deploy-staging:
+    name: Deploy to Staging (PR Preview)
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && secrets.FLY_API_TOKEN }}
     
-    # Only run if FLY_API_TOKEN is configured
-    if: ${{ secrets.FLY_API_TOKEN }}
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Fly.io CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy to Staging
+        working-directory: ./backend
+        run: flyctl deploy --config fly.staging.toml --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Comment PR with Staging URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🚀 Staging Deployment Complete\n\nYour changes have been deployed to the staging environment!\n\n- **App:** gsc-tracking-api-staging\n- **URL:** https://gsc-tracking-api-staging.fly.dev\n- **Health Check:** https://gsc-tracking-api-staging.fly.dev/api/hello\n- **PR:** #${context.issue.number}\n\n*This is a temporary preview environment. It will be automatically cleaned up after the PR is closed.*`
+            })
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.FLY_API_TOKEN }}
     
     permissions:
       contents: read
@@ -29,17 +65,17 @@ jobs:
       - name: Setup Fly.io CLI
         uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Deploy to Fly.io
+      - name: Deploy to Production
         working-directory: ./backend
-        run: flyctl deploy --remote-only
+        run: flyctl deploy --config fly.toml --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       - name: Deployment Summary
         run: |
-          echo "## 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "## 🚀 Production Deployment Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "The backend API has been deployed to Fly.io!" >> $GITHUB_STEP_SUMMARY
+          echo "The backend API has been deployed to production!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **App Name:** gsc-tracking-api" >> $GITHUB_STEP_SUMMARY
           echo "- **Region:** iad (Northern Virginia)" >> $GITHUB_STEP_SUMMARY

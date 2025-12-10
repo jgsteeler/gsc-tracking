@@ -86,19 +86,26 @@ gsc-tracking/
 
 ## 🚀 Deployment
 
-### Production Deployment
+This project follows **GitHub Flow** with automatic deployments to staging and production environments.
 
-The backend API is automatically deployed to Fly.io when changes are pushed to the `main` branch.
+### Environments
 
-- **Production URL:** https://gsc-tracking-api.fly.dev
+**Production:**
+- **URL:** https://gsc-tracking-api.fly.dev
 - **Health Check:** https://gsc-tracking-api.fly.dev/api/hello
-- **Deployment Docs:** [Fly.io Deployment Guide](./docs/FLYIO-DEPLOYMENT.md)
+- **Trigger:** Merge to `main` branch
 
-### Deployment Triggers
+**Staging (PR Previews):**
+- **URL:** https://gsc-tracking-api-staging.fly.dev
+- **Health Check:** https://gsc-tracking-api-staging.fly.dev/api/hello
+- **Trigger:** Open/update pull request to `main` branch
 
-- Push to `main` branch with backend changes
-- Manual workflow dispatch via GitHub Actions
-- Changes to deployment workflow configuration
+### GitHub Flow Workflow
+
+1. **Create a feature branch** and make your changes
+2. **Open a pull request** → Automatically deploys to staging
+3. **Test your changes** on the staging URL (posted in PR comments)
+4. **Merge to main** → Automatically deploys to production
 
 ### Setting Up Deployment
 
@@ -106,10 +113,12 @@ Follow the [Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md) fo
 
 1. Create a Fly.io account at https://fly.io/app/sign-up
 2. Install Fly.io CLI: `brew install flyctl` (or see checklist for other OS)
-3. Create the app: `flyctl launch --no-deploy --name gsc-tracking-api`
-4. Generate an API token: `flyctl tokens create deploy`
+3. Create both apps:
+   - Production: `flyctl launch --no-deploy --name gsc-tracking-api --config fly.toml`
+   - Staging: `flyctl launch --no-deploy --name gsc-tracking-api-staging --config fly.staging.toml`
+4. Generate an API token: `flyctl tokens create deploy --expiry 8760h`
 5. Add the token as `FLY_API_TOKEN` in GitHub repository secrets
-6. Push to `main` or manually trigger the workflow
+6. Create a PR to test staging deployment, or push to `main` for production
 
 See the [complete deployment guide](./docs/FLYIO-DEPLOYMENT.md) for detailed instructions and troubleshooting.
 

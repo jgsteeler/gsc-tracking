@@ -6,14 +6,16 @@ This checklist will help you complete the setup for automatic deployment of the 
 
 The following has been configured in this PR:
 
-- [x] Created `backend/fly.toml` - Fly.io application configuration
-- [x] Created `.github/workflows/deploy-flyio.yml` - GitHub Actions deployment workflow
+- [x] Created `backend/fly.toml` - Production environment configuration
+- [x] Created `backend/fly.staging.toml` - Staging environment configuration
+- [x] Created `.github/workflows/deploy-flyio.yml` - GitHub Actions deployment workflow with GitHub Flow
 - [x] Created `docs/FLYIO-DEPLOYMENT.md` - Complete deployment documentation
 - [x] Created `backend/.flyignore` - Optimized deployment context
 - [x] Updated `README.md` - Added deployment information
 - [x] Configured auto-scaling to free tier (256MB RAM, scale-to-zero)
 - [x] Configured health checks on `/api/hello` endpoint
-- [x] Set up automatic deployment triggers (push to main, backend changes only)
+- [x] Set up GitHub Flow: staging on PR, production on merge to main
+- [x] Automatic PR comments with staging URLs
 
 ## ⏳ Next Steps (Action Required)
 
@@ -56,7 +58,9 @@ Verify installation:
 flyctl version
 ```
 
-### Step 3: Authenticate and Create App (5 minutes)
+### Step 3: Authenticate and Create Apps (10 minutes)
+
+You need to create both production and staging apps:
 
 ```bash
 # Login to Fly.io
@@ -65,18 +69,23 @@ flyctl auth login
 # Navigate to backend directory
 cd backend
 
-# Create the app (without deploying yet)
-flyctl launch --no-deploy --name gsc-tracking-api --region iad
+# Create production app (without deploying yet)
+flyctl launch --no-deploy --name gsc-tracking-api --region iad --config fly.toml
+
+# Create staging app (without deploying yet)
+flyctl launch --no-deploy --name gsc-tracking-api-staging --region iad --config fly.staging.toml
 ```
 
 **Important Notes:**
-- The app name `gsc-tracking-api` must be globally unique on Fly.io
-- If the name is taken, choose a different name and update:
-  - `backend/fly.toml` (app = 'your-new-name')
-  - `docs/FLYIO-DEPLOYMENT.md` (search and replace the app name)
-  - `.github/workflows/deploy-flyio.yml` (deployment summary)
+- Both app names must be globally unique on Fly.io
+- If names are taken, choose different names and update:
+  - `backend/fly.toml` (app = 'your-production-name')
+  - `backend/fly.staging.toml` (app = 'your-staging-name')
+  - `docs/FLYIO-DEPLOYMENT.md` (search and replace the app names)
+  - `.github/workflows/deploy-flyio.yml` (update URLs in comments)
 - Region `iad` = Northern Virginia (good for East Coast US)
 - Use `flyctl platform regions` to see all available regions
+- Both apps use the same region for consistency
 
 ### Step 4: Generate and Add Deploy Token (5 minutes)
 
@@ -97,81 +106,124 @@ Add to GitHub:
 5. Value: Paste the token
 6. Click **Add secret**
 
-### Step 5: Test Deployment (10 minutes)
+### Step 5: Test Deployment (15 minutes)
 
-You can now deploy in two ways:
+Test both staging and production deployments:
 
-**Option A: Manual CLI Deployment (Immediate)**
+**Option A: Test GitHub Flow (Recommended)**
 ```bash
-cd backend
-flyctl deploy --remote-only
-```
+# Create a feature branch
+git checkout -b test/deployment
 
-This will:
-- Build the Docker image on Fly.io's servers
-- Deploy to https://gsc-tracking-api.fly.dev
-- Run health checks
-- Show deployment status
-
-**Option B: Trigger GitHub Actions (Automatic)**
-```bash
-# Make any change to backend code
+# Make a small change
 cd backend/GscTracking.Api
 echo "// Deployment test" >> Program.cs
 
-# Commit and push to main
+# Commit and push
 git add .
-git commit -m "test: trigger Fly.io deployment"
-git push origin main
+git commit -m "test: trigger staging deployment"
+git push origin test/deployment
+
+# Open a pull request on GitHub
 ```
 
-Watch the deployment:
+This will:
+1. Automatically deploy to staging: https://gsc-tracking-api-staging.fly.dev
+2. Comment on the PR with the staging URL
+3. Allow you to test before merging to production
+
+After testing staging:
+```bash
+# Merge the PR via GitHub UI, then locally:
+git checkout main
+git pull origin main
+```
+
+This will automatically deploy to production: https://gsc-tracking-api.fly.dev
+
+**Option B: Manual CLI Deployment**
+```bash
+cd backend
+
+# Deploy to staging
+flyctl deploy --config fly.staging.toml --remote-only
+
+# Deploy to production
+flyctl deploy --config fly.toml --remote-only
+```
+
+**Monitor Deployments:**
 - Go to **Actions** tab in GitHub
 - Click the latest **"Deploy Backend to Fly.io"** workflow run
 - Monitor progress in real-time
+- Check PR comments for staging URLs
 
-### Step 6: Verify Deployment (2 minutes)
+### Step 6: Verify Deployment (5 minutes)
 
-After deployment completes, test the API:
+After deployments complete, test both environments:
 
+**Test Staging:**
 ```bash
-# Test health endpoint
-curl https://gsc-tracking-api.fly.dev/api/hello
+# Test staging health endpoint
+curl https://gsc-tracking-api-staging.fly.dev/api/hello
 
 # Expected response:
 # {"message":"Hello from GSC Tracking API!","version":"1.0.0","timestamp":"..."}
+
+# Check staging app status
+flyctl status --app gsc-tracking-api-staging
+flyctl logs --app gsc-tracking-api-staging
 ```
 
-Open in browser:
-- https://gsc-tracking-api.fly.dev/api/hello
-
-Check app status:
+**Test Production:**
 ```bash
-flyctl status
-flyctl logs
+# Test production health endpoint
+curl https://gsc-tracking-api.fly.dev/api/hello
+
+# Check production app status
+flyctl status --app gsc-tracking-api
+flyctl logs --app gsc-tracking-api
 ```
+
+**Open in browser:**
+- Staging: https://gsc-tracking-api-staging.fly.dev/api/hello
+- Production: https://gsc-tracking-api.fly.dev/api/hello
 
 ## 🎉 You're Done!
 
-Your backend API is now automatically deployed to Fly.io!
+Your backend API is now automatically deployed to Fly.io with GitHub Flow!
 
-### What Happens Now
+### What Happens Now (GitHub Flow)
 
-Every time you:
-- Push to `main` branch
-- Make changes in `backend/` directory
-- Or manually trigger the workflow
+**When you create a PR:**
+- Opens PR → Automatically deploys to **staging**
+- Update PR → Automatically redeploys to **staging**
+- PR comment shows staging URL for testing
+- Changes in `backend/` directory trigger deployment
 
-The API will automatically:
-1. Build a new Docker image
-2. Deploy to Fly.io
-3. Run health checks
-4. Update the live app with zero downtime
+**When you merge to main:**
+- Merge PR → Automatically deploys to **production**
+- Changes in `backend/` directory trigger deployment
+- Zero-downtime deployment
+- Health checks verify successful deployment
+
+The workflow:
+1. Create a feature branch
+2. Open a PR (deploys to staging)
+3. Test on staging URL
+4. Merge to main (deploys to production)
 
 ### Important URLs
 
-- **Production API:** https://gsc-tracking-api.fly.dev
+**Production Environment:**
+- **API:** https://gsc-tracking-api.fly.dev
 - **Health Check:** https://gsc-tracking-api.fly.dev/api/hello
+
+**Staging Environment (PR Previews):**
+- **API:** https://gsc-tracking-api-staging.fly.dev
+- **Health Check:** https://gsc-tracking-api-staging.fly.dev/api/hello
+
+**Management:**
 - **Fly.io Dashboard:** https://fly.io/dashboard
 - **Complete Documentation:** [docs/FLYIO-DEPLOYMENT.md](./FLYIO-DEPLOYMENT.md)
 
@@ -179,20 +231,31 @@ The API will automatically:
 
 ### View Logs
 ```bash
-flyctl logs               # Stream live logs
-flyctl logs --count 200   # Last 200 lines
+# Production logs
+flyctl logs --app gsc-tracking-api
+flyctl logs --app gsc-tracking-api --count 200
+
+# Staging logs
+flyctl logs --app gsc-tracking-api-staging
 ```
 
 ### Check Status
 ```bash
-flyctl status             # App health and metrics
-flyctl dashboard          # Open web dashboard
+# Production status
+flyctl status --app gsc-tracking-api
+flyctl dashboard --app gsc-tracking-api
+
+# Staging status
+flyctl status --app gsc-tracking-api-staging
 ```
 
 ### Scaling
 ```bash
-flyctl scale count 2              # Scale to 2 instances
-flyctl scale vm shared-cpu-1x --memory 512  # Upgrade to 512MB
+# Scale production
+flyctl scale count 2 --app gsc-tracking-api
+flyctl scale vm shared-cpu-1x --memory 512 --app gsc-tracking-api
+
+# Staging typically doesn't need scaling (stays at free tier)
 ```
 
 ### Secrets Management
