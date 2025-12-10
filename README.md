@@ -126,7 +126,9 @@ See the [complete deployment guide](./docs/FLYIO-DEPLOYMENT.md) for detailed ins
 
 ## 🤝 Contributing
 
-This is an open-source project. Issue templates and contribution guidelines are available in `.github/ISSUE_TEMPLATE/`.
+This is an open-source project. See [CONTRIBUTING.md](./CONTRIBUTING.md) for complete guidelines.
+
+**⚠️ Important:** PR titles MUST follow [Conventional Commits](./COMMIT_GUIDELINES.md) format. This is required for automated releases.
 
 ## 📄 License
 
@@ -153,3 +155,4 @@ TBD - Choose appropriate license (MIT, Apache 2.0, etc.)
 ## Getting Started
 
 ...existing code...
+# Test

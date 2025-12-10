@@ -2,14 +2,29 @@
 
 Thank you for your interest in contributing! Please read these guidelines to help us maintain a welcoming and productive environment.
 
+## ⚠️ Required Reading
+
+**BEFORE creating PRs, read [COMMIT_GUIDELINES.md](./COMMIT_GUIDELINES.md)**
+
+PR titles MUST follow Conventional Commits format for automated releases. Individual commits following this format is recommended but not required.
+
 ## How to Contribute
 
 - **Fork the repository** and create your branch from `main`.
-- **Write clear, descriptive commit messages** using Conventional Commits (see `.github/copilot-instructions.md`).
-- **Open a pull request** with a clear title and description. Reference related issues (e.g., `Fixes #27`).
+- **Write clear, descriptive commit messages** - Conventional Commits recommended, see [COMMIT_GUIDELINES.md](./COMMIT_GUIDELINES.md).
+- **Open a pull request** with a conventional commit title and clear description. Reference related issues (e.g., `Fixes #27`).
 - **Follow the code style and conventions** described in `.github/copilot-instructions.md` and project READMEs.
 - **Add or update tests** for your changes.
 - **Run linters and ensure all tests pass** before submitting.
+
+## Setting Up Your Environment
+
+1. Clone the repository
+2. Install dependencies: `npm install` (at repository root - optional, for commitlint CLI tool)
+3. Configure the commit template (optional but recommended):
+   ```bash
+   git config commit.template .gitmessage
+   ```
 
 ## Issue Workflow
 
