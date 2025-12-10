@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.1...backend-v0.1.2) (2025-12-10)
+
+
+### Features
+
+* **infra:** add Fly.io deployment with GitHub Flow and staging environment ([#50](https://github.com/jgsteeler/gsc-tracking/issues/50)) ([4e1930f](https://github.com/jgsteeler/gsc-tracking/commit/4e1930ff228e6bc1574a2a4a39f424b3e326145a))
+
 ## [0.1.1](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.0...backend-v0.1.1) (2025-12-10)
 
 
