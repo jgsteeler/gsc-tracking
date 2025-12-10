@@ -2,6 +2,8 @@
 
 Software for tracking equipment, projects, expenses, and sales for GSC Small Engine Repair Shop.
 
+[![Docker Build and Push](https://github.com/jgsteeler/gsc-tracking/actions/workflows/docker-build.yml/badge.svg)](https://github.com/jgsteeler/gsc-tracking/actions/workflows/docker-build.yml)
+
 ## 📋 Project Documentation
 
 - **[Business Analysis](./business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
