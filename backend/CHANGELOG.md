@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.2...backend-v0.1.3) (2025-12-10)
+
+
+### Bug Fixes
+
+* simplify conditions in Fly.io deployment workflows and update configuration files ([#54](https://github.com/jgsteeler/gsc-tracking/issues/54)) ([027e362](https://github.com/jgsteeler/gsc-tracking/commit/027e362b7a30b2930f30dbc17307a473ad746960))
+
 ## [0.1.2](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.1...backend-v0.1.2) (2025-12-10)
 
 
