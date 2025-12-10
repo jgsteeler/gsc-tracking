@@ -3,17 +3,28 @@
 Software for tracking equipment, projects, expenses, and sales for GSC Small Engine Repair Shop.
 
 [![Docker Build and Push](https://github.com/jgsteeler/gsc-tracking/actions/workflows/docker-build.yml/badge.svg)](https://github.com/jgsteeler/gsc-tracking/actions/workflows/docker-build.yml)
+[![Deploy to Fly.io](https://github.com/jgsteeler/gsc-tracking/actions/workflows/deploy-flyio.yml/badge.svg)](https://github.com/jgsteeler/gsc-tracking/actions/workflows/deploy-flyio.yml)
+[![Validate PR](https://github.com/jgsteeler/gsc-tracking/actions/workflows/validate-pr.yml/badge.svg)](https://github.com/jgsteeler/gsc-tracking/actions/workflows/validate-pr.yml)
+[![Release Please](https://github.com/jgsteeler/gsc-tracking/actions/workflows/release-please.yml/badge.svg)](https://github.com/jgsteeler/gsc-tracking/actions/workflows/release-please.yml)
 
 ## 📋 Project Documentation
 
+### Core Documentation
 - **[Business Analysis](./business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
-- **[Hosting Evaluation](./docs/HOSTING-EVALUATION.md)** - Analysis of hosting alternatives (Azure, Fly.io, Railway, Netlify, Cloudflare) with cost estimates and recommendations
-- **[Fly.io Deployment](./docs/FLYIO-DEPLOYMENT.md)** - Complete guide for deploying the backend to Fly.io
-- **[Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md)** - Step-by-step checklist for first-time Fly.io setup
 - **[GitHub Issues](./ISSUES.md)** - Complete specifications for 25 project issues
 - **[Setup Instructions](./SETUP-INSTRUCTIONS.md)** - Step-by-step guide for creating labels, milestones, and issues
-- **[Docker Guide](./DOCKER.md)** - Complete Docker and Docker Compose documentation
+
+### CI/CD and Deployment
+- **[CI/CD Pipeline](./docs/CICD-PIPELINE.md)** - Complete CI/CD documentation with workflows, branching strategy, and troubleshooting
 - **[Release Process](./RELEASE.md)** - Semantic versioning and automated release workflow
+- **[Fly.io Deployment](./docs/FLYIO-DEPLOYMENT.md)** - Complete guide for deploying the backend to Fly.io
+- **[Deployment Setup Checklist](./docs/DEPLOYMENT-SETUP-CHECKLIST.md)** - Step-by-step checklist for first-time Fly.io setup
+- **[Hosting Evaluation](./docs/HOSTING-EVALUATION.md)** - Analysis of hosting alternatives with cost estimates and recommendations
+
+### Development
+- **[Docker Guide](./DOCKER.md)** - Complete Docker and Docker Compose documentation
+- **[Contributing Guidelines](./CONTRIBUTING.md)** - How to contribute to the project
+- **[Commit Guidelines](./COMMIT_GUIDELINES.md)** - Conventional Commits format requirements
 
 ## 🎯 Quick Start
 
@@ -86,9 +97,19 @@ gsc-tracking/
 - **Roadmap Features:** 11 enhanced features for future phases
 - **Infrastructure:** 8 setup and DevOps tasks
 
-## 🚀 Deployment
+## 🚀 CI/CD and Deployment
 
-This project follows **GitHub Flow** with automatic deployments to staging and production environments.
+This project uses **GitHub Actions** for continuous integration and deployment with **GitHub Flow** branching strategy.
+
+### CI/CD Pipeline
+
+The automated pipeline includes:
+- ✅ **PR Validation**: Conventional Commits format enforcement
+- ✅ **Docker Build**: Automatic image building and publishing to GitHub Container Registry
+- ✅ **Automated Deployment**: Staging on PR, Production on merge to main
+- ✅ **Release Management**: Automated versioning and changelog generation with Release Please
+
+📖 **Full Documentation**: [CI/CD Pipeline Guide](./docs/CICD-PIPELINE.md)
 
 ### Environments
 
@@ -96,18 +117,23 @@ This project follows **GitHub Flow** with automatic deployments to staging and p
 - **URL:** https://gsc-tracking-api.fly.dev
 - **Health Check:** https://gsc-tracking-api.fly.dev/api/hello
 - **Trigger:** Merge to `main` branch
+- **Platform:** Fly.io
 
 **Staging (PR Previews):**
 - **URL:** https://gsc-tracking-api-staging.fly.dev
 - **Health Check:** https://gsc-tracking-api-staging.fly.dev/api/hello
 - **Trigger:** Open/update pull request to `main` branch
+- **Platform:** Fly.io (shared environment)
 
 ### GitHub Flow Workflow
 
-1. **Create a feature branch** and make your changes
-2. **Open a pull request** → Automatically deploys to staging
-3. **Test your changes** on the staging URL (posted in PR comments)
-4. **Merge to main** → Automatically deploys to production
+1. **Create a feature branch** from `main` (e.g., `feat/customer-search`)
+2. **Make changes** following [Conventional Commits](./COMMIT_GUIDELINES.md)
+3. **Open a pull request** → Automatically deploys to staging
+4. **Test your changes** on the staging URL (posted in PR comments)
+5. **Get code review** and approval
+6. **Merge to main** → Automatically deploys to production
+7. **Release Please** creates release PR when ready
 
 ### Setting Up Deployment
 
