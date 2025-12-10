@@ -2,40 +2,12 @@ name: Run Tests
 
 on:
   push:
-    branches: [ main, develop, 'feature/**', 'fix/**', 'chore/**' ]
   pull_request:
-    branches: [ main, develop ]
 
 jobs:
-  # Detect which paths have changed
-  changes:
-    name: Detect Changes
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-      frontend: ${{ steps.filter.outputs.frontend }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Check for file changes
-        uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            backend:
-              - 'backend/**'
-              - '.github/workflows/test.yml'
-            frontend:
-              - 'frontend/**'
-              - '.github/workflows/test.yml'
-
   # Backend tests
   test-backend:
     name: Backend Tests
-    needs: changes
-    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -61,7 +33,7 @@ jobs:
       - name: Generate coverage report
         run: |
           dotnet tool install -g dotnet-reportgenerator-globaltool
-          reportgenerator -reports:"TestResults/*/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:"Cobertura;TextSummary"
+          reportgenerator -reports:"TestResults/*/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:"Cobertura;TextSummary;Html"
           cat coveragereport/Summary.txt
         working-directory: backend/GscTracking.Api.Tests
       - name: Upload coverage reports
@@ -69,6 +41,14 @@ jobs:
         with:
           name: backend-coverage
           path: backend/GscTracking.Api.Tests/coveragereport
+      - name: Publish backend coverage to job summary
+        run: |
+          echo "## Backend Test Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat coveragereport/Summary.txt >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        working-directory: backend/GscTracking.Api.Tests
       - name: Check coverage threshold
         run: |
           COVERAGE=$(grep -oP 'Line coverage: \K[0-9.]+' coveragereport/Summary.txt)
@@ -83,8 +63,6 @@ jobs:
   # Frontend tests
   test-frontend:
     name: Frontend Tests
-    needs: changes
-    if: needs.changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -111,6 +89,17 @@ jobs:
         with:
           name: frontend-coverage
           path: frontend/coverage
+      - name: Publish frontend coverage to job summary
+        run: |
+          echo "## Frontend Test Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f coverage/coverage-summary.json ]; then
+            echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
+            cat coverage/coverage-summary.json >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Coverage summary not found" >> $GITHUB_STEP_SUMMARY
+          fi
       - name: Check coverage threshold
         run: |
           if [ -f coverage/coverage-summary.json ]; then
@@ -128,7 +117,7 @@ jobs:
   # Summary job that requires all tests to pass
   test-summary:
     name: Test Summary
-    needs: [changes, test-backend, test-frontend]
+    needs: [test-backend, test-frontend]
     if: always()
     runs-on: ubuntu-latest
     permissions:
