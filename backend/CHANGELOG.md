@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.3...backend-v0.1.4) (2025-12-11)
+
+
+### Features
+
+* **test:** implement unit testing framework with CI/CD integration ([#59](https://github.com/jgsteeler/gsc-tracking/issues/59)) ([afe3ae4](https://github.com/jgsteeler/gsc-tracking/commit/afe3ae49ebb9fbe1b4b89a495bd5c65023ba0f53))
+
 ## [0.1.3](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.2...backend-v0.1.3) (2025-12-10)
 
 
