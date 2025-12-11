@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.1...frontend-v0.1.2) (2025-12-10)
+
+
+### Features
+
+* **infra:** add Netlify deployment with deploy previews as staging ([#55](https://github.com/jgsteeler/gsc-tracking/issues/55)) ([39288bd](https://github.com/jgsteeler/gsc-tracking/commit/39288bd40517ac47dbd2913422e64169bc673680))
+
 ## [0.1.1](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.0...frontend-v0.1.1) (2025-12-10)
 
 

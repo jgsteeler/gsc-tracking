@@ -1,0 +1,135 @@
+name: Run Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  # Backend tests
+  test-backend:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: backend/GscTracking.Api.Tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: backend
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+        working-directory: backend
+      - name: Run tests with coverage
+        run: dotnet test --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./TestResults
+        working-directory: backend/GscTracking.Api.Tests
+      - name: Generate coverage report
+        run: |
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+          reportgenerator -reports:"TestResults/*/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:"Cobertura;TextSummary;Html"
+          cat coveragereport/Summary.txt
+        working-directory: backend/GscTracking.Api.Tests
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/GscTracking.Api.Tests/coveragereport
+      - name: Publish backend coverage to job summary
+        run: |
+          echo "## Backend Test Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat coveragereport/Summary.txt >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        working-directory: backend/GscTracking.Api.Tests
+      - name: Check coverage threshold
+        run: |
+          COVERAGE=$(grep -oP 'Line coverage: \K[0-9.]+' coveragereport/Summary.txt)
+          echo "Line coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 50" | bc -l) )); then
+            echo "::warning::Backend code coverage ($COVERAGE%) is below 50% threshold"
+          else
+            echo "✅ Backend code coverage ($COVERAGE%) meets the 50% threshold"
+          fi
+        working-directory: backend/GscTracking.Api.Tests
+
+  # Frontend tests
+  test-frontend:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run lint
+        run: npm run lint
+      - name: Run tests with coverage
+        run: npm run test:coverage -- --run
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend/coverage
+      - name: Publish frontend coverage to job summary
+        run: |
+          echo "## Frontend Test Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f coverage/coverage-summary.json ]; then
+            echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
+            cat coverage/coverage-summary.json >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Coverage summary not found" >> $GITHUB_STEP_SUMMARY
+          fi
+      - name: Check coverage threshold
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            COVERAGE=$(node -pe "JSON.parse(require('fs').readFileSync('coverage/coverage-summary.json')).total.lines.pct")
+            echo "Line coverage: $COVERAGE%"
+            if (( $(echo "$COVERAGE < 50" | bc -l) )); then
+              echo "::warning::Frontend code coverage ($COVERAGE%) is below 50% threshold"
+            else
+              echo "✅ Frontend code coverage ($COVERAGE%) meets the 50% threshold"
+            fi
+          else
+            echo "::warning::Coverage summary file not found"
+          fi
+
+  # Summary job that requires all tests to pass
+  test-summary:
+    name: Test Summary
+    needs: [test-backend, test-frontend]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check test results
+        run: |
+          if [[ "${{ needs.test-backend.result }}" == "failure" ]] || [[ "${{ needs.test-frontend.result }}" == "failure" ]]; then
+            echo "❌ Some tests failed"
+            exit 1
+          elif [[ "${{ needs.test-backend.result }}" == "skipped" ]] && [[ "${{ needs.test-frontend.result }}" == "skipped" ]]; then
+            echo "⏭️ All tests were skipped (no changes detected)"
+          else
+            echo "✅ All tests passed"
+          fi

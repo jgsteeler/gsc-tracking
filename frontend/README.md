@@ -38,6 +38,31 @@ This will create an optimized production build in the `dist/` directory.
 npm run preview
 ```
 
+## Running Tests
+
+### Run all tests
+```bash
+npm run test
+```
+
+### Run tests with UI
+```bash
+npm run test:ui
+```
+
+### Run tests with coverage
+```bash
+npm run test:coverage
+```
+
+The coverage report will be generated in the `coverage/` directory.
+
+### Current Coverage
+- **Overall**: 96.61% line coverage
+- **Utils**: 100% coverage
+- **Services**: 92.85% coverage (customerService)
+- **Hooks**: 100% coverage (useCustomers)
+
 ## Features
 
 This is a Hello World setup that:
