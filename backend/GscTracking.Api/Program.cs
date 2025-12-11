@@ -18,10 +18,35 @@ builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CustomerRequestDtoValidator>();
 
-// Add DbContext
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+// Add DbContext with support for multiple database providers
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Determine database provider based on connection string format
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException(
+        "No database connection string found. Please set DATABASE_URL environment variable or DefaultConnection in appsettings.json");
+}
+
+if (connectionString.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+{
+    // SQLite for local development
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(connectionString));
+}
+else if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) ||
+         connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
+{
+    // PostgreSQL for staging and production
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(connectionString));
+}
+else
+{
+    throw new InvalidOperationException(
+        $"Unsupported database connection string format. Expected SQLite (Data Source=...) or PostgreSQL (postgresql://... or Host=...)");
+}
 
 // Add services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
