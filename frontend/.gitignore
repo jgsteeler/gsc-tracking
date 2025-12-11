@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Test coverage
+coverage
+.vitest
 # Environment variables
 .env
 .env.local
