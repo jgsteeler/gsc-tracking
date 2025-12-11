@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.3](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.2...frontend-v0.1.3) (2025-12-11)
+
+
+### Features
+
+* **test:** implement unit testing framework with CI/CD integration ([#59](https://github.com/jgsteeler/gsc-tracking/issues/59)) ([afe3ae4](https://github.com/jgsteeler/gsc-tracking/commit/afe3ae49ebb9fbe1b4b89a495bd5c65023ba0f53))
+
+
+### Bug Fixes
+
+* **ui:** make dialog forms and toast notifications fully opaque and visible ([#64](https://github.com/jgsteeler/gsc-tracking/issues/64)) ([5f72637](https://github.com/jgsteeler/gsc-tracking/commit/5f726373b0953705f1c03d98edd338cb4360ae17))
+
 ## [0.1.2](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.1...frontend-v0.1.2) (2025-12-10)
 
 
