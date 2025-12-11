@@ -70,6 +70,53 @@ Step-by-step checklist for first-time Fly.io deployment setup.
 - Testing deployment workflow
 - Verification steps
 
+### Database Setup
+
+#### [DATABASE-SETUP.md](./DATABASE-SETUP.md)
+**Status:** ✅ Complete  
+**Last Updated:** 2025-12-11
+
+Complete database setup guide for all environments (local, staging, production).
+
+**Includes:**
+- Database choice rationale (PostgreSQL vs SQLite)
+- Neon PostgreSQL setup for staging (free tier)
+- Production planning (Neon Pro, Azure PostgreSQL, Supabase)
+- Connection configuration for all environments
+- Database schema and migrations overview
+- Backup and restore procedures
+- Monitoring and alerting guidelines
+- Security best practices
+- Troubleshooting guide
+
+#### [NEON-QUICKSTART.md](./NEON-QUICKSTART.md)
+**Status:** ✅ Complete  
+**Last Updated:** 2025-12-11
+
+5-minute quick start guide for setting up Neon PostgreSQL staging database.
+
+**Includes:**
+- Step-by-step setup (< 5 minutes)
+- Fly.io integration
+- Testing database connection
+- Common tasks (branching, backup, restore)
+- Troubleshooting
+
+#### [DATABASE-MIGRATION-GUIDE.md](./DATABASE-MIGRATION-GUIDE.md)
+**Status:** ✅ Complete  
+**Last Updated:** 2025-12-11
+
+Entity Framework Core migrations reference and best practices.
+
+**Includes:**
+- EF Core migrations overview
+- Creating and applying migrations
+- Local, staging, and production deployment
+- Migration best practices
+- Common migration scenarios (add table, add column, indexes, etc.)
+- Rollback procedures
+- Troubleshooting migrations
+
 ### Infrastructure and Hosting
 
 #### [HOSTING-EVALUATION.md](./HOSTING-EVALUATION.md)
@@ -146,6 +193,9 @@ Brief description of what this document covers...
 
 | Document | Category | Purpose |
 |----------|----------|---------|
+| [DATABASE-SETUP.md](./DATABASE-SETUP.md) | Database | Complete database setup (all environments) |
+| [NEON-QUICKSTART.md](./NEON-QUICKSTART.md) | Database | 5-minute Neon PostgreSQL setup |
+| [DATABASE-MIGRATION-GUIDE.md](./DATABASE-MIGRATION-GUIDE.md) | Database | EF Core migrations reference |
 | [CICD-PIPELINE.md](./CICD-PIPELINE.md) | CI/CD | Complete CI/CD workflow guide |
 | [CICD-VALIDATION.md](./CICD-VALIDATION.md) | CI/CD | Pipeline validation report |
 | [FLYIO-DEPLOYMENT.md](./FLYIO-DEPLOYMENT.md) | Deployment | Fly.io deployment guide |
@@ -156,5 +206,5 @@ Brief description of what this document covers...
 
 ---
 
-**Last Updated:** 2025-12-10  
+**Last Updated:** 2025-12-11  
 **Maintained By:** GSC Development Team

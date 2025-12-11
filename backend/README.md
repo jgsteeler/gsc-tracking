@@ -88,11 +88,23 @@ backend/
     └── GscTracking.Api.csproj  # Project file
 ```
 
+## Database
+
+The application supports multiple database providers:
+- **Local Development**: SQLite (file-based, zero configuration)
+- **Staging/Production**: PostgreSQL (via Neon, Azure, or other providers)
+
+See database documentation:
+- **[Database Setup Guide](../docs/DATABASE-SETUP.md)** - Complete database setup for all environments
+- **[Neon Quick Start](../docs/NEON-QUICKSTART.md)** - 5-minute setup for staging database
+- **[Migration Guide](../docs/DATABASE-MIGRATION-GUIDE.md)** - EF Core migrations reference
+
 ## Next Steps
 
-1. Add Entity Framework Core for database access
-2. Implement authentication with Auth0
-3. Create customer, job, and financial endpoints
-4. Add validation and error handling
+1. ✅ Entity Framework Core for database access - **DONE**
+2. ⏳ Set up staging database (Neon PostgreSQL)
+3. ⏳ Implement authentication with Auth0
+4. ⏳ Create customer, job, and financial endpoints
+5. ⏳ Add validation and error handling
 
 See [business-management-app-analysis.md](../business-management-app-analysis.md) for full requirements.
