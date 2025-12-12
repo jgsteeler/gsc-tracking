@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.4...backend-v0.1.5) (2025-12-11)
+
+
+### Features
+
+* **infra:** add PostgreSQL support and comprehensive database documentation ([#67](https://github.com/jgsteeler/gsc-tracking/issues/67)) ([4a2cab9](https://github.com/jgsteeler/gsc-tracking/commit/4a2cab917bca1f1e7b34362588226d26395fce38))
+
 ## [0.1.4](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.3...backend-v0.1.4) (2025-12-11)
 
 
