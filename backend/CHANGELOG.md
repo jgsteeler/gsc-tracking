@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.5...backend-v0.1.6) (2025-12-12)
+
+
+### Features
+
+* **job:** implement job management with CRUD operations and unit tests ([#68](https://github.com/jgsteeler/gsc-tracking/issues/68)) ([e85bedf](https://github.com/jgsteeler/gsc-tracking/commit/e85bedfcb70e0c72c081d743c4c97c625c984c65))
+
 ## [0.1.5](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.4...backend-v0.1.5) (2025-12-11)
 
 
