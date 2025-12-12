@@ -1,0 +1,24 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a new feature!
+        
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Provide a clear and detailed description of the feature you'd like to see
+      placeholder: |
+        Describe the feature and why it would be valuable.
+        
+        You can use task lists to break down the work:
+        - [ ] Subtask 1
+        - [ ] Subtask 2
+        - [ ] Subtask 3
+    validations:
+      required: true
