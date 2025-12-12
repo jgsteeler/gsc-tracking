@@ -12,4 +12,7 @@ public class Customer
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public bool IsDeleted { get; set; } = false;
     public DateTime? DeletedAt { get; set; }
+    
+    // Navigation property
+    public ICollection<Job> Jobs { get; set; } = new List<Job>();
 }

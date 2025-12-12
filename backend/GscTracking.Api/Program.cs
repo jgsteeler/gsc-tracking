@@ -50,6 +50,7 @@ else
 
 // Add services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IJobService, JobService>();
 
 // Add CORS policy for frontend development
 builder.Services.AddCors(options =>
