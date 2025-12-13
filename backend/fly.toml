@@ -1,17 +1,12 @@
-# fly.toml app configuration file generated for gsc-tracking-api on 2025-12-09T20:06:27-06:00
+# fly.toml app configuration file generated for gsc-tracking-api-staging on 2025-12-13T03:09:26Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'gsc-tracking-api'
+app = 'gsc-tracking-api-staging'
 primary_region = 'iad'
 
 [build]
-  dockerfile = 'Dockerfile'
-
-[env]
-  ASPNETCORE_ENVIRONMENT = 'Production'
-  ASPNETCORE_URLS = 'http://+:8080'
 
 [http_service]
   internal_port = 8080
@@ -21,14 +16,8 @@ primary_region = 'iad'
   min_machines_running = 0
   processes = ['app']
 
-  [[http_service.checks]]
-    interval = '15s'
-    timeout = '10s'
-    grace_period = '30s'
-    method = 'GET'
-    path = '/api/hello'
-
 [[vm]]
-  memory = '256mb'
+  memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
+  memory_mb = 1024
