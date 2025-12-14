@@ -17,11 +17,16 @@ const customerSchema = z.object({
   name: z.string().min(1, 'Name is required').max(200, 'Name cannot exceed 200 characters'),
   email: z
     .string()
-    .min(1, 'Email is required')
-    .email('Invalid email format')
-    .max(200, 'Email cannot exceed 200 characters'),
-  phone: z.string().min(1, 'Phone is required').max(50, 'Phone cannot exceed 50 characters'),
-  address: z.string().min(1, 'Address is required').max(500, 'Address cannot exceed 500 characters'),
+    .transform(val => val === '' ? undefined : val)
+    .optional()
+    .refine(val => !val || z.string().email().safeParse(val).success, {
+      message: 'Invalid email format'
+    })
+    .refine(val => !val || val.length <= 200, {
+      message: 'Email cannot exceed 200 characters'
+    }),
+  phone: z.string().max(50, 'Phone cannot exceed 50 characters').optional(),
+  address: z.string().max(500, 'Address cannot exceed 500 characters').optional(),
   notes: z.string().max(2000, 'Notes cannot exceed 2000 characters').optional(),
 })
 
@@ -77,7 +82,7 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Email (Optional)</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="john@example.com" {...field} />
               </FormControl>
@@ -91,7 +96,7 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone</FormLabel>
+              <FormLabel>Phone (Optional)</FormLabel>
               <FormControl>
                 <Input placeholder="(555) 123-4567" {...field} />
               </FormControl>
@@ -105,7 +110,7 @@ export function CustomerForm({ customer, onSubmit, onCancel }: CustomerFormProps
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Address</FormLabel>
+              <FormLabel>Address (Optional)</FormLabel>
               <FormControl>
                 <Input placeholder="123 Main St, City, State ZIP" {...field} />
               </FormControl>
