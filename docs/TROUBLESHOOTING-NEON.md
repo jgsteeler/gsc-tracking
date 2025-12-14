@@ -1,5 +1,9 @@
 # Neon PostgreSQL Troubleshooting Guide
 
+**Document Version:** 1.0  
+**Last Updated:** 2025-12-14  
+**Status:** Active
+
 **Quick Reference for Common Issues**
 
 ---

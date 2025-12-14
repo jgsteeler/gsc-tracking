@@ -10,6 +10,31 @@
 
 This guide provides comprehensive instructions for connecting Entity Framework Core to PostgreSQL databases, with specific focus on Neon PostgreSQL serverless databases.
 
+## ⚠️ Important: About SQLite Migrations
+
+**The migrations in this repository were generated using SQLite (local development database) and contain SQLite-specific types like `INTEGER` and `TEXT`. This is expected and correct behavior.**
+
+### Why SQLite Migrations Work with PostgreSQL
+
+- **Entity Framework Core automatically translates** SQLite types to PostgreSQL types at runtime
+- The DbContext is configured to be **database-agnostic** (using `HasPrecision()` instead of `HasColumnType()`)
+- When you run `dotnet ef database update` with PostgreSQL, EF Core creates PostgreSQL-compatible tables
+
+### Type Translations
+
+| SQLite (Migration Files) | PostgreSQL (Runtime) |
+|--------------------------|----------------------|
+| INTEGER                  | integer              |
+| TEXT                     | text/varchar         |
+| REAL                     | double precision     |
+| BLOB                     | bytea                |
+
+**✅ You can safely apply SQLite migrations to PostgreSQL without modification.**
+
+See the [Migration Workflow](#migration-workflow) section for more details.
+
+---
+
 ## Connection String Formats
 
 The application supports multiple PostgreSQL connection string formats:
@@ -77,24 +102,6 @@ environment:
 ```
 
 ## Common Connection Issues and Solutions
-
-### Important: About SQLite Migrations in PostgreSQL
-
-The migrations in this repository were generated using SQLite (the local development database). They contain SQLite-specific types like `INTEGER` and `TEXT`. **This is expected and correct behavior.**
-
-**Why this works:**
-- Entity Framework Core **automatically translates** SQLite types to PostgreSQL types at runtime
-- The DbContext is configured to be database-agnostic (using `HasPrecision()` instead of `HasColumnType()`)
-- When you run `dotnet ef database update` with a PostgreSQL connection string, EF Core creates PostgreSQL-compatible tables
-
-**Type translations:**
-- SQLite `INTEGER` → PostgreSQL `integer`
-- SQLite `TEXT` → PostgreSQL `text`/`varchar`  
-- SQLite `REAL` → PostgreSQL `double precision`
-
-**You can safely apply SQLite migrations to PostgreSQL.** No need to regenerate unless you want PostgreSQL-native migration files.
-
----
 
 ### Issue 1: SSL/TLS Certificate Errors
 

@@ -40,7 +40,11 @@ else if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIg
          connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
 {
     // PostgreSQL for staging and production
-    // Npgsql supports both URL format (postgresql://) and standard format (Host=...)
+    // Supports multiple connection string formats:
+    // - postgresql:// (Neon default format)
+    // - postgres:// (alternative PostgreSQL URL format)
+    // - Host=... (standard Npgsql format)
+    // Npgsql supports both URL and standard formats directly
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
         options.UseNpgsql(connectionString, npgsqlOptions =>
