@@ -71,10 +71,23 @@ xdg-open coveragereport/index.html  # Linux
 - **Services**: 100% coverage (CustomerService)
 - **Overall**: ~28% (excluding migrations, Program.cs, and validators)
 
+### API Documentation (Swagger)
+
+When running in development mode, interactive API documentation is available via Swagger UI:
+
+- **Swagger UI**: http://localhost:5091/swagger
+- **OpenAPI JSON**: http://localhost:5091/swagger/v1/swagger.json
+
+The Swagger UI provides:
+- Interactive API documentation
+- Ability to test API endpoints directly from the browser
+- Detailed request/response schemas
+- XML comments from the code as endpoint descriptions
+
 ### Development
 
 The API is configured with:
-- OpenAPI/Swagger documentation (available in development mode)
+- Swagger/OpenAPI documentation (available in development mode)
 - CORS enabled for frontend at `http://localhost:5173`
 - HTTPS redirection
 
