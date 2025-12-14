@@ -73,10 +73,12 @@ xdg-open coveragereport/index.html  # Linux
 
 ### API Documentation (Swagger)
 
-When running in development mode, interactive API documentation is available via Swagger UI:
+When running in development or staging mode, interactive API documentation is available via Swagger UI:
 
-- **Swagger UI**: http://localhost:5091/swagger
+- **Swagger UI**: http://localhost:5091/swagger (Development) or your staging URL
 - **OpenAPI JSON**: http://localhost:5091/swagger/v1/swagger.json
+
+Note: Swagger is not available in production for security reasons.
 
 The Swagger UI provides:
 - Interactive API documentation
@@ -87,7 +89,7 @@ The Swagger UI provides:
 ### Development
 
 The API is configured with:
-- Swagger/OpenAPI documentation (available in development mode)
+- Swagger/OpenAPI documentation (available in development and staging)
 - CORS enabled for frontend at `http://localhost:5173`
 - HTTPS redirection
 
