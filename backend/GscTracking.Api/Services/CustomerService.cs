@@ -23,9 +23,9 @@ public class CustomerService : ICustomerService
             searchTerm = searchTerm.ToLower();
             query = query.Where(c =>
                 c.Name.ToLower().Contains(searchTerm) ||
-                c.Email.ToLower().Contains(searchTerm) ||
-                c.Phone.Contains(searchTerm) ||
-                c.Address.ToLower().Contains(searchTerm));
+                (c.Email != null && c.Email.ToLower().Contains(searchTerm)) ||
+                (c.Phone != null && c.Phone.Contains(searchTerm)) ||
+                (c.Address != null && c.Address.ToLower().Contains(searchTerm)));
         }
 
         var customers = await query
