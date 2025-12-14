@@ -17,10 +17,14 @@ const customerSchema = z.object({
   name: z.string().min(1, 'Name is required').max(200, 'Name cannot exceed 200 characters'),
   email: z
     .string()
-    .max(200, 'Email cannot exceed 200 characters')
-    .email('Invalid email format')
+    .transform(val => val === '' ? undefined : val)
     .optional()
-    .or(z.literal('')),
+    .refine(val => !val || z.string().email().safeParse(val).success, {
+      message: 'Invalid email format'
+    })
+    .refine(val => !val || val.length <= 200, {
+      message: 'Email cannot exceed 200 characters'
+    }),
   phone: z.string().max(50, 'Phone cannot exceed 50 characters').optional(),
   address: z.string().max(500, 'Address cannot exceed 500 characters').optional(),
   notes: z.string().max(2000, 'Notes cannot exceed 2000 characters').optional(),
