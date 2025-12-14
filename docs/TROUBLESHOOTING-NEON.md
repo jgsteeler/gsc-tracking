@@ -130,30 +130,48 @@ psql "postgresql://user:pass@host/neondb?sslmode=require" -c "CREATE DATABASE gs
 Old SQLite-specific migrations
 
 **Solution:**
-✅ **Migrations are now database-agnostic** (as of commit 3c5a9b4)
+✅ **The application DbContext is now configured for cross-database compatibility**
 
-If you still see errors:
+However, migrations are generated based on the active database provider. If you created migrations with SQLite, they'll contain SQLite types. This is expected behavior.
 
-1. **Pull latest changes:**
-   ```bash
-   git pull origin main
-   ```
+**For production PostgreSQL deployments:**
 
-2. **Remove old migrations** (if you created them before the fix):
-   ```bash
-   cd backend/GscTracking.Api
-   rm -rf Migrations/
-   ```
-
-3. **Regenerate migrations:**
-   ```bash
-   dotnet ef migrations add InitialCreate
-   ```
-
-4. **Apply to Neon:**
+1. **Option A: Let EF Core handle it (Recommended)**
+   
+   The migrations will work with PostgreSQL at runtime because:
+   - `INTEGER` → PostgreSQL `integer`
+   - `TEXT` → PostgreSQL `text`/`varchar`
+   - Constraints are translated appropriately
+   
+   Just apply the existing migrations:
    ```bash
    export DATABASE_URL="postgresql://..."
    dotnet ef database update
+   ```
+
+2. **Option B: Regenerate for PostgreSQL**
+   
+   If you want PostgreSQL-native migrations:
+   ```bash
+   # Set PostgreSQL as target
+   export DATABASE_URL="postgresql://user:pass@host/db?sslmode=require"
+   
+   # Remove existing migrations
+   rm -rf Migrations/
+   
+   # Generate new migrations with PostgreSQL provider
+   dotnet ef migrations add InitialCreate
+   
+   # Apply
+   dotnet ef database update
+   ```
+
+3. **Option C: Use both (Hybrid approach)**
+   
+   Keep SQLite migrations for local dev, use --connection flag for PostgreSQL:
+   ```bash
+   # Apply with specific connection string
+   dotnet ef database update --connection "postgresql://..."
    ```
 
 ---

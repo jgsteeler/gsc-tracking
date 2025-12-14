@@ -78,6 +78,24 @@ environment:
 
 ## Common Connection Issues and Solutions
 
+### Important: About SQLite Migrations in PostgreSQL
+
+The migrations in this repository were generated using SQLite (the local development database). They contain SQLite-specific types like `INTEGER` and `TEXT`. **This is expected and correct behavior.**
+
+**Why this works:**
+- Entity Framework Core **automatically translates** SQLite types to PostgreSQL types at runtime
+- The DbContext is configured to be database-agnostic (using `HasPrecision()` instead of `HasColumnType()`)
+- When you run `dotnet ef database update` with a PostgreSQL connection string, EF Core creates PostgreSQL-compatible tables
+
+**Type translations:**
+- SQLite `INTEGER` → PostgreSQL `integer`
+- SQLite `TEXT` → PostgreSQL `text`/`varchar`  
+- SQLite `REAL` → PostgreSQL `double precision`
+
+**You can safely apply SQLite migrations to PostgreSQL.** No need to regenerate unless you want PostgreSQL-native migration files.
+
+---
+
 ### Issue 1: SSL/TLS Certificate Errors
 
 **Error:**
@@ -435,13 +453,15 @@ dotnet ef database update
 dotnet run
 ```
 
+**Note:** Migrations generated with SQLite will contain SQLite-specific types (INTEGER, TEXT) but will work with PostgreSQL at runtime because EF Core translates them appropriately.
+
 ### Staging (Neon PostgreSQL)
 
 ```bash
 # Set connection string
 export DATABASE_URL="postgresql://user:pass@host/db?sslmode=require"
 
-# Apply migration
+# Apply migration (existing SQLite migrations work fine)
 dotnet ef database update
 
 # Verify
@@ -450,6 +470,40 @@ dotnet ef migrations list
 # Deploy
 flyctl deploy --config fly.staging.toml
 ```
+
+**Alternative:** Generate PostgreSQL-specific migrations:
+```bash
+# Remove SQLite migrations
+rm -rf Migrations/
+
+# Set PostgreSQL connection
+export DATABASE_URL="postgresql://user:pass@host/db?sslmode=require"
+
+# Generate with PostgreSQL provider
+dotnet ef migrations add InitialCreate
+
+# Apply
+dotnet ef database update
+```
+
+### Cross-Database Compatibility
+
+The application DbContext is configured to work with both SQLite and PostgreSQL:
+
+- **Decimal fields**: Use `HasPrecision(18, 2)` instead of `HasColumnType()`
+- **String fields**: Use `HasMaxLength()` which works on both
+- **Primary keys**: Auto-increment is handled automatically by each provider
+- **Timestamps**: DateTime works on both (stored as TEXT in SQLite, timestamp in PostgreSQL)
+
+**Migration type mapping:**
+| SQLite (Migration) | PostgreSQL (Runtime) |
+|--------------------|----------------------|
+| INTEGER            | integer              |
+| TEXT               | text/varchar         |
+| REAL               | double precision     |
+| BLOB               | bytea                |
+
+EF Core handles the translation automatically when you apply migrations to PostgreSQL.
 
 ---
 
