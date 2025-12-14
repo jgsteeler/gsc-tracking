@@ -73,7 +73,8 @@ namespace GscTracking.Api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal?>("ActualAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
@@ -106,7 +107,8 @@ namespace GscTracking.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal?>("EstimateAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()

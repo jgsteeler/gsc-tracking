@@ -95,6 +95,7 @@ The application supports multiple database providers:
 - **Staging/Production**: PostgreSQL (via Neon, Azure, or other providers)
 
 See database documentation:
+- **[PostgreSQL Connection Guide](../docs/POSTGRESQL-CONNECTION-GUIDE.md)** - **NEW!** Complete guide for connecting to Neon PostgreSQL
 - **[Database Setup Guide](../docs/DATABASE-SETUP.md)** - Complete database setup for all environments
 - **[Neon Quick Start](../docs/NEON-QUICKSTART.md)** - 5-minute setup for staging database
 - **[Migration Guide](../docs/DATABASE-MIGRATION-GUIDE.md)** - EF Core migrations reference

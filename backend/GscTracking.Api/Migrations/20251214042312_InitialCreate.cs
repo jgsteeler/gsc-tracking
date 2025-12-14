@@ -6,11 +6,32 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GscTracking.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class AddJobEntity : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Customer",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Phone = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Address = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    Notes = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false),
+                    DeletedAt = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customer", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Job",
                 columns: table => new
@@ -24,8 +45,8 @@ namespace GscTracking.Api.Migrations
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
                     DateReceived = table.Column<DateTime>(type: "TEXT", nullable: false),
                     DateCompleted = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    EstimateAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    ActualAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    EstimateAmount = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: true),
+                    ActualAmount = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false),
@@ -53,6 +74,9 @@ namespace GscTracking.Api.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Job");
+
+            migrationBuilder.DropTable(
+                name: "Customer");
         }
     }
 }
