@@ -89,11 +89,11 @@ static string BuildNpgsqlConnectionString(string connectionUrl)
 // Determine database provider based on connection string format
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException(
-        "No database connection string found. Please set DATABASE_URL environment variable or DefaultConnection in appsettings.json");
+    throw new InvalidOperationException("No database connection string found. Set the DATABASE_URL environment variable or configure 'DefaultConnection' in appsettings.json.");
 }
 
-if (connectionString.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+// Determine database provider based on connection string
+if (connectionString.StartsWith("Data Source="))
 {
     // SQLite for local development
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -132,7 +132,7 @@ else if (connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
     // Standard PostgreSQL connection string format
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
-        options.UseNpgsql(connectionString, npgsqlOptions =>
+        options.UseNpgsql(npgsqlConnectionString, npgsqlOptions =>
         {
             // Enable retry on failure for transient errors
             npgsqlOptions.EnableRetryOnFailure(
@@ -151,6 +151,12 @@ else if (connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
             options.EnableDetailedErrors();
         }
     });
+}
+else if (connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
+{
+    // Standard PostgreSQL connection string format
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(connectionString));
 }
 else
 {
