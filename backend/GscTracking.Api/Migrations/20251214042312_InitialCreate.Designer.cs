@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GscTracking.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251211030359_AddJobEntity")]
-    partial class AddJobEntity
+    [Migration("20251214042312_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,7 +76,8 @@ namespace GscTracking.Api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal?>("ActualAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
@@ -109,7 +110,8 @@ namespace GscTracking.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal?>("EstimateAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()

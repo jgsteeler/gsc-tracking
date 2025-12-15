@@ -89,6 +89,39 @@ Complete database setup guide for all environments (local, staging, production).
 - Security best practices
 - Troubleshooting guide
 
+#### [POSTGRESQL-CONNECTION-GUIDE.md](./POSTGRESQL-CONNECTION-GUIDE.md)
+**Status:** ✅ Complete  
+**Last Updated:** 2025-12-14
+
+Comprehensive guide for connecting Entity Framework Core to PostgreSQL databases, specifically Neon PostgreSQL.
+
+**Includes:**
+- Connection string formats (URL, standard, Docker)
+- Environment variable configuration
+- Common connection issues and solutions
+- SSL/TLS certificate handling
+- Migration workflow for PostgreSQL
+- Neon-specific configuration (pooling, auto-suspend, branches)
+- Testing connection procedures
+- Best practices for security and performance
+
+#### [TROUBLESHOOTING-NEON.md](./TROUBLESHOOTING-NEON.md)
+**Status:** ✅ Complete  
+**Last Updated:** 2025-12-14
+
+Quick reference guide for common Neon PostgreSQL connection issues.
+
+**Includes:**
+- Connection refused/timeout (auto-suspend)
+- SSL/TLS certificate errors
+- Authentication failures (password encoding)
+- Database does not exist errors
+- Migration type errors (SQLite vs PostgreSQL)
+- Connection pool exhaustion
+- Environment variable issues
+- Quick testing commands
+- Common CLI commands reference
+
 #### [NEON-QUICKSTART.md](./NEON-QUICKSTART.md)
 **Status:** ✅ Complete  
 **Last Updated:** 2025-12-11
@@ -194,6 +227,8 @@ Brief description of what this document covers...
 | Document | Category | Purpose |
 |----------|----------|---------|
 | [DATABASE-SETUP.md](./DATABASE-SETUP.md) | Database | Complete database setup (all environments) |
+| [POSTGRESQL-CONNECTION-GUIDE.md](./POSTGRESQL-CONNECTION-GUIDE.md) | Database | **NEW!** PostgreSQL/Neon connection guide |
+| [TROUBLESHOOTING-NEON.md](./TROUBLESHOOTING-NEON.md) | Database | **NEW!** Quick troubleshooting reference |
 | [NEON-QUICKSTART.md](./NEON-QUICKSTART.md) | Database | 5-minute Neon PostgreSQL setup |
 | [DATABASE-MIGRATION-GUIDE.md](./DATABASE-MIGRATION-GUIDE.md) | Database | EF Core migrations reference |
 | [CICD-PIPELINE.md](./CICD-PIPELINE.md) | CI/CD | Complete CI/CD workflow guide |
