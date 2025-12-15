@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -18,9 +19,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Plus } from 'lucide-react'
 import type { Job } from '@/types/job'
 import { JOB_STATUSES, JOB_STATUS_LABELS } from '@/types/job'
 import { useCustomers } from '@/hooks/useCustomers'
+import { CustomerDialog } from '@/components/CustomerDialog'
+import type { CustomerFormValues } from '@/components/CustomerForm'
 
 const jobSchema = z.object({
   customerId: z.number().min(1, 'Customer is required'),
@@ -43,7 +47,8 @@ interface JobFormProps {
 }
 
 export function JobForm({ job, onSubmit, onCancel }: JobFormProps) {
-  const { customers } = useCustomers()
+  const { customers, createCustomer } = useCustomers()
+  const [customerDialogOpen, setCustomerDialogOpen] = useState(false)
   
   const form = useForm<JobFormValues>({
     resolver: zodResolver(jobSchema),
@@ -76,6 +81,17 @@ export function JobForm({ job, onSubmit, onCancel }: JobFormProps) {
     }
   }
 
+  const handleAddCustomer = async (data: CustomerFormValues) => {
+    try {
+      const newCustomer = await createCustomer(data)
+      // Auto-select the newly created customer
+      form.setValue('customerId', newCustomer.id, { shouldValidate: true, shouldDirty: true })
+    } catch (error) {
+      console.error('Error creating customer:', error)
+      throw error
+    }
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -85,23 +101,35 @@ export function JobForm({ job, onSubmit, onCancel }: JobFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Customer</FormLabel>
-              <Select
-                onValueChange={(value: string) => field.onChange(Number(value))}
-                defaultValue={field.value ? field.value.toString() : ''}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a customer" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {customers.map((customer) => (
-                    <SelectItem key={customer.id} value={customer.id.toString()}>
-                      {customer.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select
+                  key={`customer-select-${customers.length}`}
+                  onValueChange={(value: string) => field.onChange(Number(value))}
+                  value={field.value && field.value > 0 ? field.value.toString() : ''}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a customer" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {customers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id.toString()}>
+                        {customer.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setCustomerDialogOpen(true)}
+                  title="Add new customer"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -272,6 +300,12 @@ export function JobForm({ job, onSubmit, onCancel }: JobFormProps) {
           </Button>
         </div>
       </form>
+
+      <CustomerDialog
+        open={customerDialogOpen}
+        onOpenChange={setCustomerDialogOpen}
+        onSubmit={handleAddCustomer}
+      />
     </Form>
   )
 }
