@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { JobForm } from './JobForm';
 import { useCustomers } from '@/hooks/useCustomers';
 import type { Customer } from '@/types/customer';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Mock the useCustomers hook
 vi.mock('@/hooks/useCustomers', () => ({
@@ -44,6 +45,12 @@ vi.mock('./CustomerDialog', () => ({
   },
 }));
 
+const queryClient = new QueryClient();
+
+const renderWithProviders = (ui: React.ReactElement) => {
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
+};
+
 describe('JobForm - Customer Creation Feature', () => {
   const mockCustomers: Customer[] = [
     {
@@ -76,7 +83,7 @@ describe('JobForm - Customer Creation Feature', () => {
   });
 
   it('should render the customer select field with existing customers', () => {
-    render(
+    renderWithProviders(
       <JobForm
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
@@ -87,7 +94,7 @@ describe('JobForm - Customer Creation Feature', () => {
   });
 
   it('should render the "Add new customer" button', () => {
-    render(
+    renderWithProviders(
       <JobForm
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
@@ -101,7 +108,7 @@ describe('JobForm - Customer Creation Feature', () => {
   it('should open customer dialog when "Add new customer" button is clicked', async () => {
     const user = userEvent.setup();
     
-    render(
+    renderWithProviders(
       <JobForm
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
@@ -131,7 +138,7 @@ describe('JobForm - Customer Creation Feature', () => {
 
     mockCreateCustomer.mockResolvedValueOnce(newCustomer);
 
-    render(
+    renderWithProviders(
       <JobForm
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
@@ -158,7 +165,7 @@ describe('JobForm - Customer Creation Feature', () => {
   it('should close customer dialog when cancel is clicked', async () => {
     const user = userEvent.setup();
     
-    render(
+    renderWithProviders(
       <JobForm
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
@@ -191,7 +198,7 @@ describe('JobForm - Customer Creation Feature', () => {
     // Mock console.error to avoid cluttering test output
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    render(
+    renderWithProviders(
       <JobForm
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
@@ -233,7 +240,7 @@ describe('JobForm - Customer Creation Feature', () => {
     };
 
     // First render with 1 customer
-    const { rerender } = render(
+    const { rerender } = renderWithProviders(
       <JobForm
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
@@ -267,7 +274,7 @@ describe('JobForm - Customer Creation Feature', () => {
   });
 
   it('should render all required fields', () => {
-    render(
+    renderWithProviders(
       <JobForm
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
@@ -283,7 +290,7 @@ describe('JobForm - Customer Creation Feature', () => {
   });
 
   it('should render create button when no job is provided', () => {
-    render(
+    renderWithProviders(
       <JobForm
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
@@ -310,7 +317,7 @@ describe('JobForm - Customer Creation Feature', () => {
       updatedAt: new Date().toISOString(),
     };
 
-    render(
+    renderWithProviders(
       <JobForm
         job={existingJob}
         onSubmit={mockOnSubmit}
