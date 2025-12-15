@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.7](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.6...backend-v0.1.7) (2025-12-15)
+
+
+### Features
+
+* **api:** add Swagger documentation to backend API ([#84](https://github.com/jgsteeler/gsc-tracking/issues/84)) ([a3a58fe](https://github.com/jgsteeler/gsc-tracking/commit/a3a58fefc355774aea0061fa08043c6887b06a3b))
+* **customer:** implement customer management with CRUD operations ([#83](https://github.com/jgsteeler/gsc-tracking/issues/83)) ([6b3f1fb](https://github.com/jgsteeler/gsc-tracking/commit/6b3f1fb5325591b6f8e3404e3ad71230b7f6c0ca))
+
+
+### Bug Fixes
+
+* **db:** improve EF Core PostgreSQL connection handling for Neon ([#85](https://github.com/jgsteeler/gsc-tracking/issues/85)) ([1b4224a](https://github.com/jgsteeler/gsc-tracking/commit/1b4224a8b6acc2126f08c47bf796547eccd11b41))
+
 ## [0.1.6](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.5...backend-v0.1.6) (2025-12-12)
 
 
