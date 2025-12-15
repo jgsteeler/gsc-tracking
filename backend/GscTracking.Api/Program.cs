@@ -46,50 +46,24 @@ builder.Services.AddValidatorsFromAssemblyContaining<CustomerRequestDtoValidator
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Determine database provider based on connection string format
-if (string.IsNullOrEmpty(connectionString))
+if (string.IsNullOrWhiteSpace(connectionString))
 {
-    throw new InvalidOperationException(
-        "No database connection string found. Please set DATABASE_URL environment variable or DefaultConnection in appsettings.json");
+    throw new InvalidOperationException("No database connection string found. Set the DATABASE_URL environment variable or configure 'DefaultConnection' in appsettings.json.");
 }
 
-if (connectionString.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+// Determine database provider based on connection string
+if (connectionString.StartsWith("Data Source="))
 {
     // SQLite for local development
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlite(connectionString));
 }
 else if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) ||
-         connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
          connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
 {
     // PostgreSQL for staging and production
-    // Supports multiple connection string formats:
-    // - postgresql:// (Neon default format)
-    // - postgres:// (alternative PostgreSQL URL format)
-    // - Host=... (standard Npgsql format)
-    // Npgsql supports both URL and standard formats directly
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    {
-        options.UseNpgsql(connectionString, npgsqlOptions =>
-        {
-            // Enable retry on failure for transient errors
-            npgsqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 3,
-                maxRetryDelay: TimeSpan.FromSeconds(5),
-                errorCodesToAdd: null);
-            
-            // Set command timeout (30 seconds)
-            npgsqlOptions.CommandTimeout(30);
-        });
-        
-        // Enable detailed errors in development
-        if (builder.Environment.IsDevelopment())
-        {
-            options.EnableSensitiveDataLogging();
-            options.EnableDetailedErrors();
-        }
-    });
+        options.UseNpgsql(connectionString));
 }
 else
 {
