@@ -45,3 +45,4 @@ actionlint
 gsc-tracking.code-workspace
 backend/GscTracking.Api/gsctracking.db
 *.db
+backend/GscTracking.Api/.env.staging
