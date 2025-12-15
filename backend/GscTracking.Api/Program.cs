@@ -67,9 +67,20 @@ static string BuildNpgsqlConnectionString(string connectionUrl)
 
         return builder.ToString();
     }
-    catch (Exception ex)
+    catch (UriFormatException ex)
     {
-        throw new InvalidOperationException($"Could not parse the database URL. Please check the format. Error: {ex.Message}", ex);
+        throw new InvalidOperationException(
+            $"Invalid database URL format. Expected format: postgresql://username:password@host:port/database. Error: {ex.Message}", ex);
+    }
+    catch (IndexOutOfRangeException ex)
+    {
+        throw new InvalidOperationException(
+            "Database URL is missing username or password. Expected format: postgresql://username:password@host:port/database", ex);
+    }
+    catch (ArgumentException ex)
+    {
+        throw new InvalidOperationException(
+            $"Invalid argument while parsing database URL. Error: {ex.Message}", ex);
     }
 }
 
