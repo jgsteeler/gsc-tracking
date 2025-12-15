@@ -47,14 +47,41 @@ builder.Services.AddValidatorsFromAssemblyContaining<CustomerRequestDtoValidator
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
+// Helper function to parse PostgreSQL URL and build a standard connection string
+static string BuildNpgsqlConnectionString(string connectionUrl)
+{
+    try
+    {
+        var databaseUri = new Uri(connectionUrl);
+        var userInfo = databaseUri.UserInfo.Split(':');
+
+        var builder = new Npgsql.NpgsqlConnectionStringBuilder
+        {
+            Host = databaseUri.Host,
+            Port = databaseUri.Port > 0 ? databaseUri.Port : 5432,
+            Username = userInfo[0],
+            Password = userInfo[1],
+            Database = databaseUri.LocalPath.TrimStart('/'),
+            SslMode = Npgsql.SslMode.Require, // Enforce SSL for security
+            TrustServerCertificate = true, // Trust the server certificate (common for cloud providers)
+        };
+
+        return builder.ToString();
+    }
+    catch (Exception ex)
+    {
+        throw new InvalidOperationException($"Could not parse the database URL. Please check the format. Error: {ex.Message}", ex);
+    }
+}
+
 // Determine database provider based on connection string format
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException(
-        "No database connection string found. Please set DATABASE_URL environment variable or DefaultConnection in appsettings.json");
+    throw new InvalidOperationException("No database connection string found. Set the DATABASE_URL environment variable or configure 'DefaultConnection' in appsettings.json.");
 }
 
-if (connectionString.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+// Determine database provider based on connection string
+if (connectionString.StartsWith("Data Source="))
 {
     // SQLite for local development
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -93,7 +120,7 @@ else if (connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
     // Standard PostgreSQL connection string format
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
-        options.UseNpgsql(connectionString, npgsqlOptions =>
+        options.UseNpgsql(npgsqlConnectionString, npgsqlOptions =>
         {
             // Enable retry on failure for transient errors
             npgsqlOptions.EnableRetryOnFailure(
@@ -112,6 +139,12 @@ else if (connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
             options.EnableDetailedErrors();
         }
     });
+}
+else if (connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
+{
+    // Standard PostgreSQL connection string format
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(connectionString));
 }
 else
 {
