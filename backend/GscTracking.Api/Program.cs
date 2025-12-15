@@ -6,6 +6,7 @@ using FluentValidation.AspNetCore;
 using GscTracking.Api.Data;
 using GscTracking.Api.Services;
 using GscTracking.Api.Validators;
+using GscTracking.Api.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,33 +47,6 @@ builder.Services.AddValidatorsFromAssemblyContaining<CustomerRequestDtoValidator
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Helper function to parse PostgreSQL URL and build a standard connection string
-static string BuildNpgsqlConnectionString(string connectionUrl)
-{
-    try
-    {
-        var databaseUri = new Uri(connectionUrl);
-        var userInfo = databaseUri.UserInfo.Split(':');
-
-        var builder = new Npgsql.NpgsqlConnectionStringBuilder
-        {
-            Host = databaseUri.Host,
-            Port = databaseUri.Port > 0 ? databaseUri.Port : 5432,
-            Username = userInfo[0],
-            Password = userInfo[1],
-            Database = databaseUri.LocalPath.TrimStart('/'),
-            SslMode = Npgsql.SslMode.Require, // Enforce SSL for security
-            TrustServerCertificate = true, // Trust the server certificate (common for cloud providers)
-        };
-
-        return builder.ToString();
-    }
-    catch (Exception ex)
-    {
-        throw new InvalidOperationException($"Could not parse the database URL. Please check the format. Error: {ex.Message}", ex);
-    }
-}
-
 // Determine database provider based on connection string format
 if (string.IsNullOrEmpty(connectionString))
 {
@@ -86,11 +60,15 @@ if (connectionString.StartsWith("Data Source="))
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlite(connectionString));
 }
-else if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) ||
-         connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase))
+else // Assume PostgreSQL for all other cases
 {
-    // Parse the URL for PostgreSQL
-    var npgsqlConnectionString = BuildNpgsqlConnectionString(connectionString);
+    var npgsqlConnectionString = connectionString;
+    if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) ||
+        connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase))
+    {
+        // Parse the URL for PostgreSQL
+        npgsqlConnectionString = ConnectionStringHelper.BuildNpgsqlConnectionString(connectionString);
+    }
     
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
@@ -113,17 +91,6 @@ else if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIg
             options.EnableDetailedErrors();
         }
     });
-}
-else if (connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
-{
-    // Standard PostgreSQL connection string format
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(connectionString));
-}
-else
-{
-    throw new InvalidOperationException(
-        $"Unsupported database connection string format. Expected SQLite (Data Source=...) or PostgreSQL (postgresql://... or Host=...)");
 }
 
 // Add services

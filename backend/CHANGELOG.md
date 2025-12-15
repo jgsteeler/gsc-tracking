@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.9](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.8...backend-v0.1.9) (2025-12-15)
+
+
+### Bug Fixes
+
+* **db:** remove obsolete TrustServerCertificate parameter ([#94](https://github.com/jgsteeler/gsc-tracking/issues/94)) ([4547c72](https://github.com/jgsteeler/gsc-tracking/commit/4547c72a8ea2cef05dc749f320cbb204537b3874))
+* **db:** validate database URL format before parsing credentials ([#93](https://github.com/jgsteeler/gsc-tracking/issues/93)) ([10ad171](https://github.com/jgsteeler/gsc-tracking/commit/10ad1714cf2d5790adaa7df4adb73f2e29f6f939))
+
+## [0.1.8](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.7...backend-v0.1.8) (2025-12-15)
+
+
+### Bug Fixes
+
+* **db:** ef core connection issues ([#89](https://github.com/jgsteeler/gsc-tracking/issues/89)) ([ceda0e5](https://github.com/jgsteeler/gsc-tracking/commit/ceda0e5a35f2232058c4ea994e9aa3ffaa75572b))
+* **db:** infra set up staging database ([#87](https://github.com/jgsteeler/gsc-tracking/issues/87)) ([82519f0](https://github.com/jgsteeler/gsc-tracking/commit/82519f00e6abc71a6643af703363093941e439d8))
+* **db:** restore PostgreSQL resilience and fix cross-database compatibility ([#90](https://github.com/jgsteeler/gsc-tracking/issues/90)) ([be7d693](https://github.com/jgsteeler/gsc-tracking/commit/be7d69308254310bc1dcf7eb937db87e40485b29))
+
 ## [0.1.7](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.6...backend-v0.1.7) (2025-12-15)
 
 

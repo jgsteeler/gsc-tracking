@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.7](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.6...frontend-v0.1.7) (2025-12-15)
+
+
+### Bug Fixes
+
+* **db:** remove obsolete TrustServerCertificate parameter ([#94](https://github.com/jgsteeler/gsc-tracking/issues/94)) ([4547c72](https://github.com/jgsteeler/gsc-tracking/commit/4547c72a8ea2cef05dc749f320cbb204537b3874))
+* **db:** validate database URL format before parsing credentials ([#93](https://github.com/jgsteeler/gsc-tracking/issues/93)) ([10ad171](https://github.com/jgsteeler/gsc-tracking/commit/10ad1714cf2d5790adaa7df4adb73f2e29f6f939))
+
+## [0.1.6](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.5...frontend-v0.1.6) (2025-12-15)
+
+
+### Features
+
+* **job:** add customer creation from job screen ([#88](https://github.com/jgsteeler/gsc-tracking/issues/88)) ([3d1d2de](https://github.com/jgsteeler/gsc-tracking/commit/3d1d2de115985bba7eac1cc05c0cefcf51153c10))
+
 ## [0.1.5](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.4...frontend-v0.1.5) (2025-12-15)
 
 
