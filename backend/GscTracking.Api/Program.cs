@@ -90,14 +90,9 @@ static string BuildNpgsqlConnectionString(string connectionUrl)
         throw new InvalidOperationException(
             $"Invalid argument while parsing database URL. Error: {ex.Message}", ex);
     }
-    catch (InvalidOperationException)
+    catch (Exception ex) when (ex is not InvalidOperationException)
     {
-        // Re-throw our own validation errors without wrapping
-        throw;
-    }
-    catch (Exception ex)
-    {
-        // Catch any other unexpected exceptions
+        // Catch any other unexpected exceptions, but let our own validation errors bubble up
         throw new InvalidOperationException(
             $"Unexpected error while parsing database URL. Error: {ex.Message}", ex);
     }
