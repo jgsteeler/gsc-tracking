@@ -53,16 +53,17 @@ if (connectionString?.StartsWith("Data Source=") == true)
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlite(connectionString));
 }
+else if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) ||
+         connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
+{
+    // PostgreSQL for staging and production
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(connectionString));
+}
 else
 {
-    // PostgreSQL for staging/production
-    var dataSourceBuilder = new Npgsql.NpgsqlDataSourceBuilder(connectionString);
-    // The following line can be removed if you don't need channel binding or if it's causing issues.
-    // dataSourceBuilder.ConnectionStringBuilder.Add("channel_binding", "require");
-    var dataSource = dataSourceBuilder.Build();
-
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(dataSource));
+    throw new InvalidOperationException(
+        $"Unsupported database connection string format. Expected SQLite (Data Source=...) or PostgreSQL (postgresql://... or Host=...)");
 }
 
 // Add services
