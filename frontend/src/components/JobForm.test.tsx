@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { JobForm } from './JobForm';
 import { useCustomers } from '@/hooks/useCustomers';
@@ -13,7 +13,15 @@ vi.mock('@/hooks/useCustomers', () => ({
 
 // Mock the CustomerDialog component
 vi.mock('./CustomerDialog', () => ({
-  CustomerDialog: ({ open, onSubmit, onOpenChange }: any) => {
+  CustomerDialog: ({
+    open,
+    onSubmit,
+    onOpenChange,
+  }: {
+    open: boolean
+    onSubmit: (data: { name: string }) => Promise<void>
+    onOpenChange: (open: boolean) => void
+  }) => {
     return open ? (
       <div data-testid="customer-dialog">
         <h2>Add New Customer</h2>
@@ -227,7 +235,6 @@ describe('JobForm - Customer Creation Feature', () => {
   });
 
   it('should update customer list when creating a new customer', async () => {
-    const user = userEvent.setup();
     const newCustomer: Customer = {
       id: 2,
       name: 'New Customer',
