@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.8](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.7...frontend-v0.1.8) (2025-12-15)
+
+
+### Features
+
+* **job:** add job updates for tracking progress notes ([#96](https://github.com/jgsteeler/gsc-tracking/issues/96)) ([24d4c28](https://github.com/jgsteeler/gsc-tracking/commit/24d4c2807d249ccb0108732537ea4a47270cc048))
+
 ## [0.1.7](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.6...frontend-v0.1.7) (2025-12-15)
 
 
