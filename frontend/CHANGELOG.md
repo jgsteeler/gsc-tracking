@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.4...frontend-v0.1.5) (2025-12-15)
+
+
+### Features
+
+* **customer:** implement customer management with CRUD operations ([#83](https://github.com/jgsteeler/gsc-tracking/issues/83)) ([6b3f1fb](https://github.com/jgsteeler/gsc-tracking/commit/6b3f1fb5325591b6f8e3404e3ad71230b7f6c0ca))
+
 ## [0.1.4](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.3...frontend-v0.1.4) (2025-12-12)
 
 
