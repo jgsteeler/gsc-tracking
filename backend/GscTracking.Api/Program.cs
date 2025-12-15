@@ -54,6 +54,13 @@ static string BuildNpgsqlConnectionString(string connectionUrl)
         var databaseUri = new Uri(connectionUrl);
         var userInfo = databaseUri.UserInfo.Split(':');
 
+        // Validate credentials format explicitly
+        if (userInfo.Length < 2 || string.IsNullOrEmpty(userInfo[0]) || string.IsNullOrEmpty(userInfo[1]))
+        {
+            throw new InvalidOperationException(
+                "Database URL is missing username or password. Expected format: postgresql://username:password@host:port/database");
+        }
+
         var builder = new Npgsql.NpgsqlConnectionStringBuilder
         {
             Host = databaseUri.Host,
@@ -72,15 +79,21 @@ static string BuildNpgsqlConnectionString(string connectionUrl)
         throw new InvalidOperationException(
             $"Invalid database URL format. Expected format: postgresql://username:password@host:port/database. Error: {ex.Message}", ex);
     }
-    catch (IndexOutOfRangeException ex)
-    {
-        throw new InvalidOperationException(
-            "Database URL is missing username or password. Expected format: postgresql://username:password@host:port/database", ex);
-    }
     catch (ArgumentException ex)
     {
         throw new InvalidOperationException(
             $"Invalid argument while parsing database URL. Error: {ex.Message}", ex);
+    }
+    catch (InvalidOperationException)
+    {
+        // Re-throw our own validation errors without wrapping
+        throw;
+    }
+    catch (Exception ex)
+    {
+        // Catch any other unexpected exceptions
+        throw new InvalidOperationException(
+            $"Unexpected error while parsing database URL. Error: {ex.Message}", ex);
     }
 }
 
