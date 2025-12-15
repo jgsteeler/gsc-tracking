@@ -54,6 +54,13 @@ static string BuildNpgsqlConnectionString(string connectionUrl)
         var databaseUri = new Uri(connectionUrl);
         var userInfo = databaseUri.UserInfo.Split(':');
 
+        // Validate that userInfo contains both username and password
+        if (userInfo.Length < 2 || string.IsNullOrEmpty(userInfo[0]) || string.IsNullOrEmpty(userInfo[1]))
+        {
+            throw new InvalidOperationException(
+                "Invalid database URL format. Expected format: postgresql://username:password@host:port/database");
+        }
+
         var builder = new Npgsql.NpgsqlConnectionStringBuilder
         {
             Host = databaseUri.Host,
