@@ -39,9 +39,9 @@ public class JobUpdateService : IJobUpdateService
 
     public async Task<JobUpdateDto> CreateJobUpdateAsync(int jobId, JobUpdateRequestDto updateRequest)
     {
-        // Verify that the job exists
-        var job = await _context.Job.FindAsync(jobId);
-        if (job == null)
+        // Verify that the job exists using AnyAsync for better performance
+        var jobExists = await _context.Job.AnyAsync(j => j.Id == jobId);
+        if (!jobExists)
         {
             throw new ArgumentException($"Job with ID {jobId} not found.");
         }

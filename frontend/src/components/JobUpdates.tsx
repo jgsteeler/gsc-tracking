@@ -58,9 +58,10 @@ export function JobUpdates({ jobId }: JobUpdatesProps) {
   }
 
   const handleDeleteConfirm = async () => {
-    if (!updateToDelete) return
+    if (!updateToDelete || isSubmitting) return
 
     try {
+      setIsSubmitting(true)
       await deleteUpdate(updateToDelete.id)
       toast({
         title: 'Success',
@@ -74,6 +75,8 @@ export function JobUpdates({ jobId }: JobUpdatesProps) {
         description: err instanceof Error ? err.message : 'Failed to delete job update',
         variant: 'destructive',
       })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 

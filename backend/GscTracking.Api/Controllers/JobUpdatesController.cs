@@ -107,6 +107,7 @@ public class JobUpdatesController : ControllerBase
     {
         try
         {
+            // Verify the update exists and belongs to the specified job in one operation
             var update = await _jobUpdateService.GetJobUpdateByIdAsync(id);
             if (update == null)
             {
@@ -117,6 +118,7 @@ public class JobUpdatesController : ControllerBase
                 return BadRequest(new { message = "Job update does not belong to the specified job." });
             }
 
+            // Attempt to delete - if it fails (already deleted), we'll return 404
             var result = await _jobUpdateService.DeleteJobUpdateAsync(id);
             if (!result)
             {
