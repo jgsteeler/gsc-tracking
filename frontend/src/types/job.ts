@@ -14,6 +14,17 @@ export interface Job {
   updatedAt: string
 }
 
+export interface JobUpdate {
+  id: number
+  jobId: number
+  updateText: string
+  createdAt: string
+}
+
+export interface JobUpdateRequestDto {
+  updateText: string
+}
+
 export type JobStatus = 'Quote' | 'InProgress' | 'Completed' | 'Invoiced' | 'Paid'
 
 export interface JobRequestDto {
