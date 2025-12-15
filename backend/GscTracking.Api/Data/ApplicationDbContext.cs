@@ -41,8 +41,9 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Description).IsRequired().HasMaxLength(2000);
             entity.Property(e => e.Status).IsRequired();
             entity.Property(e => e.DateReceived).IsRequired();
-            entity.Property(e => e.EstimateAmount).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.ActualAmount).HasColumnType("decimal(18,2)");
+            // Use precision instead of ColumnType for cross-database compatibility
+            entity.Property(e => e.EstimateAmount).HasPrecision(18, 2);
+            entity.Property(e => e.ActualAmount).HasPrecision(18, 2);
             entity.Property(e => e.CreatedAt).IsRequired();
             entity.Property(e => e.UpdatedAt).IsRequired();
             entity.Property(e => e.IsDeleted).IsRequired().HasDefaultValue(false);
