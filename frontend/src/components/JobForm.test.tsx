@@ -26,7 +26,7 @@ vi.mock('./CustomerDialog', () => ({
             try {
               await onSubmit({ name: 'Test Customer' });
             } catch (error) {
-              // Silently catch errors in the mock
+              // Catch and log errors for test visibility
               console.error('Error in mock:', error);
             }
           }}
