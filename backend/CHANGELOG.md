@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.10](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.9...backend-v0.1.10) (2025-12-15)
+
+
+### Features
+
+* **job:** add job updates for tracking progress notes ([#96](https://github.com/jgsteeler/gsc-tracking/issues/96)) ([24d4c28](https://github.com/jgsteeler/gsc-tracking/commit/24d4c2807d249ccb0108732537ea4a47270cc048))
+
 ## [0.1.9](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.8...backend-v0.1.9) (2025-12-15)
 
 
