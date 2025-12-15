@@ -25,7 +25,7 @@ import type { Job } from '@/types/job'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, JOB_STATUSES } from '@/types/job'
 import { JobDialog } from '@/components/JobDialog'
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
-import type { JobFormValues } from '@/components/JobForm'
+import type { JobFormValues } from '@/lib/validations'
 import { useToast } from '@/hooks/use-toast'
 
 export function Jobs() {

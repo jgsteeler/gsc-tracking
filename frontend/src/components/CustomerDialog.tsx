@@ -1,5 +1,6 @@
 import type { Customer } from '@/types/customer'
-import { CustomerForm, type CustomerFormValues } from './CustomerForm'
+import { CustomerForm } from './CustomerForm'
+import type { CustomerFormValues } from '@/lib/validations'
 import {
   Dialog,
   DialogContent,
