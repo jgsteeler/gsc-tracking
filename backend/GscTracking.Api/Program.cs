@@ -46,8 +46,13 @@ builder.Services.AddValidatorsFromAssemblyContaining<CustomerRequestDtoValidator
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException("No database connection string found. Set the DATABASE_URL environment variable or configure 'DefaultConnection' in appsettings.json.");
+}
+
 // Determine database provider based on connection string
-if (connectionString?.StartsWith("Data Source=") == true)
+if (connectionString.StartsWith("Data Source="))
 {
     // SQLite for local development
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
