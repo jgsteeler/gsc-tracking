@@ -55,10 +55,16 @@ static string BuildNpgsqlConnectionString(string connectionUrl)
         var userInfo = databaseUri.UserInfo.Split(':');
 
         // Validate credentials format explicitly
-        if (userInfo.Length < 2 || string.IsNullOrEmpty(userInfo[0]) || string.IsNullOrEmpty(userInfo[1]))
+        if (userInfo.Length < 2)
         {
             throw new InvalidOperationException(
                 "Database URL is missing username or password. Expected format: postgresql://username:password@host:port/database");
+        }
+
+        if (string.IsNullOrWhiteSpace(userInfo[0]) || string.IsNullOrWhiteSpace(userInfo[1]))
+        {
+            throw new InvalidOperationException(
+                "Database URL username or password cannot be empty. Expected format: postgresql://username:password@host:port/database");
         }
 
         var builder = new Npgsql.NpgsqlConnectionStringBuilder
