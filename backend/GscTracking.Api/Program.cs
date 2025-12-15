@@ -62,7 +62,8 @@ static string BuildNpgsqlConnectionString(string connectionUrl)
             Password = userInfo[1],
             Database = databaseUri.LocalPath.TrimStart('/'),
             SslMode = Npgsql.SslMode.Require, // Enforce SSL for security
-            TrustServerCertificate = true, // Trust the server certificate (common for cloud providers)
+            // Note: TrustServerCertificate is no longer needed in Npgsql 10.0+
+            // Certificate validation is handled securely by default
         };
 
         return builder.ToString();
