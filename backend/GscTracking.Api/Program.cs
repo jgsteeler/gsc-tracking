@@ -22,30 +22,23 @@ builder.Services.AddValidatorsFromAssemblyContaining<CustomerRequestDtoValidator
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Determine database provider based on connection string format
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException(
-        "No database connection string found. Please set DATABASE_URL environment variable or DefaultConnection in appsettings.json");
-}
-
-if (connectionString.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+// Determine database provider based on connection string
+if (connectionString?.StartsWith("Data Source=") == true)
 {
     // SQLite for local development
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlite(connectionString));
 }
-else if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) ||
-         connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
-{
-    // PostgreSQL for staging and production
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(connectionString));
-}
 else
 {
-    throw new InvalidOperationException(
-        $"Unsupported database connection string format. Expected SQLite (Data Source=...) or PostgreSQL (postgresql://... or Host=...)");
+    // PostgreSQL for staging/production
+    var dataSourceBuilder = new Npgsql.NpgsqlDataSourceBuilder(connectionString);
+    // The following line can be removed if you don't need channel binding or if it's causing issues.
+    // dataSourceBuilder.ConnectionStringBuilder.Add("channel_binding", "require");
+    var dataSource = dataSourceBuilder.Build();
+
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(dataSource));
 }
 
 // Add services
