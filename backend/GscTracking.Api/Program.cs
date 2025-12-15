@@ -62,32 +62,8 @@ else if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIg
          connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
 {
     // PostgreSQL for staging and production
-    // Supports multiple connection string formats:
-    // - postgresql:// (Neon default format)
-    // - postgres:// (alternative PostgreSQL URL format)
-    // - Host=... (standard Npgsql format)
-    // Npgsql supports both URL and standard formats directly
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    {
-        options.UseNpgsql(connectionString, npgsqlOptions =>
-        {
-            // Enable retry on failure for transient errors
-            npgsqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 3,
-                maxRetryDelay: TimeSpan.FromSeconds(5),
-                errorCodesToAdd: null);
-            
-            // Set command timeout (30 seconds)
-            npgsqlOptions.CommandTimeout(30);
-        });
-        
-        // Enable detailed errors in development
-        if (builder.Environment.IsDevelopment())
-        {
-            options.EnableSensitiveDataLogging();
-            options.EnableDetailedErrors();
-        }
-    });
+        options.UseNpgsql(connectionString));
 }
 else
 {
