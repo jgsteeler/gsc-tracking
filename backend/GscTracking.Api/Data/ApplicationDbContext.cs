@@ -12,6 +12,7 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Customer> Customer { get; set; }
     public DbSet<Job> Job { get; set; }
+    public DbSet<JobUpdate> JobUpdate { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -59,6 +60,19 @@ public class ApplicationDbContext : DbContext
             
             // Global query filter for soft delete
             entity.HasQueryFilter(e => !e.IsDeleted);
+        });
+
+        modelBuilder.Entity<JobUpdate>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.UpdateText).IsRequired().HasMaxLength(4000);
+            entity.Property(e => e.CreatedAt).IsRequired();
+
+            // Foreign key relationship
+            entity.HasOne(e => e.Job)
+                .WithMany(j => j.JobUpdates)
+                .HasForeignKey(e => e.JobId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
