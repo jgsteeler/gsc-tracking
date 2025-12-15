@@ -72,11 +72,11 @@ public class ConnectionStringHelperTests
     }
 
     [Fact]
-    public void BuildNpgsqlConnectionString_WithUrlEncodedPassword_DoesNotDecode()
+    public void BuildNpgsqlConnectionString_WithUrlEncodedPassword_PreservesEncoding()
     {
         // Arrange - password with URL-encoded special characters
-        // Note: The Uri class does not automatically decode userInfo,
-        // so users must provide decoded passwords in the connection URL
+        // Note: The Uri class does NOT automatically decode userInfo
+        // Users must provide passwords in the format expected by their database
         var connectionUrl = "postgresql://user:pass%40word%23test@example.com:5432/db";
 
         // Act
@@ -84,7 +84,7 @@ public class ConnectionStringHelperTests
 
         // Assert
         result.Should().Contain("Username=user");
-        // URL encoding is preserved as-is
+        // URL encoding is preserved as-is in the connection string
         result.Should().Contain("Password=pass%40word%23test");
     }
 
@@ -219,10 +219,11 @@ public class ConnectionStringHelperTests
     }
 
     [Fact]
-    public void BuildNpgsqlConnectionString_WithMultipleColonsInPassword_ParsesFirstColonOnly()
+    public void BuildNpgsqlConnectionString_WithMultipleColonsInPassword_ParsesCorrectly()
     {
-        // Arrange - password contains colons
-        // Note: Uri.UserInfo splits on first colon only, so additional colons are part of the password
+        // Arrange - password contains multiple colons
+        // The helper splits on first colon only (using Split(':', 2))
+        // so remaining colons become part of the password
         var connectionUrl = "postgresql://user:pass:word:123@localhost:5432/db";
 
         // Act

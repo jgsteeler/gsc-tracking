@@ -24,7 +24,9 @@ public static class ConnectionStringHelper
         try
         {
             var databaseUri = new Uri(connectionUrl);
-            var userInfo = databaseUri.UserInfo.Split(':', 2); // Split on first colon only
+            // Split userInfo on first colon to separate username and password
+            // Remaining colons after the first one are part of the password
+            var userInfo = databaseUri.UserInfo.Split(':', 2);
 
             if (userInfo.Length < 2 || string.IsNullOrWhiteSpace(userInfo[0]) || string.IsNullOrWhiteSpace(userInfo[1]))
             {
