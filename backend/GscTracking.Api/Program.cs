@@ -1,4 +1,6 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using GscTracking.Api.Data;
@@ -8,8 +10,30 @@ using GscTracking.Api.Validators;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Add Swagger/OpenAPI documentation
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "GSC Tracking API",
+        Description = "API for GSC Small Engine Repair business management application",
+        Contact = new OpenApiContact
+        {
+            Name = "GSC Development Team",
+            Url = new Uri("https://github.com/jgsteeler/gsc-tracking")
+        }
+    });
+
+    // Include XML comments for documentation
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
+});
 
 // Add controllers
 builder.Services.AddControllers();
@@ -62,9 +86,15 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Enable Swagger in Development and Staging environments (not Production)
+if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "GSC Tracking API v1");
+        options.RoutePrefix = "swagger";
+    });
 }
 
 app.UseCors("AllowFrontend");

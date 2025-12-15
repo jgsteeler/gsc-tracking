@@ -12,17 +12,17 @@ public class CustomerRequestDtoValidator : AbstractValidator<CustomerRequestDto>
             .MaximumLength(200).WithMessage("Name cannot exceed 200 characters");
 
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required")
             .EmailAddress().WithMessage("Invalid email format")
-            .MaximumLength(200).WithMessage("Email cannot exceed 200 characters");
+            .MaximumLength(200).WithMessage("Email cannot exceed 200 characters")
+            .When(x => !string.IsNullOrWhiteSpace(x.Email));
 
         RuleFor(x => x.Phone)
-            .NotEmpty().WithMessage("Phone is required")
-            .MaximumLength(50).WithMessage("Phone cannot exceed 50 characters");
+            .MaximumLength(50).WithMessage("Phone cannot exceed 50 characters")
+            .When(x => !string.IsNullOrWhiteSpace(x.Phone));
 
         RuleFor(x => x.Address)
-            .NotEmpty().WithMessage("Address is required")
-            .MaximumLength(500).WithMessage("Address cannot exceed 500 characters");
+            .MaximumLength(500).WithMessage("Address cannot exceed 500 characters")
+            .When(x => !string.IsNullOrWhiteSpace(x.Address));
 
         RuleFor(x => x.Notes)
             .MaximumLength(2000).WithMessage("Notes cannot exceed 2000 characters");
