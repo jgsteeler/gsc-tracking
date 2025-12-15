@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.9](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.8...backend-v0.1.9) (2025-12-15)
+
+
+### Bug Fixes
+
+* **db:** remove obsolete TrustServerCertificate parameter ([#94](https://github.com/jgsteeler/gsc-tracking/issues/94)) ([4547c72](https://github.com/jgsteeler/gsc-tracking/commit/4547c72a8ea2cef05dc749f320cbb204537b3874))
+* **db:** validate database URL format before parsing credentials ([#93](https://github.com/jgsteeler/gsc-tracking/issues/93)) ([10ad171](https://github.com/jgsteeler/gsc-tracking/commit/10ad1714cf2d5790adaa7df4adb73f2e29f6f939))
+
 ## [0.1.8](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.7...backend-v0.1.8) (2025-12-15)
 
 
