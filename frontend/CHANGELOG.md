@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.5...frontend-v0.1.6) (2025-12-15)
+
+
+### Features
+
+* **job:** add customer creation from job screen ([#88](https://github.com/jgsteeler/gsc-tracking/issues/88)) ([3d1d2de](https://github.com/jgsteeler/gsc-tracking/commit/3d1d2de115985bba7eac1cc05c0cefcf51153c10))
+
 ## [0.1.5](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.4...frontend-v0.1.5) (2025-12-15)
 
 
