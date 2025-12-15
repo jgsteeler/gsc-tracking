@@ -17,6 +17,9 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        // Set default schema
+        modelBuilder.HasDefaultSchema("public");
+
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id);
