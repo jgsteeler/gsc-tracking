@@ -47,7 +47,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## 🚀 Staging Deployment Complete\n\nYour changes have been deployed to the staging environment!\n\n- **App:** gsc-tracking-api-staging\n- **URL:** https://gsc-tracking-api-staging.fly.dev\n- **Health Check:** https://gsc-tracking-api-staging.fly.dev/api/hello\n- **PR:** #${context.issue.number}\n\n*This staging environment is shared across all PRs. Test your changes and merge when ready.*`
+              body: `## 🚀 Staging Deployment Complete\n\nYour changes have been deployed to the staging environment!\n\n- **App:** gsc-tracking-api-staging\n- **URL:** https://gsc-tracking-api-staging.fly.dev\n- **Swagger:** https://gsc-tracking-api-staging.fly.dev/swagger\n- **Health Check:** https://gsc-tracking-api-staging.fly.dev/api/hello\n- **PR:** #${context.issue.number}\n\n*This staging environment is shared across all PRs. Test your changes and merge when ready.*`
             })
 
   deploy-production:
