@@ -17,6 +17,12 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        // Set default schema only for PostgreSQL
+        if (Database.ProviderName == "Npgsql.EntityFrameworkCore.PostgreSQL")
+        {
+            modelBuilder.HasDefaultSchema("public");
+        }
+
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id);
