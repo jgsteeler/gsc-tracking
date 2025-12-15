@@ -96,6 +96,7 @@ else // Assume PostgreSQL for all other cases
 // Add services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IJobService, JobService>();
+builder.Services.AddScoped<IJobUpdateService, JobUpdateService>();
 
 // Add CORS policy for frontend development
 builder.Services.AddCors(options =>

@@ -17,4 +17,5 @@ public class Job
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public bool IsDeleted { get; set; } = false;
     public DateTime? DeletedAt { get; set; }
+    public ICollection<JobUpdate> JobUpdates { get; set; } = new List<JobUpdate>();
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -18,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Pencil, Trash2, Search } from 'lucide-react'
+import { Plus, Pencil, Trash2, Search, Eye } from 'lucide-react'
 import { useJobs } from '@/hooks/useJobs'
 import type { Job } from '@/types/job'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, JOB_STATUSES } from '@/types/job'
@@ -28,6 +29,7 @@ import type { JobFormValues } from '@/components/JobForm'
 import { useToast } from '@/hooks/use-toast'
 
 export function Jobs() {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('')
@@ -215,6 +217,14 @@ export function Jobs() {
                       <TableCell>{formatDate(job.dateReceived)}</TableCell>
                       <TableCell>{formatCurrency(job.estimateAmount)}</TableCell>
                       <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => navigate(`/jobs/${job.id}`)}
+                          className="mr-2"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"
