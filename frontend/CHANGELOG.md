@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.8...frontend-v0.1.9) (2025-12-16)
+
+
+### Features
+
+* **validation:** implement comprehensive form validation with Zod and FluentValidation ([#101](https://github.com/jgsteeler/gsc-tracking/issues/101)) ([ba7d91c](https://github.com/jgsteeler/gsc-tracking/commit/ba7d91cb12a847aa32031f76b2db1489eadcafa5))
+
 ## [0.1.8](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.7...frontend-v0.1.8) (2025-12-15)
 
 
