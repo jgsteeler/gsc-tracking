@@ -30,15 +30,9 @@ namespace GscTracking.Api.Data
                 throw new InvalidOperationException("Could not find a connection string named 'DefaultConnection' or 'DATABASE_URL' environment variable.");
             }
 
-            if (connectionString.StartsWith("Data Source="))
-            {
-                builder.UseSqlite(connectionString);
-            }
-            else
-            {
+            
                 builder.UseNpgsql(connectionString);
-            }
-
+            
             return new ApplicationDbContext(builder.Options);
         }
     }
