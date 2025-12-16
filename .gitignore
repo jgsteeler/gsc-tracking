@@ -43,6 +43,10 @@ temp/
 # Build tools
 actionlint
 gsc-tracking.code-workspace
-backend/GscTracking.Api/gsctracking.db
-*.db
+
+
+# SQLite database file
+gsctracking.db
+gsctracking.db-journal
+backend/GscTracking.Api/.env.production
 backend/GscTracking.Api/.env.staging
