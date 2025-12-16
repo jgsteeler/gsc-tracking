@@ -48,6 +48,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set API version
+        working-directory: backend
+        run: |
+          chmod +x set-version.sh
+          ./set-version.sh GscTracking.Api/GscTracking.Api.csproj ${{ github.run_number }}
+        shell: bash
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
