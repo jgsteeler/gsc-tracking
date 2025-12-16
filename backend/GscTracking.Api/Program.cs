@@ -108,6 +108,12 @@ builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IJobUpdateService, JobUpdateService>();
 
 // Add CORS policy with pattern matching for Netlify deploy previews
+// Compile regex once for performance
+var netlifyPreviewRegex = new Regex(
+    @"^https:\/\/deploy-preview-\d+--gsc-tracking-ui\.netlify\.app$",
+    RegexOptions.Compiled | RegexOptions.IgnoreCase
+);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -132,8 +138,7 @@ builder.Services.AddCors(options =>
                 return true;
             
             // Allow Netlify deploy previews with pattern matching
-            var netlifyPreviewPattern = @"^https:\/\/deploy-preview-\d+--gsc-tracking-ui\.netlify\.app$";
-            if (Regex.IsMatch(origin, netlifyPreviewPattern))
+            if (netlifyPreviewRegex.IsMatch(origin))
                 return true;
             
             return false;
