@@ -114,12 +114,13 @@ var netlifyPreviewRegex = new Regex(
     RegexOptions.Compiled | RegexOptions.IgnoreCase
 );
 
+// Parse allowed ports once
+var allowedLocalPorts = builder.Configuration["AllowedLocalPorts"]?.Split(',') ?? new[] { "5173" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        var allowedLocalPorts = builder.Configuration["AllowedLocalPorts"]?.Split(',') ?? new[] { "5173" };
-        
         policy.SetIsOriginAllowed(origin =>
         {
             // Allow configured localhost ports
