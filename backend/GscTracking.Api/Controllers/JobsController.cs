@@ -87,7 +87,27 @@ public class JobsController : ControllerBase
     /// </summary>
     /// <param name="jobRequest">Job data</param>
     /// <returns>Created job</returns>
+    /// <remarks>
+    /// Validation Rules:
+    /// - CustomerId: Required, must be greater than 0
+    /// - EquipmentType: Required, max 200 characters
+    /// - EquipmentModel: Required, max 200 characters
+    /// - Description: Required, max 2000 characters
+    /// - Status: Required, must be one of: Quote, InProgress, Completed, Invoiced, Paid
+    /// - DateReceived: Required
+    /// - DateCompleted: Optional, must be on or after DateReceived
+    /// - EstimateAmount: Optional, must be >= 0
+    /// - ActualAmount: Optional, must be >= 0
+    /// 
+    /// Returns 400 Bad Request if validation fails with detailed error messages.
+    /// </remarks>
+    /// <response code="201">Job created successfully</response>
+    /// <response code="400">Validation error - check response for details</response>
+    /// <response code="500">Internal server error</response>
     [HttpPost]
+    [ProducesResponseType(typeof(JobDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<JobDto>> CreateJob([FromBody] JobRequestDto jobRequest)
     {
         try
@@ -117,7 +137,29 @@ public class JobsController : ControllerBase
     /// <param name="id">Job ID</param>
     /// <param name="jobRequest">Updated job data</param>
     /// <returns>Updated job</returns>
+    /// <remarks>
+    /// Validation Rules:
+    /// - CustomerId: Required, must be greater than 0
+    /// - EquipmentType: Required, max 200 characters
+    /// - EquipmentModel: Required, max 200 characters
+    /// - Description: Required, max 2000 characters
+    /// - Status: Required, must be one of: Quote, InProgress, Completed, Invoiced, Paid
+    /// - DateReceived: Required
+    /// - DateCompleted: Optional, must be on or after DateReceived
+    /// - EstimateAmount: Optional, must be >= 0
+    /// - ActualAmount: Optional, must be >= 0
+    /// 
+    /// Returns 400 Bad Request if validation fails with detailed error messages.
+    /// </remarks>
+    /// <response code="200">Job updated successfully</response>
+    /// <response code="400">Validation error - check response for details</response>
+    /// <response code="404">Job not found</response>
+    /// <response code="500">Internal server error</response>
     [HttpPut("{id}")]
+    [ProducesResponseType(typeof(JobDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<JobDto>> UpdateJob(int id, [FromBody] JobRequestDto jobRequest)
     {
         try

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -24,21 +23,8 @@ import type { Job } from '@/types/job'
 import { JOB_STATUSES, JOB_STATUS_LABELS } from '@/types/job'
 import { useCustomers } from '@/hooks/useCustomers'
 import { CustomerDialog } from '@/components/CustomerDialog'
-import type { CustomerFormValues } from '@/components/CustomerForm'
-
-const jobSchema = z.object({
-  customerId: z.number().min(1, 'Customer is required'),
-  equipmentType: z.string().min(1, 'Equipment type is required').max(200, 'Equipment type cannot exceed 200 characters'),
-  equipmentModel: z.string().min(1, 'Equipment model is required').max(200, 'Equipment model cannot exceed 200 characters'),
-  description: z.string().min(1, 'Description is required').max(2000, 'Description cannot exceed 2000 characters'),
-  status: z.enum(['Quote', 'InProgress', 'Completed', 'Invoiced', 'Paid']),
-  dateReceived: z.string().min(1, 'Date received is required'),
-  dateCompleted: z.string().optional().nullable(),
-  estimateAmount: z.number().min(0, 'Estimate amount must be 0 or greater').optional().nullable(),
-  actualAmount: z.number().min(0, 'Actual amount must be 0 or greater').optional().nullable(),
-})
-
-export type JobFormValues = z.infer<typeof jobSchema>
+import type { CustomerFormValues } from '@/lib/validations'
+import { jobSchema, type JobFormValues } from '@/lib/validations'
 
 interface JobFormProps {
   job?: Job

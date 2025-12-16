@@ -15,7 +15,7 @@ import { useCustomers } from '@/hooks/useCustomers'
 import type { Customer } from '@/types/customer'
 import { CustomerDialog } from '@/components/CustomerDialog'
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
-import type { CustomerFormValues } from '@/components/CustomerForm'
+import type { CustomerFormValues } from '@/lib/validations'
 import { useToast } from '@/hooks/use-toast'
 
 export function Customers() {
