@@ -114,6 +114,30 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Run database migrations on startup (in staging and production environments)
+if (!app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            
+            logger.LogInformation("Applying database migrations...");
+            await context.Database.MigrateAsync();
+            logger.LogInformation("Database migrations applied successfully");
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred while migrating the database");
+            throw; // Re-throw to prevent app from starting with failed migration
+        }
+    }
+}
+
 // Configure the HTTP request pipeline.
 // Enable Swagger in Development and Staging environments (not Production)
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
