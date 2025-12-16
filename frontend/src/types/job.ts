@@ -10,6 +10,8 @@ export interface Job {
   dateCompleted?: string | null
   estimateAmount?: number | null
   actualAmount?: number | null
+  totalCost: number
+  profitMargin?: number | null
   createdAt: string
   updatedAt: string
 }
