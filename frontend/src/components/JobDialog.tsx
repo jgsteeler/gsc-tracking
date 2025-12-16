@@ -1,5 +1,6 @@
 import type { Job } from '@/types/job'
-import { JobForm, type JobFormValues } from './JobForm'
+import { JobForm } from './JobForm'
+import type { JobFormValues } from '@/lib/validations'
 import {
   Dialog,
   DialogContent,

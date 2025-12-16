@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -12,25 +11,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import type { Customer } from '@/types/customer'
-
-const customerSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(200, 'Name cannot exceed 200 characters'),
-  email: z
-    .string()
-    .transform(val => val === '' ? undefined : val)
-    .optional()
-    .refine(val => !val || z.string().email().safeParse(val).success, {
-      message: 'Invalid email format'
-    })
-    .refine(val => !val || val.length <= 200, {
-      message: 'Email cannot exceed 200 characters'
-    }),
-  phone: z.string().max(50, 'Phone cannot exceed 50 characters').optional(),
-  address: z.string().max(500, 'Address cannot exceed 500 characters').optional(),
-  notes: z.string().max(2000, 'Notes cannot exceed 2000 characters').optional(),
-})
-
-export type CustomerFormValues = z.infer<typeof customerSchema>
+import { customerSchema, type CustomerFormValues } from '@/lib/validations'
 
 interface CustomerFormProps {
   customer?: Customer

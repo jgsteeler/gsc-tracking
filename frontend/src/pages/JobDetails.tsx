@@ -8,7 +8,7 @@ import { jobService } from '@/services/jobService'
 import type { Job } from '@/types/job'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS } from '@/types/job'
 import { JobDialog } from '@/components/JobDialog'
-import type { JobFormValues } from '@/components/JobForm'
+import type { JobFormValues } from '@/lib/validations'
 import { useToast } from '@/hooks/use-toast'
 import { JobUpdates } from '@/components/JobUpdates'
 
