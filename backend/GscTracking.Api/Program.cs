@@ -36,6 +36,25 @@ builder.Services.AddSwaggerGen(options =>
     }
 });
 
+// Load .env file in development
+if (builder.Environment.IsDevelopment())
+{
+    var envPath = Path.Combine(builder.Environment.ContentRootPath, ".env");
+    if (File.Exists(envPath))
+    {
+        foreach (var line in File.ReadAllLines(envPath))
+        {
+            var parts = line.Split('=', 2);
+            if (parts.Length == 2)
+            {
+                // Trim quotes from the value
+                var value = parts[1].Trim().Trim('"');
+                Environment.SetEnvironmentVariable(parts[0], value);
+            }
+        }
+    }
+}
+
 // Add controllers
 builder.Services.AddControllers();
 
@@ -43,55 +62,44 @@ builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CustomerRequestDtoValidator>();
 
-// Add DbContext with support for multiple database providers
+// Add DbContext with PostgreSQL support for all environments
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Determine database provider based on connection string format
 if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException("No database connection string found. Set the DATABASE_URL environment variable or configure 'DefaultConnection' in appsettings.json.");
 }
 
-// Determine database provider based on connection string
-if (connectionString.StartsWith("Data Source="))
+// Parse the URL for PostgreSQL if needed
+var npgsqlConnectionString = connectionString;
+if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) ||
+    connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase))
 {
-    // SQLite for local development
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite(connectionString));
+    npgsqlConnectionString = ConnectionStringHelper.BuildNpgsqlConnectionString(connectionString);
 }
-else // Assume PostgreSQL for all other cases
-{
-    var npgsqlConnectionString = connectionString;
-    if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) ||
-        connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase))
-    {
-        // Parse the URL for PostgreSQL
-        npgsqlConnectionString = ConnectionStringHelper.BuildNpgsqlConnectionString(connectionString);
-    }
     
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseNpgsql(npgsqlConnectionString, npgsqlOptions =>
     {
-        options.UseNpgsql(npgsqlConnectionString, npgsqlOptions =>
-        {
-            // Enable retry on failure for transient errors
-            npgsqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 3,
-                maxRetryDelay: TimeSpan.FromSeconds(5),
-                errorCodesToAdd: null);
-            
-            // Set command timeout (30 seconds)
-            npgsqlOptions.CommandTimeout(30);
-        });
+        // Enable retry on failure for transient errors
+        npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 3,
+            maxRetryDelay: TimeSpan.FromSeconds(5),
+            errorCodesToAdd: null);
         
-        // Enable detailed errors in development
-        if (builder.Environment.IsDevelopment())
-        {
-            options.EnableSensitiveDataLogging();
-            options.EnableDetailedErrors();
-        }
+        // Set command timeout (30 seconds)
+        npgsqlOptions.CommandTimeout(30);
     });
-}
+    
+    // Enable detailed errors in development
+    if (builder.Environment.IsDevelopment())
+    {
+        options.EnableSensitiveDataLogging();
+        options.EnableDetailedErrors();
+    }
+});
 
 // Add services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -114,27 +122,24 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Run database migrations on startup (in staging and production environments)
-if (!app.Environment.IsDevelopment())
+// Run database migrations on startup (for all environments)
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
+    var services = scope.ServiceProvider;
+    try
     {
-        var services = scope.ServiceProvider;
-        try
-        {
-            var context = services.GetRequiredService<ApplicationDbContext>();
-            var logger = services.GetRequiredService<ILogger<Program>>();
-            
-            logger.LogInformation("Applying database migrations...");
-            await context.Database.MigrateAsync();
-            logger.LogInformation("Database migrations applied successfully");
-        }
-        catch (Exception ex)
-        {
-            var logger = services.GetRequiredService<ILogger<Program>>();
-            logger.LogError(ex, "An error occurred while migrating the database");
-            throw; // Re-throw to prevent app from starting with failed migration
-        }
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        
+        logger.LogInformation("Applying database migrations...");
+        await context.Database.MigrateAsync();
+        logger.LogInformation("Database migrations applied successfully");
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database");
+        throw; // Re-throw to prevent app from starting with failed migration
     }
 }
 
