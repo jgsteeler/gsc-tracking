@@ -160,3 +160,120 @@ Additional workflows can be added here for:
 - Testing
 - Linting
 - Deployment
+
+## Deploy to Fly.io Workflow
+
+The `deploy-flyio.yml` workflow deploys the backend API to Fly.io hosting platform.
+
+### How It Works
+
+1. **Triggered on**:
+   - Push to `main` branch (production deployment)
+   - Pull requests to `main` branch (staging deployment)
+   - Manual trigger via workflow_dispatch
+
+2. **Environments**:
+   - **Staging**: `gsc-tracking-api-staging.fly.dev` (for PRs)
+   - **Production**: `gsc-tracking-api.fly.dev` (for main branch)
+
+3. **What it does**:
+   - Deploys backend to Fly.io using `flyctl`
+   - Automatically applies database migrations on startup
+   - Runs automated smoke tests after deployment
+   - Comments on PR with deployment information (staging only)
+
+### Database Migrations
+
+Database migrations are applied automatically when the backend application starts in non-development environments (staging and production).
+
+**Implementation:**
+```csharp
+// In Program.cs
+if (!app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await context.Database.MigrateAsync();
+    }
+}
+```
+
+**Benefits:**
+- No manual migration steps required
+- Migrations run before app accepts traffic
+- Prevents app from starting if migrations fail
+- Automatically applies pending migrations
+
+**Local Development:**
+Migrations are **not** run automatically in development. Use:
+```bash
+cd backend/GscTracking.Api
+dotnet ef database update
+```
+
+### Smoke Tests
+
+Automated smoke tests verify basic functionality after deployment.
+
+**Backend Smoke Tests** (`backend/smoke-test.sh`):
+- Tests API health endpoint (`/api/hello`)
+- Verifies Swagger UI (staging only)
+- Tests core API endpoints (customers, jobs)
+- Validates database connectivity
+
+**Running Manually:**
+```bash
+# Test staging
+API_URL="https://gsc-tracking-api-staging.fly.dev" ./backend/smoke-test.sh
+
+# Test production
+API_URL="https://gsc-tracking-api.fly.dev" ./backend/smoke-test.sh
+```
+
+See [Smoke Tests Documentation](../../docs/SMOKE-TESTS.md) for detailed information.
+
+### Required Secrets
+
+Configure in GitHub repository settings (Settings → Secrets → Actions):
+- `FLY_API_TOKEN` - Fly.io token for production deployments
+- `STAGING_FLY_API_TOKEN` - Fly.io token for staging deployments
+
+### Testing the Workflow
+
+**Test staging deployment:**
+```bash
+# Make a backend change
+git checkout -b test-deploy
+echo "// Test change" >> backend/GscTracking.Api/Program.cs
+git add backend/
+git commit -m "feat(backend): test deployment workflow"
+git push origin test-deploy
+
+# Create PR to main - this triggers staging deployment
+# Check PR comments for deployment status and links
+```
+
+**Test production deployment:**
+```bash
+# Merge PR to main - this triggers production deployment
+# Check Actions tab for workflow progress
+# Verify deployment at https://gsc-tracking-api.fly.dev/api/hello
+```
+
+### Troubleshooting
+
+**Deployment Failures:**
+1. Check workflow logs in GitHub Actions
+2. Check Fly.io logs: `flyctl logs -a gsc-tracking-api`
+3. Verify secrets are configured correctly
+
+**Migration Issues:**
+1. Check migration files are properly created
+2. Test migration locally: `dotnet ef database update`
+3. Review application logs for migration errors
+
+**Smoke Test Failures:**
+1. Verify endpoints manually
+2. Check application logs for runtime errors
+3. Increase stabilization wait time if needed
