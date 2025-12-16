@@ -13,6 +13,8 @@ public class JobDto
     public DateTime? DateCompleted { get; set; }
     public decimal? EstimateAmount { get; set; }
     public decimal? ActualAmount { get; set; }
+    public decimal TotalCost { get; set; }
+    public decimal? ProfitMargin { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

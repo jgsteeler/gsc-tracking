@@ -16,7 +16,10 @@ public class JobService : IJobService
 
     public async Task<IEnumerable<JobDto>> GetAllJobsAsync(string? searchTerm = null, string? statusFilter = null)
     {
-        var query = _context.Job.Include(j => j.Customer).AsQueryable();
+        var query = _context.Job
+            .Include(j => j.Customer)
+            .Include(j => j.Expenses)
+            .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
@@ -47,6 +50,7 @@ public class JobService : IJobService
     {
         var job = await _context.Job
             .Include(j => j.Customer)
+            .Include(j => j.Expenses)
             .FirstOrDefaultAsync(j => j.Id == id);
         
         if (job == null)
@@ -61,6 +65,7 @@ public class JobService : IJobService
     {
         var jobs = await _context.Job
             .Include(j => j.Customer)
+            .Include(j => j.Expenses)
             .Where(j => j.CustomerId == customerId)
             .OrderByDescending(j => j.DateReceived)
             .ToListAsync();
@@ -94,8 +99,9 @@ public class JobService : IJobService
         _context.Job.Add(job);
         await _context.SaveChangesAsync();
 
-        // Load the customer for the DTO
+        // Load the customer and expenses for the DTO
         await _context.Entry(job).Reference(j => j.Customer).LoadAsync();
+        await _context.Entry(job).Collection(j => j.Expenses).LoadAsync();
 
         return MapToDto(job);
     }
@@ -104,6 +110,7 @@ public class JobService : IJobService
     {
         var job = await _context.Job
             .Include(j => j.Customer)
+            .Include(j => j.Expenses)
             .FirstOrDefaultAsync(j => j.Id == id);
         
         if (job == null)
@@ -153,6 +160,20 @@ public class JobService : IJobService
 
     private static JobDto MapToDto(Job job)
     {
+        // Calculate total cost from expenses
+        var totalCost = job.Expenses?.Sum(e => e.Amount) ?? 0;
+        
+        // Calculate profit margin (ActualAmount - TotalCost) or (EstimateAmount - TotalCost)
+        decimal? profitMargin = null;
+        if (job.ActualAmount.HasValue)
+        {
+            profitMargin = job.ActualAmount.Value - totalCost;
+        }
+        else if (job.EstimateAmount.HasValue)
+        {
+            profitMargin = job.EstimateAmount.Value - totalCost;
+        }
+
         return new JobDto
         {
             Id = job.Id,
@@ -166,6 +187,8 @@ public class JobService : IJobService
             DateCompleted = job.DateCompleted,
             EstimateAmount = job.EstimateAmount,
             ActualAmount = job.ActualAmount,
+            TotalCost = totalCost,
+            ProfitMargin = profitMargin,
             CreatedAt = job.CreatedAt,
             UpdatedAt = job.UpdatedAt
         };

@@ -18,4 +18,5 @@ public class Job
     public bool IsDeleted { get; set; } = false;
     public DateTime? DeletedAt { get; set; }
     public ICollection<JobUpdate> JobUpdates { get; set; } = new List<JobUpdate>();
+    public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
 }
