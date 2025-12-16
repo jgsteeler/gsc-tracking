@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Version>0.1.11</Version>
-    <InformationalVersion>0.1.11+ce4c206</InformationalVersion>
+    <InformationalVersion>0.1.11+132b278</InformationalVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PublishRepositoryUrl>false</PublishRepositoryUrl>
