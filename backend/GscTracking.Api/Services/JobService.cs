@@ -163,7 +163,9 @@ public class JobService : IJobService
         // Calculate total cost from expenses
         var totalCost = job.Expenses?.Sum(e => e.Amount) ?? 0;
         
-        // Calculate profit margin (ActualAmount - TotalCost) or (EstimateAmount - TotalCost)
+        // Calculate profit margin as: Revenue - Total Cost
+        // Uses ActualAmount if available (for completed/invoiced jobs), 
+        // otherwise falls back to EstimateAmount (for quotes/in-progress jobs)
         decimal? profitMargin = null;
         if (job.ActualAmount.HasValue)
         {
