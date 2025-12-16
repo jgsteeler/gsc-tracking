@@ -320,6 +320,8 @@ describe('JobForm - Customer Creation Feature', () => {
       dateCompleted: null,
       estimateAmount: 50,
       actualAmount: null,
+      totalCost: 0,
+      profitMargin: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
