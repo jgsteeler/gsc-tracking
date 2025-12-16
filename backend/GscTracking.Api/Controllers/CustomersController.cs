@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
+// Uncomment the following line to enable authentication for this controller:
+// using Microsoft.AspNetCore.Authorization;
 using GscTracking.Api.DTOs;
 using GscTracking.Api.Services;
 
 namespace GscTracking.Api.Controllers;
 
+// To protect all endpoints in this controller, add [Authorize] attribute here:
+// [Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CustomersController : ControllerBase
