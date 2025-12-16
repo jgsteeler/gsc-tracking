@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
@@ -106,17 +107,46 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IJobUpdateService, JobUpdateService>();
 
-// Add CORS policy for frontend development
+// Add CORS policy with pattern matching for Netlify deploy previews
+// Compile regex once for performance
+var netlifyPreviewRegex = new Regex(
+    @"^https:\/\/deploy-preview-\d+--gsc-tracking-ui\.netlify\.app$",
+    RegexOptions.Compiled | RegexOptions.IgnoreCase
+);
+
+// Parse allowed ports once
+var allowedLocalPorts = builder.Configuration["AllowedLocalPorts"]?.Split(',') ?? new[] { "5173" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:5173",  // Vite default port (HTTP)
-                "https://localhost:5173"  // Vite with HTTPS
-              )
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.SetIsOriginAllowed(origin =>
+        {
+            // Allow configured localhost ports
+            foreach (var port in allowedLocalPorts)
+            {
+                if (origin == $"http://localhost:{port.Trim()}")
+                    return true;
+            }
+            
+            // Allow production
+            if (origin == "https://gsc-tracking-ui.netlify.app")
+                return true;
+            
+            // Allow staging
+            if (origin == "https://staging--gsc-tracking-ui.netlify.app")
+                return true;
+            
+            // Allow Netlify deploy previews with pattern matching
+            if (netlifyPreviewRegex.IsMatch(origin))
+                return true;
+            
+            return false;
+        })
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
     });
 });
 
