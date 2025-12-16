@@ -19,6 +19,7 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 
 - **[CI/CD Pipeline](./docs/CICD-PIPELINE.md)** - Complete CI/CD documentation with workflows, branching strategy, and troubleshooting
 - **[Release Process](./RELEASE.md)** - Semantic versioning and automated release workflow
+- **[Smoke Tests](./docs/SMOKE-TESTS.md)** - Automated smoke testing for deployment validation
 
 **Frontend Deployment (Netlify):**
 
