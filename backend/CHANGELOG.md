@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.13](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.12...backend-v0.1.13) (2025-12-16)
+
+
+### Features
+
+* **infra:** implement pattern-based CORS for Netlify deploy previews ([#112](https://github.com/jgsteeler/gsc-tracking/issues/112)) ([9caa550](https://github.com/jgsteeler/gsc-tracking/commit/9caa5504df6be6e579e0438063d3178ddfbfff7b))
+
 ## [0.1.12](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.11...backend-v0.1.12) (2025-12-16)
 
 
