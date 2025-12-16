@@ -90,8 +90,27 @@ The Swagger UI provides:
 
 The API is configured with:
 - Swagger/OpenAPI documentation (available in development and staging)
-- CORS enabled for frontend at `http://localhost:5173`
+- CORS policy with pattern-based origin validation:
+  - Configurable localhost ports (default: 5173, 5174, 3000)
+  - Production: `https://gsc-tracking-ui.netlify.app`
+  - Staging: `https://staging--gsc-tracking-ui.netlify.app`
+  - Deploy previews: Pattern-matched URLs (e.g., `https://deploy-preview-123--gsc-tracking-ui.netlify.app`)
 - HTTPS redirection
+
+#### CORS Configuration
+
+The CORS policy uses pattern matching to dynamically allow:
+- **Localhost ports**: Configured via `AllowedLocalPorts` in appsettings (comma-separated)
+- **Production URL**: Exact match for production Netlify deployment
+- **Staging URL**: Exact match for staging Netlify deployment
+- **Deploy previews**: Regex pattern matching for `https://deploy-preview-\d+--gsc-tracking-ui.netlify.app`
+
+To modify allowed localhost ports, update `appsettings.Development.json`:
+```json
+{
+  "AllowedLocalPorts": "5173,5174,3000"
+}
+```
 
 ### Project Structure
 
