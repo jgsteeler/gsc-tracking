@@ -133,11 +133,22 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 // Hello World endpoint for GSC Tracking API
-app.MapGet("/api/hello", () => new { 
-    message = "Hello from GSC Tracking API!", 
-    version = "1.0.0",
-    timestamp = DateTime.UtcNow 
+app.MapGet("/api/hello", () => 
+{
+    var assembly = Assembly.GetExecutingAssembly();
+    var version = assembly.GetName().Version?.ToString() ?? "unknown";
+    var informationalVersion = assembly
+        .GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>()?
+        .InformationalVersion ?? version;
+    
+    return new { 
+        message = "Hello from GSC Tracking API!", 
+        version = informationalVersion,
+        assemblyVersion = version,
+        timestamp = DateTime.UtcNow 
+    };
 })
-.WithName("GetHello");
+.WithName("GetHello")
+.WithTags("System");
 
 app.Run();
