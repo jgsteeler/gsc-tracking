@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.10](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.9...frontend-v0.1.10) (2025-12-16)
+
+
+### Features
+
+* **backend:** implement assembly version management with build metadata ([#108](https://github.com/jgsteeler/gsc-tracking/issues/108)) ([8b2c8d4](https://github.com/jgsteeler/gsc-tracking/commit/8b2c8d4448bd78903470de6490877f39a118e9d5))
+
 ## [0.1.9](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.8...frontend-v0.1.9) (2025-12-16)
 
 
