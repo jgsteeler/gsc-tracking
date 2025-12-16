@@ -2,6 +2,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using GscTracking.Api.Data;
@@ -27,6 +29,45 @@ builder.Services.AddSwaggerGen(options =>
             Url = new Uri("https://github.com/jgsteeler/gsc-tracking")
         }
     });
+
+    // Configure OAuth2 for Auth0
+    var auth0Domain = builder.Configuration["Auth0:Domain"];
+    if (!string.IsNullOrEmpty(auth0Domain))
+    {
+        options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows
+            {
+                Implicit = new OpenApiOAuthFlow
+                {
+                    AuthorizationUrl = new Uri($"https://{auth0Domain}/authorize"),
+                    TokenUrl = new Uri($"https://{auth0Domain}/oauth/token"),
+                    Scopes = new Dictionary<string, string>
+                    {
+                        { "openid", "OpenID" },
+                        { "profile", "Profile" },
+                        { "email", "Email" }
+                    }
+                }
+            }
+        });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "oauth2"
+                    }
+                },
+                new[] { "openid", "profile", "email" }
+            }
+        });
+    }
 
     // Include XML comments for documentation
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -150,6 +191,40 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Configure Auth0 Authentication
+var auth0Domain = builder.Configuration["Auth0:Domain"];
+var auth0Audience = builder.Configuration["Auth0:Audience"];
+
+// Only configure Auth0 if domain and audience are provided
+if (!string.IsNullOrEmpty(auth0Domain) && !string.IsNullOrEmpty(auth0Audience))
+{
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.Authority = $"https://{auth0Domain}/";
+        options.Audience = auth0Audience;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = $"https://{auth0Domain}/",
+            ValidateAudience = true,
+            ValidAudience = auth0Audience,
+            ValidateLifetime = true
+        };
+    });
+
+    builder.Services.AddAuthorization();
+}
+else
+{
+    // Auth0 is not configured - authentication will be disabled
+    Console.WriteLine("WARNING: Auth0 is not configured. Authentication will be disabled.");
+}
+
 var app = builder.Build();
 
 // Run database migrations on startup (for all environments)
@@ -187,6 +262,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
+
+// Add authentication and authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Map controllers
 app.MapControllers();
