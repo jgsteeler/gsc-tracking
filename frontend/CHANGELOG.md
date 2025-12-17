@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.12](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.11...frontend-v0.1.12) (2025-12-17)
+
+
+### Features
+
+* **expense:** add backend expense tracking system with CRUD operations ([#121](https://github.com/jgsteeler/gsc-tracking/issues/121)) ([0fa2ec8](https://github.com/jgsteeler/gsc-tracking/commit/0fa2ec8c94222b5f1aa8af1cf32495c8c63662e8))
+
 ## [0.1.11](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.10...frontend-v0.1.11) (2025-12-17)
 
 

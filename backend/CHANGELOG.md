@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.15](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.14...backend-v0.1.15) (2025-12-17)
+
+
+### Features
+
+* **expense:** add backend expense tracking system with CRUD operations ([#121](https://github.com/jgsteeler/gsc-tracking/issues/121)) ([0fa2ec8](https://github.com/jgsteeler/gsc-tracking/commit/0fa2ec8c94222b5f1aa8af1cf32495c8c63662e8))
+
+
+### Bug Fixes
+
+* **expense:** add job validation before expense deletion ([#123](https://github.com/jgsteeler/gsc-tracking/issues/123)) ([a600c33](https://github.com/jgsteeler/gsc-tracking/commit/a600c331dcaa1d962d633ba31738196cb391a310))
+
 ## [0.1.14](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.13...backend-v0.1.14) (2025-12-17)
 
 
