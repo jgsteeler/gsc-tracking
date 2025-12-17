@@ -68,11 +68,11 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 3. **Configure Application Settings**
    - Navigate to the **Settings** tab
    - Note your **Domain** and **Client ID** (you'll need these later)
-      - Domain: <dev-axm38gs1176ibx7p.us.auth0.com>
-      - Client ID: <arNDmNtUSmJm1O1V1UYOWNcKnEEnXgrI>
+
 4. **Configure Allowed URLs**
 
    **Allowed Callback URLs** (comma-separated):
+
 
    ```
    http://localhost:5173,
@@ -125,6 +125,8 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 
 ## Backend Configuration
 
+**IMPORTANT: Auth0 configuration is mandatory.** The application will not start without proper Auth0 configuration. This is a security measure to prevent the application from running in an insecure state.
+
 The backend is configured to read Auth0 settings primarily from environment variables. This is the most secure method and is recommended for all environments.
 
 ### How It Works
@@ -133,6 +135,8 @@ In `Program.cs`, the application attempts to load configuration in this order:
 
 1. **Environment Variables**: `AUTH0_DOMAIN` and `AUTH0_AUDIENCE`. This is the primary method for production and staging.
 2. **`appsettings.json`**: `Auth0:Domain` and `Auth0:Audience`. This is a fallback, useful for shared development settings.
+
+**If both `AUTH0_DOMAIN` and `AUTH0_AUDIENCE` are not set (either via environment variables or appsettings.json), the application will throw an `InvalidOperationException` and fail to start.**
 
 For local development, the `DotNetEnv` NuGet package is used to automatically load a `.env` file if it exists.
 
@@ -180,7 +184,7 @@ Example for `fly.staging.toml`:
   AUTH0_AUDIENCE = 'https://gsc-tracking-api'
 ```
 
-**Note:** Secrets set with `flyctl secrets set` will override any values in `fly.toml`. The recommended practice is to use secrets for all sensitive data.
+**Note:** Secrets set with `flyctl secrets set` will override any values in `fly.toml`. The recommended practice is to use secrets for all sensitive data
 
 ## Frontend Configuration
 
@@ -189,6 +193,7 @@ Example for `fly.staging.toml`:
 1. **Local Development (.env.local)**
 
    Create `.env.local` in the frontend directory:
+
 
    ```bash
    # Auth0 Configuration
@@ -201,19 +206,20 @@ Example for `fly.staging.toml`:
    ```
 
 2. **Netlify Configuration**
-
    **Option A: Using Netlify UI**
-   - Go to your Netlify site dashboard
-   - Navigate to **Site settings** → **Environment variables**
-   - Add the following variables:
-     - `VITE_AUTH0_DOMAIN`: `your-tenant.auth0.com`
-     - `VITE_AUTH0_CLIENT_ID`: `your-client-id`
-     - `VITE_AUTH0_AUDIENCE`: `https://api.gsc-tracking.com`
-     - `VITE_API_URL`: `https://gsc-tracking-api.fly.dev/api`
+
+- Go to your Netlify site dashboard
+- Navigate to **Site settings** → **Environment variables**
+- Add the following variables:
+  - `VITE_AUTH0_DOMAIN`: `your-tenant.auth0.com`
+  - `VITE_AUTH0_CLIENT_ID`: `your-client-id`
+  - `VITE_AUTH0_AUDIENCE`: `https://api.gsc-tracking.com`
+  - `VITE_API_URL`: `https://gsc-tracking-api.fly.dev/api`
 
    **Option B: Using netlify.toml**
 
    Update `netlify.toml`:
+
 
    ```toml
    [context.production.environment]
@@ -286,6 +292,7 @@ public class CustomersController : ControllerBase
 }
 ```
 
+
 ## Protecting Frontend Routes
 
 ### ProtectedRoute Component
@@ -295,6 +302,7 @@ The application includes a `ProtectedRoute` component (`frontend/src/components/
 **Current Status**: The `ProtectedRoute` component is **currently not integrated** into the application routing. It has been implemented as **preparatory work for future use** when route-level authentication is required.
 
 **Features**:
+
 - Checks if the user is authenticated using Auth0
 - Shows a loading spinner while authentication status is being determined
 - Redirects unauthenticated users to the Auth0 login page
@@ -351,6 +359,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 
 The application currently uses optional authentication - users can use the app without logging in, but certain features (like creating/editing) may be restricted based on authentication status. When the business requirements change to require authentication for accessing the application, the `ProtectedRoute` component can be integrated following the example above.
 
+>>>>>>>
 ## Protecting API Endpoints
 
 ### Controller-Level Protection
@@ -423,25 +432,31 @@ public async Task<ActionResult<CustomerDto>> CreateCustomer(CustomerRequestDto d
 
 ### Common Issues
 
-1. **"Invalid state" error on callback**
+1. **Application fails to start with "Auth0 configuration is required" error**
+   - This is expected behavior when Auth0 is not configured
+   - Set `AUTH0_DOMAIN` and `AUTH0_AUDIENCE` environment variables
+   - Or configure `Auth0:Domain` and `Auth0:Audience` in appsettings.json
+   - See the Backend Configuration section for detailed instructions
+
+2. **"Invalid state" error on callback**
    - Clear browser cookies and local storage
    - Verify the redirect URI matches exactly in Auth0 settings
    - Check that HTTPS is used in production URLs
 
-2. **"Audience is required" error**
+3. **"Audience is required" error**
    - Verify `VITE_AUTH0_AUDIENCE` is set in frontend environment
    - Verify the audience matches your API identifier in Auth0
 
-3. **401 Unauthorized on API calls**
+4. **401 Unauthorized on API calls**
    - Verify the access token is being sent with requests
    - Check that the API audience matches between frontend and backend
    - Verify Auth0 domain and audience are correctly set in backend
 
-4. **CORS errors**
+5. **CORS errors**
    - Verify your origin is listed in Auth0's Allowed Web Origins
    - Check backend CORS configuration includes your frontend URL
 
-5. **"Login required" error on deploy previews**
+6. **"Login required" error on deploy previews**
    - Deploy preview URLs are not registered in Auth0 by default
    - Either register each preview URL manually (not recommended)
    - Or use the staging branch for Auth0 testing
