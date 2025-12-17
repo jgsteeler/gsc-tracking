@@ -18,7 +18,7 @@ import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
 import type { CustomerFormValues } from '@/lib/validations'
 import { useToast } from '@/hooks/use-toast'
 
-export function Customers() {
+export default function Customers() {
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [dialogOpen, setDialogOpen] = useState(false)

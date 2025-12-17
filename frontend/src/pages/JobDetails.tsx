@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast'
 import { JobUpdates } from '@/components/JobUpdates'
 import { ExpenseList } from '@/components/ExpenseList'
 
-export function JobDetails() {
+export default function JobDetails() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { toast } = useToast()
