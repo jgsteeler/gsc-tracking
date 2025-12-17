@@ -68,11 +68,11 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 3. **Configure Application Settings**
    - Navigate to the **Settings** tab
    - Note your **Domain** and **Client ID** (you'll need these later)
-      - Domain: <dev-axm38gs1176ibx7p.us.auth0.com>
-      - Client ID: <arNDmNtUSmJm1O1V1UYOWNcKnEEnXgrI>
+
 4. **Configure Allowed URLs**
 
    **Allowed Callback URLs** (comma-separated):
+
 
    ```
    http://localhost:5173,
@@ -180,7 +180,7 @@ Example for `fly.staging.toml`:
   AUTH0_AUDIENCE = 'https://gsc-tracking-api'
 ```
 
-**Note:** Secrets set with `flyctl secrets set` will override any values in `fly.toml`. The recommended practice is to use secrets for all sensitive data.
+**Note:** Secrets set with `flyctl secrets set` will override any values in `fly.toml`. The recommended practice is to use secrets for all sensitive data
 
 ## Frontend Configuration
 
@@ -189,6 +189,7 @@ Example for `fly.staging.toml`:
 1. **Local Development (.env.local)**
 
    Create `.env.local` in the frontend directory:
+
 
    ```bash
    # Auth0 Configuration
@@ -201,19 +202,20 @@ Example for `fly.staging.toml`:
    ```
 
 2. **Netlify Configuration**
-
    **Option A: Using Netlify UI**
-   - Go to your Netlify site dashboard
-   - Navigate to **Site settings** → **Environment variables**
-   - Add the following variables:
-     - `VITE_AUTH0_DOMAIN`: `your-tenant.auth0.com`
-     - `VITE_AUTH0_CLIENT_ID`: `your-client-id`
-     - `VITE_AUTH0_AUDIENCE`: `https://api.gsc-tracking.com`
-     - `VITE_API_URL`: `https://gsc-tracking-api.fly.dev/api`
+
+- Go to your Netlify site dashboard
+- Navigate to **Site settings** → **Environment variables**
+- Add the following variables:
+  - `VITE_AUTH0_DOMAIN`: `your-tenant.auth0.com`
+  - `VITE_AUTH0_CLIENT_ID`: `your-client-id`
+  - `VITE_AUTH0_AUDIENCE`: `https://api.gsc-tracking.com`
+  - `VITE_API_URL`: `https://gsc-tracking-api.fly.dev/api`
 
    **Option B: Using netlify.toml**
 
    Update `netlify.toml`:
+
 
    ```toml
    [context.production.environment]
@@ -286,6 +288,7 @@ public class CustomersController : ControllerBase
 }
 ```
 
+
 ## Protecting Frontend Routes
 
 ### ProtectedRoute Component
@@ -295,6 +298,7 @@ The application includes a `ProtectedRoute` component (`frontend/src/components/
 **Current Status**: The `ProtectedRoute` component is **currently not integrated** into the application routing. It has been implemented as **preparatory work for future use** when route-level authentication is required.
 
 **Features**:
+
 - Checks if the user is authenticated using Auth0
 - Shows a loading spinner while authentication status is being determined
 - Redirects unauthenticated users to the Auth0 login page
@@ -351,6 +355,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 
 The application currently uses optional authentication - users can use the app without logging in, but certain features (like creating/editing) may be restricted based on authentication status. When the business requirements change to require authentication for accessing the application, the `ProtectedRoute` component can be integrated following the example above.
 
+>>>>>>>
 ## Protecting API Endpoints
 
 ### Controller-Level Protection
