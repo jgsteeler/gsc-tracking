@@ -108,6 +108,13 @@ public class ExpenseService : IExpenseService
             return false;
         }
 
+        // Verify the expense belongs to a valid job before deletion
+        var jobExists = await _context.Job.AnyAsync(j => j.Id == expense.JobId);
+        if (!jobExists)
+        {
+            throw new InvalidOperationException($"Cannot delete expense {id}: associated job {expense.JobId} does not exist");
+        }
+
         _context.Expense.Remove(expense);
         await _context.SaveChangesAsync();
 

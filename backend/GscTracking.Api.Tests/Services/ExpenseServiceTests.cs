@@ -282,6 +282,32 @@ public class ExpenseServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task DeleteExpenseAsync_ThrowsInvalidOperationException_WhenJobDoesNotExist()
+    {
+        // Arrange - Create an expense with a non-existent job
+        var expense = new Expense
+        {
+            Id = 1,
+            JobId = 999, // Non-existent job ID
+            Type = ExpenseType.Parts,
+            Description = "Orphaned expense",
+            Amount = 10.00m,
+            Date = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+        _context.Expense.Add(expense);
+        await _context.SaveChangesAsync();
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => 
+            _expenseService.DeleteExpenseAsync(1));
+        
+        exception.Message.Should().Contain("Cannot delete expense");
+        exception.Message.Should().Contain("associated job 999 does not exist");
+    }
+
+    [Fact]
     public async Task CalculateTotalCostAsync_ReturnsSumOfExpenses()
     {
         // Arrange
