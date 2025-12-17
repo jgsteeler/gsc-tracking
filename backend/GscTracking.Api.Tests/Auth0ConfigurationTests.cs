@@ -48,7 +48,7 @@ public class Auth0ConfigurationTests
     }
 
     [Fact]
-    public void Auth0Configuration_WhenDomainMissing_ShouldNotConfigureAuth()
+    public void Auth0Configuration_WhenDomainMissing_ShouldBeDetectableAsNull()
     {
         // Arrange
         var configuration = new ConfigurationBuilder()
@@ -62,12 +62,13 @@ public class Auth0ConfigurationTests
         var audience = configuration["Auth0:Audience"];
 
         // Act & Assert
+        // Note: In actual application startup, this condition would cause app to fail
         string.IsNullOrEmpty(domain).Should().BeTrue();
         string.IsNullOrEmpty(audience).Should().BeFalse();
     }
 
     [Fact]
-    public void Auth0Configuration_WhenAudienceMissing_ShouldNotConfigureAuth()
+    public void Auth0Configuration_WhenAudienceMissing_ShouldBeDetectableAsNull()
     {
         // Arrange
         var configuration = new ConfigurationBuilder()
@@ -81,6 +82,7 @@ public class Auth0ConfigurationTests
         var audience = configuration["Auth0:Audience"];
 
         // Act & Assert
+        // Note: In actual application startup, this condition would cause app to fail
         string.IsNullOrEmpty(domain).Should().BeFalse();
         string.IsNullOrEmpty(audience).Should().BeTrue();
     }
