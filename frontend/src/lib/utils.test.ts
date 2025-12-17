@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { cn } from './utils';
+import { cn, formatDateForApi } from './utils';
 
 describe('cn utility function', () => {
   it('should merge class names correctly', () => {
@@ -41,5 +41,30 @@ describe('cn utility function', () => {
       'class3': true,
     });
     expect(result).toBe('class1 class3');
+  });
+});
+
+describe('formatDateForApi utility function', () => {
+  it('should add time component to date-only string', () => {
+    const result = formatDateForApi('2024-01-15');
+    expect(result).toBe('2024-01-15T00:00:00Z');
+  });
+
+  it('should return ISO format string unchanged', () => {
+    const isoDate = '2024-01-15T14:30:00Z';
+    const result = formatDateForApi(isoDate);
+    expect(result).toBe(isoDate);
+  });
+
+  it('should handle ISO format with milliseconds', () => {
+    const isoDate = '2024-01-15T14:30:00.123Z';
+    const result = formatDateForApi(isoDate);
+    expect(result).toBe(isoDate);
+  });
+
+  it('should handle ISO format with timezone offset', () => {
+    const isoDate = '2024-01-15T14:30:00+05:00';
+    const result = formatDateForApi(isoDate);
+    expect(result).toBe(isoDate);
   });
 });

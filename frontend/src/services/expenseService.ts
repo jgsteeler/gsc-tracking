@@ -1,4 +1,5 @@
 import type { Expense, ExpenseRequestDto } from '@/types/expense'
+import { formatDateForApi } from '@/lib/utils'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5091/api'
 
@@ -15,7 +16,7 @@ export const expenseService = {
     // Ensure date is in proper format for backend
     const submitData = {
       ...data,
-      date: data.date.includes('T') ? data.date : `${data.date}T00:00:00Z`
+      date: formatDateForApi(data.date)
     }
     
     const response = await fetch(`${API_BASE_URL}/jobs/${jobId}/expenses`, {
@@ -37,7 +38,7 @@ export const expenseService = {
     // Ensure date is in proper format for backend
     const submitData = {
       ...data,
-      date: data.date.includes('T') ? data.date : `${data.date}T00:00:00Z`
+      date: formatDateForApi(data.date)
     }
     
     const response = await fetch(`${API_BASE_URL}/expenses/${id}`, {
