@@ -3,6 +3,9 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import { Menu, X, LayoutDashboard, Users, Briefcase } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { LoginButton } from '@/components/LoginButton'
+import { LogoutButton } from '@/components/LogoutButton'
+import { UserProfile } from '@/components/UserProfile'
 import packageJson from '../../package.json'
 
 const navigation = [
@@ -47,6 +50,14 @@ export function MainLayout() {
               })}
             </nav>
           </div>
+          {/* Auth Section at Bottom */}
+          <div className="flex-shrink-0 flex flex-col gap-2 border-t p-4">
+            <UserProfile />
+            <div className="flex gap-2">
+              <LoginButton />
+              <LogoutButton />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -57,17 +68,20 @@ export function MainLayout() {
             <h1 className="text-lg font-bold">GSC Tracking</h1>
             <span className="text-xs text-muted-foreground">v{packageJson.version}</span>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </Button>
+          <div className="flex items-center gap-2">
+            <UserProfile />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -95,6 +109,11 @@ export function MainLayout() {
                 </Link>
               )
             })}
+            {/* Auth buttons in mobile menu */}
+            <div className="pt-4 mt-4 border-t flex gap-2">
+              <LoginButton />
+              <LogoutButton />
+            </div>
           </div>
         </div>
       )}
