@@ -11,21 +11,19 @@ export const expenseService = {
     return response.json()
   },
 
-  async getById(jobId: number, id: number): Promise<Expense> {
-    const response = await fetch(`${API_BASE_URL}/jobs/${jobId}/expenses/${id}`)
-    if (!response.ok) {
-      throw new Error('Failed to fetch expense')
-    }
-    return response.json()
-  },
-
   async create(jobId: number, data: ExpenseRequestDto): Promise<Expense> {
+    // Ensure date is in proper format for backend
+    const submitData = {
+      ...data,
+      date: data.date.includes('T') ? data.date : `${data.date}T00:00:00Z`
+    }
+    
     const response = await fetch(`${API_BASE_URL}/jobs/${jobId}/expenses`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(submitData),
     })
     
     if (!response.ok) {
@@ -36,12 +34,18 @@ export const expenseService = {
   },
 
   async update(id: number, data: ExpenseRequestDto): Promise<Expense> {
+    // Ensure date is in proper format for backend
+    const submitData = {
+      ...data,
+      date: data.date.includes('T') ? data.date : `${data.date}T00:00:00Z`
+    }
+    
     const response = await fetch(`${API_BASE_URL}/expenses/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(submitData),
     })
     
     if (!response.ok) {
