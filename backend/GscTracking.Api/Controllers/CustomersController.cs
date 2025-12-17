@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 // Uncomment the following line to enable authentication for this controller:
-// using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using GscTracking.Api.DTOs;
 using GscTracking.Api.Services;
 
@@ -154,6 +154,7 @@ public class CustomersController : ControllerBase
     /// <param name="id">Customer ID</param>
     /// <returns>No content if successful</returns>
     [HttpDelete("{id}")]
+    [Authorize] 
     public async Task<IActionResult> DeleteCustomer(int id)
     {
         try
