@@ -10,8 +10,15 @@ using GscTracking.Api.Data;
 using GscTracking.Api.Services;
 using GscTracking.Api.Validators;
 using GscTracking.Api.Utils;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load .env file in development
+if (builder.Environment.IsDevelopment())
+{
+    Env.Load();
+}
 
 // Add services to the container.
 // Add Swagger/OpenAPI documentation
@@ -31,7 +38,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 
     // Configure OAuth2 for Auth0
-    var auth0Domain = builder.Configuration["Auth0:Domain"];
+    var auth0Domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN") ?? builder.Configuration["Auth0:Domain"];
     if (!string.IsNullOrEmpty(auth0Domain))
     {
         options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -77,25 +84,6 @@ builder.Services.AddSwaggerGen(options =>
         options.IncludeXmlComments(xmlPath);
     }
 });
-
-// Load .env file in development
-if (builder.Environment.IsDevelopment())
-{
-    var envPath = Path.Combine(builder.Environment.ContentRootPath, ".env");
-    if (File.Exists(envPath))
-    {
-        foreach (var line in File.ReadAllLines(envPath))
-        {
-            var parts = line.Split('=', 2);
-            if (parts.Length == 2)
-            {
-                // Trim quotes from the value
-                var value = parts[1].Trim().Trim('"');
-                Environment.SetEnvironmentVariable(parts[0], value);
-            }
-        }
-    }
-}
 
 // Add controllers
 builder.Services.AddControllers();
@@ -193,8 +181,8 @@ builder.Services.AddCors(options =>
 });
 
 // Configure Auth0 Authentication
-var auth0Domain = builder.Configuration["Auth0:Domain"];
-var auth0Audience = builder.Configuration["Auth0:Audience"];
+var auth0Domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN") ?? builder.Configuration["Auth0:Domain"];
+var auth0Audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE") ?? builder.Configuration["Auth0:Audience"];
 
 // Only configure Auth0 if domain and audience are provided
 if (!string.IsNullOrEmpty(auth0Domain) && !string.IsNullOrEmpty(auth0Audience))
