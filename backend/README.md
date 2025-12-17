@@ -8,6 +8,22 @@
 
 ## Getting Started
 
+### Prerequisites
+
+Before running the API, you must configure Auth0 authentication. The application will not start without proper Auth0 configuration.
+
+1. **Set up Auth0** - Follow the [Auth0 Setup Guide](../docs/AUTH0-SETUP.md)
+2. **Configure environment variables** - Create a `.env` file in `backend/GscTracking.Api/`:
+
+```bash
+# backend/GscTracking.Api/.env
+AUTH0_DOMAIN="your-tenant.auth0.com"
+AUTH0_AUDIENCE="https://your-api-audience"
+DATABASE_URL="Data Source=gsctracking.db"  # SQLite for local dev
+```
+
+See the [Auth0 Setup Guide](../docs/AUTH0-SETUP.md) for detailed configuration instructions.
+
 ### Running the API
 
 ```bash

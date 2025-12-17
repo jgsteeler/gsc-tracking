@@ -125,6 +125,8 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 
 ## Backend Configuration
 
+**IMPORTANT: Auth0 configuration is mandatory.** The application will not start without proper Auth0 configuration. This is a security measure to prevent the application from running in an insecure state.
+
 The backend is configured to read Auth0 settings primarily from environment variables. This is the most secure method and is recommended for all environments.
 
 ### How It Works
@@ -133,6 +135,8 @@ In `Program.cs`, the application attempts to load configuration in this order:
 
 1. **Environment Variables**: `AUTH0_DOMAIN` and `AUTH0_AUDIENCE`. This is the primary method for production and staging.
 2. **`appsettings.json`**: `Auth0:Domain` and `Auth0:Audience`. This is a fallback, useful for shared development settings.
+
+**If both `AUTH0_DOMAIN` and `AUTH0_AUDIENCE` are not set (either via environment variables or appsettings.json), the application will throw an `InvalidOperationException` and fail to start.**
 
 For local development, the `DotNetEnv` NuGet package is used to automatically load a `.env` file if it exists.
 
@@ -428,25 +432,31 @@ public async Task<ActionResult<CustomerDto>> CreateCustomer(CustomerRequestDto d
 
 ### Common Issues
 
-1. **"Invalid state" error on callback**
+1. **Application fails to start with "Auth0 configuration is required" error**
+   - This is expected behavior when Auth0 is not configured
+   - Set `AUTH0_DOMAIN` and `AUTH0_AUDIENCE` environment variables
+   - Or configure `Auth0:Domain` and `Auth0:Audience` in appsettings.json
+   - See the Backend Configuration section for detailed instructions
+
+2. **"Invalid state" error on callback**
    - Clear browser cookies and local storage
    - Verify the redirect URI matches exactly in Auth0 settings
    - Check that HTTPS is used in production URLs
 
-2. **"Audience is required" error**
+3. **"Audience is required" error**
    - Verify `VITE_AUTH0_AUDIENCE` is set in frontend environment
    - Verify the audience matches your API identifier in Auth0
 
-3. **401 Unauthorized on API calls**
+4. **401 Unauthorized on API calls**
    - Verify the access token is being sent with requests
    - Check that the API audience matches between frontend and backend
    - Verify Auth0 domain and audience are correctly set in backend
 
-4. **CORS errors**
+5. **CORS errors**
    - Verify your origin is listed in Auth0's Allowed Web Origins
    - Check backend CORS configuration includes your frontend URL
 
-5. **"Login required" error on deploy previews**
+6. **"Login required" error on deploy previews**
    - Deploy preview URLs are not registered in Auth0 by default
    - Either register each preview URL manually (not recommended)
    - Or use the staging branch for Auth0 testing
