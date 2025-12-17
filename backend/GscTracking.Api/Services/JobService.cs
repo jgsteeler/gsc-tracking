@@ -160,6 +160,22 @@ public class JobService : IJobService
 
     private static JobDto MapToDto(Job job)
     {
+        // Calculate total cost from expenses
+        var totalCost = job.Expenses?.Sum(e => e.Amount) ?? 0;
+        
+        // Calculate profit margin as: Revenue - Total Cost
+        // Uses ActualAmount if available (for completed/invoiced jobs), 
+        // otherwise falls back to EstimateAmount (for quotes/in-progress jobs)
+        decimal? profitMargin = null;
+        if (job.ActualAmount.HasValue)
+        {
+            profitMargin = job.ActualAmount.Value - totalCost;
+        }
+        else if (job.EstimateAmount.HasValue)
+        {
+            profitMargin = job.EstimateAmount.Value - totalCost;
+        }
+
         return new JobDto
         {
             Id = job.Id,
