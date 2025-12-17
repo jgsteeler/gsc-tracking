@@ -144,6 +144,8 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
     }).format(new Date(dateString))
   }
 
+  const totalCost = expenses.reduce((sum, expense) => sum + expense.amount, 0)
+
   return (
     <>
       <Card>
@@ -221,6 +223,13 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
                   ))}
                 </TableBody>
               </Table>
+              
+              <div className="flex justify-end pt-4 border-t">
+                <div className="text-right">
+                  <p className="text-sm text-muted-foreground">Total Cost</p>
+                  <p className="text-2xl font-bold">{formatCurrency(totalCost)}</p>
+                </div>
+              </div>
             </div>
           )}
         </CardContent>
