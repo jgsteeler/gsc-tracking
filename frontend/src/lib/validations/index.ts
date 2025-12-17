@@ -9,3 +9,4 @@
 export * from './customer.schema'
 export * from './job.schema'
 export * from './jobUpdate.schema'
+export * from './expense.schema'

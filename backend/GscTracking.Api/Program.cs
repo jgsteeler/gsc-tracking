@@ -106,6 +106,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IJobUpdateService, JobUpdateService>();
+builder.Services.AddScoped<IExpenseService, ExpenseService>();
 
 // Add CORS policy with pattern matching for Netlify deploy previews
 // Compile regex once for performance

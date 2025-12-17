@@ -11,6 +11,7 @@ import { JobDialog } from '@/components/JobDialog'
 import type { JobFormValues } from '@/lib/validations'
 import { useToast } from '@/hooks/use-toast'
 import { JobUpdates } from '@/components/JobUpdates'
+import { ExpenseList } from '@/components/ExpenseList'
 
 export function JobDetails() {
   const { id } = useParams<{ id: string }>()
@@ -56,6 +57,17 @@ export function JobDetails() {
         description: err instanceof Error ? err.message : 'Failed to update job',
         variant: 'destructive',
       })
+    }
+  }
+
+  const handleExpenseChange = async () => {
+    // Refresh job data to get updated totals
+    if (!id) return
+    try {
+      const data = await jobService.getById(parseInt(id))
+      setJob(data)
+    } catch (err) {
+      console.error('Failed to refresh job data:', err)
     }
   }
 
@@ -180,7 +192,7 @@ export function JobDetails() {
               </div>
             )}
 
-            <div>
+            <div className="pt-4 border-t">
               <label className="text-sm font-medium text-muted-foreground">Estimate Amount</label>
               <p className="mt-1 text-sm font-semibold">{formatCurrency(job.estimateAmount)}</p>
             </div>
@@ -188,6 +200,26 @@ export function JobDetails() {
             <div>
               <label className="text-sm font-medium text-muted-foreground">Actual Amount</label>
               <p className="mt-1 text-sm font-semibold">{formatCurrency(job.actualAmount)}</p>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Total Cost</label>
+              <p className="mt-1 text-sm font-semibold">{formatCurrency(job.totalCost)}</p>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Profit Margin</label>
+              <p className={`mt-1 text-sm font-semibold ${
+                job.profitMargin !== null && job.profitMargin !== undefined
+                  ? job.profitMargin < 0
+                    ? 'text-red-600'
+                    : job.profitMargin === 0
+                    ? 'text-gray-600'
+                    : 'text-green-600'
+                  : ''
+              }`}>
+                {formatCurrency(job.profitMargin)}
+              </p>
             </div>
 
             <div className="pt-4 border-t">
@@ -202,6 +234,9 @@ export function JobDetails() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Expenses Section */}
+      <ExpenseList jobId={job.id} onExpenseChange={handleExpenseChange} />
 
       {/* Job Updates Section */}
       <JobUpdates jobId={job.id} />
