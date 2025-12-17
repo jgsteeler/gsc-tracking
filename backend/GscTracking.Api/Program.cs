@@ -190,7 +190,7 @@ if (string.IsNullOrEmpty(auth0Domain) || string.IsNullOrEmpty(auth0Audience))
     throw new InvalidOperationException(
         "Auth0 configuration is required for application security. " +
         "Please set AUTH0_DOMAIN and AUTH0_AUDIENCE environment variables or configure 'Auth0:Domain' and 'Auth0:Audience' in appsettings.json. " +
-        "See docs/AUTH0_SETUP.md for configuration instructions."
+        "See docs/AUTH0-SETUP.md for configuration instructions."
     );
 }
 
