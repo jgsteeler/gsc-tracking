@@ -199,6 +199,11 @@ public class ExpenseManagementController : ControllerBase
             }
             return NoContent();
         }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "Invalid operation when deleting expense {ExpenseId}", id);
+            return BadRequest(new { message = ex.Message });
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting expense {ExpenseId}", id);
