@@ -68,7 +68,8 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 3. **Configure Application Settings**
    - Navigate to the **Settings** tab
    - Note your **Domain** and **Client ID** (you'll need these later)
-
+      - Domain: your-tenant.auth0.com
+      - Client ID: your-client-id-here
 4. **Configure Allowed URLs**
 
    **Allowed Callback URLs** (comma-separated):
