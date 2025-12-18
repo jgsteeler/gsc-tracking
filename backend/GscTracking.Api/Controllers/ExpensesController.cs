@@ -160,10 +160,6 @@ public class ExpensesController : ControllerBase
             }
             
             var expense = await _expenseService.UpdateExpenseAsync(id, expenseRequest);
-            if (expense == null)
-            {
-                return NotFound(new { message = $"Expense with ID {id} not found." });
-            }
             return Ok(expense);
         }
         catch (ArgumentException ex)
@@ -200,12 +196,7 @@ public class ExpensesController : ControllerBase
                 return BadRequest(new { message = "Expense does not belong to the specified job." });
             }
 
-            // Attempt to delete - if it fails (already deleted), we'll return 404
-            var result = await _expenseService.DeleteExpenseAsync(id);
-            if (!result)
-            {
-                return NotFound(new { message = $"Expense with ID {id} not found." });
-            }
+            await _expenseService.DeleteExpenseAsync(id);
             return NoContent();
         }
         catch (InvalidOperationException ex)
