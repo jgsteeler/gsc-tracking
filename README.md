@@ -6,14 +6,15 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 [![Deploy to Fly.io](https://github.com/jgsteeler/gsc-tracking/actions/workflows/deploy-flyio.yml/badge.svg)](https://github.com/jgsteeler/gsc-tracking/actions/workflows/deploy-flyio.yml)
 [![Validate PR](https://github.com/jgsteeler/gsc-tracking/actions/workflows/validate-pr.yml/badge.svg)](https://github.com/jgsteeler/gsc-tracking/actions/workflows/validate-pr.yml)
 [![Release Please](https://github.com/jgsteeler/gsc-tracking/actions/workflows/release-please.yml/badge.svg)](https://github.com/jgsteeler/gsc-tracking/actions/workflows/release-please.yml)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/8217bab4-e220-45f5-bb8b-436083684de4/deploy-status)](https://app.netlify.com/projects/gsc-tracking-ui/deploys)
 
 ## 📋 Project Documentation
 
 ### Core Documentation
 
-- **[Business Analysis](./business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
-- **[GitHub Issues](./ISSUES.md)** - Complete specifications for 25 project issues
-- **[Setup Instructions](./SETUP-INSTRUCTIONS.md)** - Step-by-step guide for creating labels, milestones, and issues
+- **[Business Analysis](./docs/business-management-app-analysis.md)** - Comprehensive technology stack analysis and requirements
+- **[GitHub Issues](./docs/ISSUES.md)** - Complete specifications for 25 project issues
+- **[Setup Instructions](./docs/SETUP-INSTRUCTIONS.md)** - Step-by-step guide for creating labels, milestones, and issues
 
 ### CI/CD and Deployment
 
@@ -38,9 +39,9 @@ Software for tracking equipment, projects, expenses, and sales for GSC Small Eng
 
 ### Development
 
-- **[Docker Guide](./DOCKER.md)** - Complete Docker and Docker Compose documentation
+- **[Docker Guide](./docs/DOCKER.md)** - Complete Docker and Docker Compose documentation
 - **[Contributing Guidelines](./CONTRIBUTING.md)** - How to contribute to the project
-- **[Commit Guidelines](./COMMIT_GUIDELINES.md)** - Conventional Commits format requirements
+- **[Commit Guidelines](./docs/COMMIT_GUIDELINES.md)** - Conventional Commits format requirements
 
 ## 🎯 Quick Start
 
@@ -60,7 +61,7 @@ docker-compose up
 - **Backend API**: <http://localhost:8080>
 - **Database**: PostgreSQL on localhost:5432
 
-See [DOCKER.md](./DOCKER.md) for complete Docker documentation.
+See [DOCKER.md](./docs/DOCKER.md) for complete Docker documentation.
 
 ### Option 2: Local Development
 
@@ -85,9 +86,9 @@ The app will be available at `http://localhost:5173`
 
 ### Project Setup
 
-1. Review the [business analysis document](./business-management-app-analysis.md) for project context
-2. Follow the [setup instructions](./SETUP-INSTRUCTIONS.md) to create GitHub labels and milestones
-3. Create issues from the [ISSUES.md](./ISSUES.md) specifications
+1. Review the [business analysis document](./docs/business-management-app-analysis.md) for project context
+2. Follow the [setup instructions](./docs/SETUP-INSTRUCTIONS.md) to create GitHub labels and milestones
+3. Create issues from the [ISSUES.md](./docs/ISSUES.md) specifications
 
 ## 🏗️ Technology Stack
 
@@ -138,7 +139,7 @@ This project follows **GitHub Flow** with automatic deployments to staging and p
 ### GitHub Flow Workflow
 
 1. **Create a feature branch** from `main` (e.g., `feat/customer-search`)
-2. **Make changes** following [Conventional Commits](./COMMIT_GUIDELINES.md)
+2. **Make changes** following [Conventional Commits](./docs/COMMIT_GUIDELINES.md)
 3. **Open a pull request** → Automatically deploys backend to Fly.io staging and frontend to Netlify preview
 4. **Test your changes** using the preview URLs (posted in PR comments)
 5. **Get code review** and approval

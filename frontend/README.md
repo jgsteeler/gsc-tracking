@@ -143,4 +143,4 @@ The following shadcn/ui components are available:
 8. Implement dark mode toggle (optional)
 9. Integrate ProtectedRoute for route-level authentication (when required)
 
-See [business-management-app-analysis.md](../business-management-app-analysis.md) for full requirements.
+See [business-management-app-analysis.md](../../docs/business-management-app-analysis.md) for full requirements.
