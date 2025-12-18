@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.18](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.17...backend-v0.1.18) (2025-12-18)
+
+
+### Features
+
+* **docs:** add setup instructions and business management app analysis ([#140](https://github.com/jgsteeler/gsc-tracking/issues/140)) ([de7eb3a](https://github.com/jgsteeler/gsc-tracking/commit/de7eb3ae8424c374de59d7968a42916800b03c5b))
+
 ## [0.1.17](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.16...backend-v0.1.17) (2025-12-18)
 
 
