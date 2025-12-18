@@ -28,9 +28,9 @@ import { useAuth0 } from '@auth0/auth0-react';
 export const useAccessToken = () => {
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
-  const isAuthEnabled = !!(import.meta.env.VITE_AUTH0_DOMAIN &&
-                            import.meta.env.VITE_AUTH0_CLIENT_ID &&
-                            import.meta.env.VITE_AUTH0_AUDIENCE);
+  const isAuthEnabled = Boolean(import.meta.env.VITE_AUTH0_DOMAIN &&
+                                 import.meta.env.VITE_AUTH0_CLIENT_ID &&
+                                 import.meta.env.VITE_AUTH0_AUDIENCE);
 
   const getToken = async (): Promise<string | null> => {
     if (!isAuthEnabled || !isAuthenticated) {
