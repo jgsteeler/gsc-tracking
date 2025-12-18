@@ -5,6 +5,7 @@ This checklist helps verify that Auth0 authentication is working correctly after
 ## Prerequisites
 
 Before testing, ensure:
+
 - [ ] Auth0 tenant is created
 - [ ] Auth0 API is created with audience configured
 - [ ] Auth0 Application (SPA) is created
@@ -22,6 +23,7 @@ dotnet run
 ```
 
 Expected: Application starts successfully. Check console output:
+
 - ✅ No Auth0-related errors
 - ✅ If Auth0 is configured, no "Auth0 is not configured" warning
 - ✅ If Auth0 is not configured, see "WARNING: Auth0 is not configured. Authentication will be disabled."
@@ -45,6 +47,7 @@ curl http://localhost:5091/api/customers
 ```
 
 Expected:
+
 - ✅ Endpoints return data successfully
 - ✅ No 401 Unauthorized errors (if endpoints are not protected yet)
 
@@ -69,6 +72,7 @@ npm run dev
 ```
 
 Expected:
+
 - ✅ Application starts on `http://localhost:5173`
 - ✅ No Auth0-related errors in browser console
 - ✅ If Auth0 is not configured, app works normally (no auth UI)
@@ -171,6 +175,7 @@ When using `useAccessToken` hook:
 **Cause:** Redirect URI mismatch or cookie issues
 
 **Solution:**
+
 1. Verify redirect URI in Auth0 matches exactly (including protocol and port)
 2. Clear browser cookies and Local Storage
 3. Try login again
@@ -180,6 +185,7 @@ When using `useAccessToken` hook:
 **Cause:** Token not being sent or invalid
 
 **Solution:**
+
 1. Check if user is logged in (token should be present)
 2. Verify `Authorization` header is being sent
 3. Check backend logs for JWT validation errors
@@ -190,6 +196,7 @@ When using `useAccessToken` hook:
 **Cause:** Origin not allowed by backend or Auth0
 
 **Solution:**
+
 1. Verify frontend origin is in Auth0's Allowed Web Origins
 2. Verify backend CORS policy includes frontend origin
 3. Check both backend and Auth0 dashboard settings
@@ -199,6 +206,7 @@ When using `useAccessToken` hook:
 **Cause:** Deploy preview URLs not registered in Auth0
 
 **Solution:**
+
 - This is expected behavior
 - Use staging branch for Auth0 testing
 - Deploy previews are for non-authenticated testing only
@@ -208,6 +216,7 @@ When using `useAccessToken` hook:
 **Cause:** Scopes not requested or granted
 
 **Solution:**
+
 1. Verify `openid`, `profile`, `email` scopes in Auth0Provider config
 2. Check Auth0 application settings for enabled scopes
 3. Re-login to grant new scopes
@@ -267,6 +276,7 @@ Before considering Auth0 setup complete:
 ## Support
 
 If issues persist:
+
 1. Check [docs/AUTH0-SETUP.md](./AUTH0-SETUP.md) for detailed setup instructions
 2. Review [Auth0 Documentation](https://auth0.com/docs)
 3. Check Auth0 Dashboard Logs: Monitoring → Logs

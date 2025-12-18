@@ -3,6 +3,7 @@
 This guide walks you through setting up Auth0 authentication for the GSC Tracking application.
 
 ## Table of Contents
+
 1. [Prerequisites](#prerequisites)
 2. [Auth0 Tenant Setup](#auth0-tenant-setup)
 3. [Auth0 Application Configuration](#auth0-application-configuration)
@@ -67,10 +68,12 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 3. **Configure Application Settings**
    - Navigate to the **Settings** tab
    - Note your **Domain** and **Client ID** (you'll need these later)
-
+      - Domain: <dev-axm38gs1176ibx7p.us.auth0.com>
+      - Client ID: <arNDmNtUSmJm1O1V1UYOWNcKnEEnXgrI>
 4. **Configure Allowed URLs**
-   
+
    **Allowed Callback URLs** (comma-separated):
+
    ```
    http://localhost:5173,
    https://gsc-tracking-ui.netlify.app,
@@ -78,6 +81,7 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
    ```
 
    **Allowed Logout URLs** (comma-separated):
+
    ```
    http://localhost:5173,
    https://gsc-tracking-ui.netlify.app,
@@ -85,6 +89,7 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
    ```
 
    **Allowed Web Origins** (comma-separated):
+
    ```
    http://localhost:5173,
    https://gsc-tracking-ui.netlify.app,
@@ -92,6 +97,7 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
    ```
 
    **Allowed Origins (CORS)** (comma-separated):
+
    ```
    http://localhost:5173,
    https://gsc-tracking-ui.netlify.app,
@@ -119,51 +125,71 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 
 ## Backend Configuration
 
-### Environment Variables
+The backend is configured to read Auth0 settings primarily from environment variables. This is the most secure method and is recommended for all environments.
 
-1. **Local Development (.env file)**
-   
-   Create or update `.env` in the backend directory:
-   ```bash
-   # Auth0 Configuration
-   AUTH0_DOMAIN=your-tenant.auth0.com
-   AUTH0_AUDIENCE=https://api.gsc-tracking.com
-   ```
+### How It Works
 
-2. **Fly.io Configuration**
-   
-   Set secrets on Fly.io:
-   ```bash
-   # Production
-   flyctl secrets set AUTH0_DOMAIN=your-tenant.auth0.com --app gsc-tracking-api
-   flyctl secrets set AUTH0_AUDIENCE=https://api.gsc-tracking.com --app gsc-tracking-api
+In `Program.cs`, the application attempts to load configuration in this order:
 
-   # Staging
-   flyctl secrets set AUTH0_DOMAIN=your-tenant.auth0.com --app gsc-tracking-api-staging
-   flyctl secrets set AUTH0_AUDIENCE=https://api.gsc-tracking.com --app gsc-tracking-api-staging
-   ```
+1. **Environment Variables**: `AUTH0_DOMAIN` and `AUTH0_AUDIENCE`. This is the primary method for production and staging.
+2. **`appsettings.json`**: `Auth0:Domain` and `Auth0:Audience`. This is a fallback, useful for shared development settings.
 
-3. **appsettings.json Configuration**
+For local development, the `DotNetEnv` NuGet package is used to automatically load a `.env` file if it exists.
 
-   The backend is already configured to read Auth0 settings from configuration:
-   ```json
-   {
-     "Auth0": {
-       "Domain": "your-tenant.auth0.com",
-       "Audience": "https://api.gsc-tracking.com"
-     }
-   }
-   ```
+### 1. Local Development (`.env` file)
 
-   **Note**: For security, use environment variables instead of storing values in appsettings.json.
+Create a file named `.env` in the `backend/GscTracking.Api/` directory. This file is in the `.gitignore` and will not be committed.
+
+```bash
+# backend/GscTracking.Api/.env
+
+# Auth0 Configuration
+AUTH0_DOMAIN="your-dev-tenant.us.auth0.com"
+AUTH0_AUDIENCE="https://gsc-tracking-api"
+```
+
+### 2. Fly.io Configuration (Staging & Production)
+
+For deployed environments like Fly.io, you should use secrets to store your environment variables securely.
+
+**Option A: Use `flyctl secrets set` (Recommended)**
+
+This is the most secure method. Run these commands from your terminal:
+
+```bash
+# Staging Environment
+flyctl secrets set AUTH0_DOMAIN="your-staging-domain" --app gsc-tracking-api-staging
+flyctl secrets set AUTH0_AUDIENCE="your-staging-audience" --app gsc-tracking-api-staging
+
+# Production Environment
+flyctl secrets set AUTH0_DOMAIN="your-production-domain" --app gsc-tracking-api
+flyctl secrets set AUTH0_AUDIENCE="your-production-audience" --app gsc-tracking-api
+```
+
+**Option B: Use `fly.toml` (Less Secure)**
+
+You can also place environment variables in your `fly.toml` file. This is less secure as the file is committed to version control, but can be useful if the values are not highly sensitive.
+
+Example for `fly.staging.toml`:
+
+```toml
+[env]
+  ASPNETCORE_ENVIRONMENT = 'Staging'
+  ASPNETCORE_URLS = 'http://+:8080'
+  AUTH0_DOMAIN = 'dev-axm38gs1176ibx7p.us.auth0.com'
+  AUTH0_AUDIENCE = 'https://gsc-tracking-api'
+```
+
+**Note:** Secrets set with `flyctl secrets set` will override any values in `fly.toml`. The recommended practice is to use secrets for all sensitive data.
 
 ## Frontend Configuration
 
 ### Environment Variables
 
 1. **Local Development (.env.local)**
-   
+
    Create `.env.local` in the frontend directory:
+
    ```bash
    # Auth0 Configuration
    VITE_AUTH0_DOMAIN=your-tenant.auth0.com
@@ -175,7 +201,7 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
    ```
 
 2. **Netlify Configuration**
-   
+
    **Option A: Using Netlify UI**
    - Go to your Netlify site dashboard
    - Navigate to **Site settings** → **Environment variables**
@@ -186,8 +212,9 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
      - `VITE_API_URL`: `https://gsc-tracking-api.fly.dev/api`
 
    **Option B: Using netlify.toml**
-   
+
    Update `netlify.toml`:
+
    ```toml
    [context.production.environment]
      VITE_API_URL = "https://gsc-tracking-api.fly.dev/api"
@@ -212,12 +239,14 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 ### Local Testing
 
 1. **Start Backend**
+
    ```bash
    cd backend/GscTracking.Api
    dotnet run
    ```
 
 2. **Start Frontend**
+
    ```bash
    cd frontend
    npm run dev
@@ -404,6 +433,7 @@ public async Task<ActionResult<CustomerDto>> CreateCustomer(CustomerRequestDto d
 ## Support
 
 If you encounter issues:
+
 1. Check the [Auth0 Community](https://community.auth0.com/)
 2. Review the [Auth0 Documentation](https://auth0.com/docs)
 3. Contact your development team
