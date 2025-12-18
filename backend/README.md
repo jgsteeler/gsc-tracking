@@ -158,4 +158,4 @@ See database documentation:
 4. ⏳ Create customer, job, and financial endpoints
 5. ⏳ Add validation and error handling
 
-See [business-management-app-analysis.md](../business-management-app-analysis.md) for full requirements.
+See [business-management-app-analysis.md](../../docs/business-management-app-analysis.md) for full requirements.

@@ -11,7 +11,6 @@
 
 ## Executive Summary
 
-
 ### Primary Recommendation: **Hybrid Architecture (Updated for .NET 10 LTS)**
 
 - **Backend:** .NET 10 Web API (C#) — Latest LTS, business-focused, enterprise-grade
@@ -28,10 +27,10 @@
 
 ## Business Requirements Analysis
 
-
 ### Core Features (MVP Phase 1 — Refined)
 
 **MVP Scope:**
+
 1. **Customer Management**
    - Contact information, basic service history
    - Equipment inventory per customer (optional, can be deferred)
@@ -65,7 +64,6 @@
 
 ## Technology Stack Comparison
 
-
 ### Option 1: .NET Stack (RECOMMENDED, .NET 10 LTS)
 
 #### Architecture
@@ -93,12 +91,10 @@ Storage: Azure Blob Storage (photos/docs) — or Tigris, Upstash, etc.
 
 #### Cons
 
-
 ❌ **Learning curve:** For frontend devs joining later (not relevant for solo)
 ❌ **Perceived cost:** Azure can be more expensive at scale, but is manageable for MVP
 ❌ **Cold starts:** App Service can have cold starts on lower tiers (5-10s)
 ❌ **Hosting lock-in:** Containerization allows migration to Fly.io, Railway, etc. if needed
-
 
 #### Cost Breakdown (Monthly)
 
@@ -117,7 +113,6 @@ Storage: Azure Blob Storage (photos/docs) — or Tigris, Upstash, etc.
 - Excellent debugging
 
 ---
-
 
 ### Option 2: Node.js/Express Stack (for comparison)
 
@@ -157,7 +152,6 @@ Storage: Supabase Storage or Cloudflare R2
 - Storage (Supabase Free): $0/month (1GB limit)
 - Domain: $1/month
 - **Total: $6-10/month**
-
 
 #### Development Experience
 
@@ -237,7 +231,6 @@ Integration: API Management layer
 
 ### Recommended Tech Stack Details
 
-
 #### Backend (.NET 10 Web API)
 
 ```csharp
@@ -288,7 +281,6 @@ Tech Stack:
 - Accessible by default
 - Professional look without design work
 
-
 #### Database (Azure SQL, PostgreSQL, Cosmos/Mongo)
 
 ```sql
@@ -302,42 +294,43 @@ Schema Design (starter):
 ```
 
 **Strategy:**
+
 - Start with Azure SQL (serverless) for MVP, or PostgreSQL (Fly.io, Railway, Supabase) if preferred
 - Cosmos DB or MongoDB are options for NoSQL, but not required for current relational needs
 - Automated backups, point-in-time restore
 - ORM/abstraction layer to allow future DB migration
-
 
 #### Integration Layer (Wave API, Roadmap)
 
 **MVP:** CSV import/export for expenses, estimates, invoices, and payment status. No direct Wave API integration in MVP.
 
 **Roadmap:**
+
 - Repository + abstraction pattern for future Wave/QuickBooks integration
 - Consider Wave API capabilities for future (REST, GraphQL, webhooks)
 - Sync strategy: CSV/manual for MVP, API for later phases
 
-
 #### Hosting & Containerization
 
 **Initial Setup:**
+
 - Azure App Service (F1 Free tier for dev, B1 Basic for prod)
 - **Alternatives:** Fly.io (container hosting, managed Postgres, Tigris object storage, Upstash Redis), Railway, GCP, AWS, Netlify (API gateway via Cloudflare)
 - **Strategy:** Use Docker containers for portability; can migrate between hosts as needed
 - **Storage:** Azure Blob, Tigris, or other S3-compatible storage
 
 **Container Strategy:**
+
 - Docker Compose for local dev
 - CI/CD with GitHub Actions (see below)
-
 
 #### Authentication (Auth0)
 
 - **Auth0 (Recommended):**
-   - Free tier: 7,000 active users
-   - Social logins included
-   - Excellent developer experience
-   - Already in use for Divergent Flow
+  - Free tier: 7,000 active users
+  - Social logins included
+  - Excellent developer experience
+  - Already in use for Divergent Flow
 - **Azure AD B2C:** Not recommended (complex, less preferred)
 
 ---
@@ -375,26 +368,29 @@ Stack: React + Express + PostgreSQL
 
 ## Migration Path & Scalability
 
-
 ### Phase 1: MVP (Months 1-3)
+
 **Users:** Just you
 **Hosting:** Azure Free tier (or Fly.io, Railway for dev)
 **Features:** Basic CRUD for customers/jobs, cost tracking, CSV import/export for expenses/estimates/invoices, manual Wave sync
 **Cost:** $0-10/month
 
 ### Phase 2: Production (Months 3-6)
+
 **Users:** 1-5 (you + potential helpers)
 **Hosting:** Azure B1 or Fly.io managed Postgres
 **Features:** Add job workflow, basic reporting, CSV sync improvements
 **Cost:** $15-25/month
 
 ### Phase 3: Division Expansion (Months 6-12)
+
 **Users:** 10-20 (multiple divisions)
 **Hosting:** Azure B2 or Fly.io Pro
 **Features:** Multi-tenant, role-based access, consolidated reporting, customer portal (view jobs, invoices)
 **Cost:** $30-60/month
 
 ### Phase 4: Scale (Year 2+)
+
 **Users:** 50+ (if you hire employees or offer to other businesses)
 **Hosting:** Azure S1 or Kubernetes
 **Features:** Advanced analytics, mobile apps, API for partners, full Wave API integration
@@ -403,7 +399,6 @@ Stack: React + Express + PostgreSQL
 ---
 
 ## Integration Strategy
-
 
 ### Wave Integration (MVP: CSV, API: Roadmap)
 
@@ -479,10 +474,10 @@ public interface IAccountingSync
 
 ## Development Roadmap
 
-
 ### Month 1: Foundation
 
 **Week 1-2: Setup & Core Models**
+
 - [ ] Azure account setup, App Service creation
 - [ ] .NET 10 Web API project scaffolding
 - [ ] Database schema design & EF Core migrations (Azure SQL or PostgreSQL)
@@ -490,6 +485,7 @@ public interface IAccountingSync
 - [ ] Auth0 authentication setup
 
 **Week 3-4: Core CRUD**
+
 - [ ] Customer management (CRUD)
 - [ ] Job management (CRUD)
 - [ ] Cost tracking per job
@@ -500,11 +496,13 @@ public interface IAccountingSync
 ### Month 2: Workflow & Reporting
 
 **Week 1-2: Job Workflow**
+
 - [ ] Job status workflow (open → in-progress → completed → closed)
 - [ ] Time tracking for labor
 - [ ] Expense tracking improvements
 
 **Week 3-4: Reporting**
+
 - [ ] Job-related reports (status, cost)
 - [ ] Export capabilities (CSV)
 
@@ -520,6 +518,7 @@ public interface IAccountingSync
 - [ ] Begin planning for Wave API integration
 
 ### Month 4+: Advanced & Integration
+
 - [ ] Wave API integration (estimates, invoices, payments)
 - [ ] Inventory management (if needed)
 - [ ] AI features (if desired)
@@ -705,7 +704,6 @@ Database: Azure Data Studio or SSMS
 Docker: Docker Desktop (for local dev consistency)
 ```
 
-
 ### CI/CD Pipeline (GitHub Actions, GitLab Flow)
 
 **Branching:** Main branch + short-lived working branches
@@ -716,6 +714,7 @@ b) PR to main: Deploy to staging
 c) Merge to main: Deploy to prod (with approval)
 
 **Automated:**
+
 - Linting (C# + TypeScript)
 - Unit tests (xUnit for .NET, Vitest for React)
 - Integration tests (key workflows)
@@ -827,10 +826,10 @@ services:
 
 ---
 
-
 ## Next Steps (Updated)
 
 ### Immediate Actions (This Week)
+
 1. [ ] Confirm tech stack: .NET 10 Web API, React + Vite, Auth0, Azure SQL or PostgreSQL, containerized
 2. [ ] Set up Azure App Service (free tier for dev)
 3. [ ] Set up Auth0 tenant (reuse existing if possible)
@@ -839,6 +838,7 @@ services:
 6. [ ] Set up GitHub Actions for CI/CD (GitLab Flow)
 
 ### Month 1 Kickoff
+
 1. [ ] Scaffold .NET 10 Web API project
 2. [ ] Scaffold React + Vite frontend
 3. [ ] Implement Auth0 authentication
@@ -846,6 +846,7 @@ services:
 5. [ ] Implement CSV import/export for expenses, estimates, invoices, payment status
 
 ### Questions to Answer
+
 1. Azure SQL or PostgreSQL for MVP?
 2. Start with Azure hosting, or try Fly.io for dev?
 3. Any immediate need for mobile app, or is responsive web enough?

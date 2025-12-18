@@ -25,7 +25,7 @@ feat(infra): add Docker support
 **Note:** Scopes are optional and not restricted. Use any scope that clearly describes the area of change (e.g., customer, api, ci, infra, db, auth, ui).
 
 ### Best Practice for Commits
-While not strictly required, following Conventional Commits for individual commits is recommended for clear history. See [COMMIT_GUIDELINES.md](../COMMIT_GUIDELINES.md) for complete details.
+While not strictly required, following Conventional Commits for individual commits is recommended for clear history. See [COMMIT_GUIDELINES.md](../docs/COMMIT_GUIDELINES.md) for complete details.
 
 ## Project Overview
 
