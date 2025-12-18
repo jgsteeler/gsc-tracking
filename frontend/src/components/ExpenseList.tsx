@@ -144,8 +144,6 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
     }).format(new Date(dateString))
   }
 
-  const totalCost = expenses.reduce((sum, expense) => sum + expense.amount, 0)
-
   return (
     <>
       <Card>
