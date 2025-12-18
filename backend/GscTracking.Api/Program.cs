@@ -20,6 +20,10 @@ if (builder.Environment.IsDevelopment())
     Env.Load();
 }
 
+// Configure Auth0 settings (used by both Swagger and Authentication)
+var auth0Domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN") ?? builder.Configuration["Auth0:Domain"];
+var auth0Audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE") ?? builder.Configuration["Auth0:Audience"];
+
 // Add services to the container.
 // Add Swagger/OpenAPI documentation
 builder.Services.AddEndpointsApiExplorer();
@@ -38,7 +42,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 
     // Configure OAuth2 for Auth0
-    var auth0Domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN") ?? builder.Configuration["Auth0:Domain"];
     if (!string.IsNullOrEmpty(auth0Domain))
     {
         options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -180,12 +183,9 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Configure Auth0 Authentication - REQUIRED for security
-var auth0Domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN") ?? builder.Configuration["Auth0:Domain"];
-var auth0Audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE") ?? builder.Configuration["Auth0:Audience"];
-
-// Auth0 configuration is mandatory - app will not start without it
-if (string.IsNullOrEmpty(auth0Domain) || string.IsNullOrEmpty(auth0Audience))
+// Configure Auth0 Authentication
+// Only configure Auth0 if domain and audience are provided
+if (!string.IsNullOrEmpty(auth0Domain) && !string.IsNullOrEmpty(auth0Audience))
 {
     throw new InvalidOperationException(
         "Auth0 configuration is required for application security. " +
