@@ -1,4 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react';
+import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 
 interface ProtectedRouteProps {
@@ -46,6 +47,13 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
                                !import.meta.env.VITE_AUTH0_CLIENT_ID ||
                                !import.meta.env.VITE_AUTH0_AUDIENCE;
 
+  // Trigger login redirect when not authenticated
+  useEffect(() => {
+    if (!auth0NotConfigured && !isAuthenticated && !isLoading) {
+      loginWithRedirect();
+    }
+  }, [auth0NotConfigured, isAuthenticated, isLoading, loginWithRedirect]);
+
   if (auth0NotConfigured) {
     // Auth0 not configured, allow access
     return <>{children}</>;
@@ -63,8 +71,6 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   if (!isAuthenticated) {
-    // Trigger login redirect
-    loginWithRedirect();
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
