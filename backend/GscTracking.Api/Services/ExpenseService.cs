@@ -72,12 +72,21 @@ public class ExpenseService : IExpenseService
 
     public async Task<ExpenseDto?> UpdateExpenseAsync(int id, ExpenseRequestDto expenseRequest)
     {
+        // Use IgnoreQueryFilters to load the Job navigation property even if it's soft-deleted
         var expense = await _context.Expense
+            .Include(e => e.Job)
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(e => e.Id == id);
         
         if (expense == null)
         {
             return null;
+        }
+
+        // Validate that the associated job exists and has not been deleted
+        if (expense.Job == null || expense.Job.IsDeleted)
+        {
+            throw new ArgumentException($"The job associated with expense {id} no longer exists or has been deleted");
         }
 
         // Parse the type string to enum

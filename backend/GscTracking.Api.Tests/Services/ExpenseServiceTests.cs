@@ -245,6 +245,43 @@ public class ExpenseServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task UpdateExpenseAsync_ThrowsArgumentException_WhenJobIsDeleted()
+    {
+        // Arrange
+        var expense = new Expense
+        {
+            Id = 1,
+            JobId = 1,
+            Type = ExpenseType.Parts,
+            Description = "Old description",
+            Amount = 10.00m,
+            Date = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+        _context.Expense.Add(expense);
+        await _context.SaveChangesAsync();
+
+        // Mark the job as deleted
+        _testJob.IsDeleted = true;
+        _testJob.DeletedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        var expenseRequest = new ExpenseRequestDto
+        {
+            Type = "Labor",
+            Description = "New description",
+            Amount = 20.00m,
+            Date = DateTime.UtcNow
+        };
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<ArgumentException>(() => 
+            _expenseService.UpdateExpenseAsync(1, expenseRequest));
+        exception.Message.Should().Contain("no longer exists or has been deleted");
+    }
+
+    [Fact]
     public async Task DeleteExpenseAsync_DeletesExpense_WhenExpenseExists()
     {
         // Arrange
