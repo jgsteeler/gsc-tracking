@@ -34,14 +34,14 @@ export const expenseService = {
     return response.json()
   },
 
-  async update(id: number, data: ExpenseRequestDto): Promise<Expense> {
+  async update(jobId: number, id: number, data: ExpenseRequestDto): Promise<Expense> {
     // Ensure date is in proper format for backend
     const submitData = {
       ...data,
       date: formatDateForApi(data.date)
     }
     
-    const response = await fetch(`${API_BASE_URL}/expenses/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/jobs/${jobId}/expenses/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -56,8 +56,8 @@ export const expenseService = {
     return response.json()
   },
 
-  async delete(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/expenses/${id}`, {
+  async delete(jobId: number, id: number): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/jobs/${jobId}/expenses/${id}`, {
       method: 'DELETE',
     })
     

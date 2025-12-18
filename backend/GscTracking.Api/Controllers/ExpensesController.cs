@@ -112,27 +112,11 @@ public class ExpensesController : ControllerBase
             return StatusCode(500, new { message = "An error occurred while retrieving the expense." });
         }
     }
-}
-
-/// <summary>
-/// Controller for managing individual expenses (Update and Delete operations)
-/// </summary>
-[ApiController]
-[Route("api/expenses")]
-public class ExpenseManagementController : ControllerBase
-{
-    private readonly IExpenseService _expenseService;
-    private readonly ILogger<ExpenseManagementController> _logger;
-
-    public ExpenseManagementController(IExpenseService expenseService, ILogger<ExpenseManagementController> logger)
-    {
-        _expenseService = expenseService;
-        _logger = logger;
-    }
 
     /// <summary>
     /// Update an existing expense
     /// </summary>
+    /// <param name="jobId">Job ID</param>
     /// <param name="id">Expense ID</param>
     /// <param name="expenseRequest">Updated expense data</param>
     /// <returns>Updated expense</returns>
@@ -155,7 +139,7 @@ public class ExpenseManagementController : ControllerBase
     [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(object), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ExpenseDto>> UpdateExpense(int id, [FromBody] ExpenseRequestDto expenseRequest)
+    public async Task<ActionResult<ExpenseDto>> UpdateExpense(int jobId, int id, [FromBody] ExpenseRequestDto expenseRequest)
     {
         try
         {
@@ -163,10 +147,24 @@ public class ExpenseManagementController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-            var expense = await _expenseService.UpdateExpenseAsync(id, expenseRequest);
-            if (expense == null)
+            
+            // Verify the expense exists and belongs to the specified job
+            var existingExpense = await _expenseService.GetExpenseByIdAsync(id);
+            if (existingExpense == null)
             {
                 return NotFound(new { message = $"Expense with ID {id} not found." });
+            }
+            if (existingExpense.JobId != jobId)
+            {
+                return BadRequest(new { message = "Expense does not belong to the specified job." });
+            }
+            
+            var expense = await _expenseService.UpdateExpenseAsync(id, expenseRequest);
+            // This should not happen since we verified the expense exists above, but handle defensively
+            if (expense == null)
+            {
+                _logger.LogError("UpdateExpenseAsync returned null for existing expense {ExpenseId}", id);
+                return StatusCode(500, new { message = "An unexpected error occurred while updating the expense." });
             }
             return Ok(expense);
         }
@@ -185,13 +183,26 @@ public class ExpenseManagementController : ControllerBase
     /// <summary>
     /// Delete an expense
     /// </summary>
+    /// <param name="jobId">Job ID</param>
     /// <param name="id">Expense ID</param>
     /// <returns>No content if successful</returns>
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteExpense(int id)
+    public async Task<IActionResult> DeleteExpense(int jobId, int id)
     {
         try
         {
+            // Verify the expense exists and belongs to the specified job
+            var expense = await _expenseService.GetExpenseByIdAsync(id);
+            if (expense == null)
+            {
+                return NotFound(new { message = $"Expense with ID {id} not found." });
+            }
+            if (expense.JobId != jobId)
+            {
+                return BadRequest(new { message = "Expense does not belong to the specified job." });
+            }
+
+            // Attempt to delete - if it fails (already deleted), we'll return 404
             var result = await _expenseService.DeleteExpenseAsync(id);
             if (!result)
             {
