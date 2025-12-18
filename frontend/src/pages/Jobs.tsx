@@ -28,7 +28,7 @@ import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
 import type { JobFormValues } from '@/lib/validations'
 import { useToast } from '@/hooks/use-toast'
 
-export function Jobs() {
+export default function Jobs() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
