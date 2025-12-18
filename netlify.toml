@@ -14,8 +14,7 @@
   # Environment variables for the build
   [build.environment]
     NODE_VERSION = "20"
-
-# Production branch configuration
+  SECRETS_SCAN_OMIT_KEYS = "VITE_AUTH0_CLIENT_ID,VITE_AUTH0_AUDIENCE"
 [context.production]
   command = "npm run build"
   [context.production.environment]
