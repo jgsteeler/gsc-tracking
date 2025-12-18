@@ -89,6 +89,25 @@ Complete database setup guide for all environments (local, staging, production).
 - Security best practices
 - Troubleshooting guide
 
+### Authentication and Security
+
+#### [AUTH0-SETUP.md](./AUTH0-SETUP.md)
+**Status:** ✅ Complete  
+**Last Updated:** 2025-12-16
+
+Complete Auth0 authentication setup guide for both backend and frontend.
+
+**Includes:**
+- Auth0 tenant and application configuration
+- Backend JWT Bearer authentication setup
+- Frontend React integration with Auth0 SDK
+- Environment variable configuration (local, staging, production)
+- Testing authentication flows
+- Protecting API endpoints with [Authorize]
+- Role-based and permission-based authorization
+- Troubleshooting common issues
+- Security best practices
+
 #### [POSTGRESQL-CONNECTION-GUIDE.md](./POSTGRESQL-CONNECTION-GUIDE.md)
 **Status:** ✅ Complete  
 **Last Updated:** 2025-12-14
@@ -231,6 +250,7 @@ Brief description of what this document covers...
 | [TROUBLESHOOTING-NEON.md](./TROUBLESHOOTING-NEON.md) | Database | **NEW!** Quick troubleshooting reference |
 | [NEON-QUICKSTART.md](./NEON-QUICKSTART.md) | Database | 5-minute Neon PostgreSQL setup |
 | [DATABASE-MIGRATION-GUIDE.md](./DATABASE-MIGRATION-GUIDE.md) | Database | EF Core migrations reference |
+| [AUTH0-SETUP.md](./AUTH0-SETUP.md) | Security | **NEW!** Auth0 authentication setup guide |
 | [CICD-PIPELINE.md](./CICD-PIPELINE.md) | CI/CD | Complete CI/CD workflow guide |
 | [CICD-VALIDATION.md](./CICD-VALIDATION.md) | CI/CD | Pipeline validation report |
 | [FLYIO-DEPLOYMENT.md](./FLYIO-DEPLOYMENT.md) | Deployment | Fly.io deployment guide |
@@ -241,5 +261,5 @@ Brief description of what this document covers...
 
 ---
 
-**Last Updated:** 2025-12-11  
+**Last Updated:** 2025-12-16  
 **Maintained By:** GSC Development Team
