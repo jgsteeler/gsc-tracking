@@ -286,6 +286,71 @@ public class CustomersController : ControllerBase
 }
 ```
 
+## Protecting Frontend Routes
+
+### ProtectedRoute Component
+
+The application includes a `ProtectedRoute` component (`frontend/src/components/ProtectedRoute.tsx`) that can be used to protect specific routes in the frontend. This component ensures that only authenticated users can access certain pages.
+
+**Current Status**: The `ProtectedRoute` component is **currently not integrated** into the application routing. It has been implemented as **preparatory work for future use** when route-level authentication is required.
+
+**Features**:
+- Checks if the user is authenticated using Auth0
+- Shows a loading spinner while authentication status is being determined
+- Redirects unauthenticated users to the Auth0 login page
+- Gracefully handles cases where Auth0 is not configured (allows access)
+- Displays appropriate loading states during redirects
+
+**Future Usage Example**:
+
+When you need to protect specific routes, you can wrap them with the `ProtectedRoute` component:
+
+```tsx
+import { ProtectedRoute } from './components/ProtectedRoute';
+
+// In your routing configuration
+<Routes>
+  <Route path="/" element={<MainLayout />}>
+    <Route index element={<Dashboard />} />
+    
+    {/* Public routes */}
+    <Route path="about" element={<About />} />
+    
+    {/* Protected routes - require authentication */}
+    <Route 
+      path="customers" 
+      element={
+        <ProtectedRoute>
+          <Customers />
+        </ProtectedRoute>
+      } 
+    />
+    
+    <Route 
+      path="jobs" 
+      element={
+        <ProtectedRoute>
+          <Jobs />
+        </ProtectedRoute>
+      } 
+    />
+    
+    <Route 
+      path="jobs/:id" 
+      element={
+        <ProtectedRoute>
+          <JobDetails />
+        </ProtectedRoute>
+      } 
+    />
+  </Route>
+</Routes>
+```
+
+**Why Not Enabled Yet?**
+
+The application currently uses optional authentication - users can use the app without logging in, but certain features (like creating/editing) may be restricted based on authentication status. When the business requirements change to require authentication for accessing the application, the `ProtectedRoute` component can be integrated following the example above.
+
 ## Protecting API Endpoints
 
 ### Controller-Level Protection

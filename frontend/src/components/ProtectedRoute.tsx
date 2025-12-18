@@ -7,7 +7,35 @@ interface ProtectedRouteProps {
 
 /**
  * Protected route component that requires authentication
- * If Auth0 is not configured, the route is publicly accessible
+ * 
+ * CURRENT STATUS: This component is not currently integrated into the application routing.
+ * It has been implemented as preparatory work for future use when route-level authentication
+ * becomes a requirement.
+ * 
+ * FEATURES:
+ * - Checks if the user is authenticated using Auth0
+ * - Shows a loading spinner while authentication status is being determined
+ * - Redirects unauthenticated users to the Auth0 login page
+ * - Gracefully handles cases where Auth0 is not configured (allows public access)
+ * 
+ * FUTURE USAGE:
+ * Wrap routes that require authentication with this component in App.tsx:
+ * 
+ * ```tsx
+ * <Route 
+ *   path="customers" 
+ *   element={
+ *     <ProtectedRoute>
+ *       <Customers />
+ *     </ProtectedRoute>
+ *   } 
+ * />
+ * ```
+ * 
+ * See docs/AUTH0-SETUP.md for complete usage examples and integration guide.
+ * 
+ * @param children - The component(s) to render if the user is authenticated
+ * @returns The protected content or a loading/redirect state
  */
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
