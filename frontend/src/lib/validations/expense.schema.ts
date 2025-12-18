@@ -22,7 +22,7 @@ export const expenseSchema = z.object({
     .string()
     .max(200, 'Receipt reference cannot exceed 200 characters')
     .optional()
-    .nullable(),
+    .or(z.literal('')),
 })
 
 export type ExpenseFormValues = z.infer<typeof expenseSchema>

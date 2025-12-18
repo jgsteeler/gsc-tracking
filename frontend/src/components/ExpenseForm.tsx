@@ -41,13 +41,7 @@ export function ExpenseForm({ expense, onSubmit, onCancel }: ExpenseFormProps) {
 
   const handleSubmit = async (data: ExpenseFormValues) => {
     try {
-      // Convert date to ISO format for API, preserving local date
-      const submitData = {
-        ...data,
-        date: data.date, // Keep as-is - already in YYYY-MM-DD format from date input
-        receiptReference: data.receiptReference || null,
-      }
-      await onSubmit(submitData)
+      await onSubmit(data)
       form.reset()
     } catch (error) {
       // Error handling is done in parent component
