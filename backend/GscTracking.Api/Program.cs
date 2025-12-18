@@ -180,39 +180,40 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Configure Auth0 Authentication
+// Configure Auth0 Authentication - REQUIRED for security
 var auth0Domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN") ?? builder.Configuration["Auth0:Domain"];
 var auth0Audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE") ?? builder.Configuration["Auth0:Audience"];
 
-// Only configure Auth0 if domain and audience are provided
-if (!string.IsNullOrEmpty(auth0Domain) && !string.IsNullOrEmpty(auth0Audience))
+// Auth0 configuration is mandatory - app will not start without it
+if (string.IsNullOrEmpty(auth0Domain) || string.IsNullOrEmpty(auth0Audience))
 {
-    builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.Authority = $"https://{auth0Domain}/";
-        options.Audience = auth0Audience;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = $"https://{auth0Domain}/",
-            ValidateAudience = true,
-            ValidAudience = auth0Audience,
-            ValidateLifetime = true
-        };
-    });
+    throw new InvalidOperationException(
+        "Auth0 configuration is required for application security. " +
+        "Please set AUTH0_DOMAIN and AUTH0_AUDIENCE environment variables or configure 'Auth0:Domain' and 'Auth0:Audience' in appsettings.json. " +
+        "See docs/AUTH0-SETUP.md for configuration instructions."
+    );
+}
 
-    builder.Services.AddAuthorization();
-}
-else
+builder.Services.AddAuthentication(options =>
 {
-    // Auth0 is not configured - authentication will be disabled
-    Console.WriteLine("WARNING: Auth0 is not configured. Authentication will be disabled.");
-}
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.Authority = $"https://{auth0Domain}/";
+    options.Audience = auth0Audience;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = $"https://{auth0Domain}/",
+        ValidateAudience = true,
+        ValidAudience = auth0Audience,
+        ValidateLifetime = true
+    };
+});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
