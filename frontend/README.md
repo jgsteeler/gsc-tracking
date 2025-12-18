@@ -106,11 +106,17 @@ The application includes Auth0 authentication components:
 - `LogoutButton` - Logs user out and clears session
 - `UserProfile` - Displays user avatar and information
 - `Auth0ProviderWithNavigate` - Auth0 provider with React Router integration
-- `ProtectedRoute` - Route protection component (**not currently integrated**)
+- `ProtectedRoute` - Route protection component (**currently integrated**)
+- `Landing` - Landing page for unauthenticated users
 
-**Note on ProtectedRoute**: This component is included as preparatory work for future use when route-level authentication becomes required. It is not currently integrated into the routing but can be easily added when needed. See `docs/AUTH0-SETUP.md` for usage examples.
+**Authentication Flow**: 
+- When Auth0 is configured, unauthenticated users are redirected to the landing page
+- The landing page provides an overview of features and a "Log In to Get Started" button
+- After authentication, users are redirected to the Dashboard
+- All main routes (Dashboard, Customers, Jobs) are protected with the `ProtectedRoute` component
+- When Auth0 is not configured (development mode), all routes are accessible without authentication
 
-The application currently uses optional authentication - users can browse the app without logging in, with certain features restricted based on authentication status.
+See `docs/AUTH0-SETUP.md` for detailed setup instructions and authentication flow documentation.
 
 ### Component Library
 
@@ -127,6 +133,7 @@ The following shadcn/ui components are available:
 
 ### Pages
 
+- **Landing**: Welcome page for unauthenticated users (shown when Auth0 is configured)
 - **Dashboard**: Overview with stats cards and recent activity
 - **Customers**: Customer list with skeleton loading states
 - **Jobs**: Job tracking interface with skeleton loading states
@@ -137,10 +144,11 @@ The following shadcn/ui components are available:
 2. ✅ Implement routing with React Router
 3. ✅ Create responsive navigation layout
 4. ✅ Implement authentication with Auth0
-5. Add state management (TanStack Query or Zustand)
-6. Connect to backend API for real data
-7. Add Table, Select, DropdownMenu components as needed
-8. Implement dark mode toggle (optional)
-9. Integrate ProtectedRoute for route-level authentication (when required)
+5. ✅ Add landing page for unauthenticated users
+6. ✅ Integrate ProtectedRoute for route-level authentication
+7. Add state management (TanStack Query or Zustand)
+8. Connect to backend API for real data
+9. Add Table, Select, DropdownMenu components as needed
+10. Implement dark mode toggle (optional)
 
 See [business-management-app-analysis.md](../../docs/business-management-app-analysis.md) for full requirements.
