@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.16](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.15...backend-v0.1.16) (2025-12-18)
+
+
+### Features
+
+* **expense:** add job validation to UpdateExpense endpoint ([#124](https://github.com/jgsteeler/gsc-tracking/issues/124)) ([4b99ddc](https://github.com/jgsteeler/gsc-tracking/commit/4b99ddc372d3dd5c1ec63f468b169b9031ed9bc1))
+
 ## [0.1.15](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.14...backend-v0.1.15) (2025-12-17)
 
 

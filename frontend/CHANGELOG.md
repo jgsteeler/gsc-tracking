@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.13](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.12...frontend-v0.1.13) (2025-12-18)
+
+
+### Bug Fixes
+
+* **expense:** align receiptReference validation with form behavior ([#127](https://github.com/jgsteeler/gsc-tracking/issues/127)) ([ca2a107](https://github.com/jgsteeler/gsc-tracking/commit/ca2a107340f4e9910dddba3b667bd3f0aeeddf38))
+
 ## [0.1.12](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.11...frontend-v0.1.12) (2025-12-17)
 
 
