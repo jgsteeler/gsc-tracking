@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.14](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.13...frontend-v0.1.14) (2025-12-18)
+
+
+### Features
+
+* **auth:** implement Auth0 authentication for backend and frontend  ([#129](https://github.com/jgsteeler/gsc-tracking/issues/129)) ([472e2f4](https://github.com/jgsteeler/gsc-tracking/commit/472e2f46c16a1f7864d5edf2cec6615ad01bb56f))
+
 ## [0.1.13](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.12...frontend-v0.1.13) (2025-12-18)
 
 
