@@ -41,10 +41,10 @@ export function ExpenseForm({ expense, onSubmit, onCancel }: ExpenseFormProps) {
 
   const handleSubmit = async (data: ExpenseFormValues) => {
     try {
-      // Convert date to ISO format for API, preserving local date
+      // Convert date string to ISO format for API
       const submitData = {
         ...data,
-        date: data.date, // Keep as-is - already in YYYY-MM-DD format from date input
+        date: new Date(data.date).toISOString(),
         receiptReference: data.receiptReference || null,
       }
       await onSubmit(submitData)

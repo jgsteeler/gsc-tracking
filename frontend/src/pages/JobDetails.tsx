@@ -210,13 +210,7 @@ export function JobDetails() {
             <div>
               <label className="text-sm font-medium text-muted-foreground">Profit Margin</label>
               <p className={`mt-1 text-sm font-semibold ${
-                job.profitMargin !== null && job.profitMargin !== undefined
-                  ? job.profitMargin < 0
-                    ? 'text-red-600'
-                    : job.profitMargin === 0
-                    ? 'text-gray-600'
-                    : 'text-green-600'
-                  : ''
+                job.profitMargin !== null && job.profitMargin !== undefined && job.profitMargin < 0 ? 'text-red-600' : 'text-green-600'
               }`}>
                 {formatCurrency(job.profitMargin)}
               </p>
