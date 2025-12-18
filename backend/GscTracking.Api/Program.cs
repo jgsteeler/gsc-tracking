@@ -185,7 +185,7 @@ builder.Services.AddCors(options =>
 
 // Configure Auth0 Authentication
 // Only configure Auth0 if domain and audience are provided
-if (!string.IsNullOrEmpty(auth0Domain) && !string.IsNullOrEmpty(auth0Audience))
+if (string.IsNullOrEmpty(auth0Domain) || string.IsNullOrEmpty(auth0Audience))
 {
     throw new InvalidOperationException(
         "Auth0 configuration is required for application security. " +
