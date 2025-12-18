@@ -74,7 +74,7 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
     if (!selectedExpense) return
 
     try {
-      await expenseService.update(selectedExpense.id, data)
+      await expenseService.update(jobId, selectedExpense.id, data)
       toast({
         title: 'Success',
         description: 'Expense updated successfully',
@@ -96,7 +96,7 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
     if (!expenseToDelete) return
 
     try {
-      await expenseService.delete(expenseToDelete.id)
+      await expenseService.delete(jobId, expenseToDelete.id)
       toast({
         title: 'Success',
         description: 'Expense deleted successfully',
