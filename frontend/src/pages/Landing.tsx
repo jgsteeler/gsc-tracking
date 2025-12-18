@@ -61,9 +61,11 @@ export default function Landing() {
             size="lg"
             onClick={() => loginWithRedirect()}
             disabled={isLoading}
-            className="text-xl px-12 py-8 font-semibold shadow-2xl hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 text-primary-foreground animate-pulse hover:animate-none"
+            className="text-xl px-12 py-8 font-semibold shadow-2xl hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 text-primary-foreground motion-safe:animate-pulse hover:animate-none"
+            aria-label="Log in to get started with secure authentication"
           >
-            {isLoading ? 'Loading...' : '🔐 Log In to Get Started'}
+            <Shield className="h-6 w-6 mr-2" aria-hidden="true" />
+            {isLoading ? 'Loading...' : 'Log In to Get Started'}
           </Button>
           <p className="text-sm text-muted-foreground mt-6">
             Click the button above to securely log in with Auth0
