@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.15](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.14...frontend-v0.1.15) (2025-12-18)
+
+
+### Features
+
+* **docs:** add setup instructions and business management app analysis ([#140](https://github.com/jgsteeler/gsc-tracking/issues/140)) ([de7eb3a](https://github.com/jgsteeler/gsc-tracking/commit/de7eb3ae8424c374de59d7968a42916800b03c5b))
+
 ## [0.1.14](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.13...frontend-v0.1.14) (2025-12-18)
 
 
