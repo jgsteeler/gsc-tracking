@@ -206,13 +206,15 @@ public class ExpensesController : ControllerBase
             var result = await _expenseService.DeleteExpenseAsync(id);
             if (!result)
             {
-                return NotFound(new { message = $"Expense with ID {id} not found." });
+                // This case should ideally not be hit if GetExpenseByIdAsync check passes
+                return NotFound(new { message = $"Expense with ID {id} not found for deletion." });
             }
+
             return NoContent();
         }
-        catch (InvalidOperationException ex)
+        catch (ArgumentException ex)
         {
-            _logger.LogWarning(ex, "Invalid operation when deleting expense {ExpenseId}", id);
+            _logger.LogWarning(ex, "Invalid argument when deleting expense {ExpenseId}", id);
             return BadRequest(new { message = ex.Message });
         }
         catch (Exception ex)
