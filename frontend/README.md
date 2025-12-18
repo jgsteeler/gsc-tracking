@@ -95,6 +95,22 @@ frontend/
 - **Toast Notifications**: User feedback system using Radix UI
 - **Loading States**: Skeleton components for async operations
 - **Modern Styling**: Tailwind CSS with CSS variables for theming
+- **Auth0 Integration**: Authentication system with login/logout functionality
+- **Auth0 Components**: LoginButton, LogoutButton, UserProfile, Auth0ProviderWithNavigate, ProtectedRoute (preparatory)
+
+### Authentication Components
+
+The application includes Auth0 authentication components:
+
+- `LoginButton` - Triggers Auth0 login flow
+- `LogoutButton` - Logs user out and clears session
+- `UserProfile` - Displays user avatar and information
+- `Auth0ProviderWithNavigate` - Auth0 provider with React Router integration
+- `ProtectedRoute` - Route protection component (**not currently integrated**)
+
+**Note on ProtectedRoute**: This component is included as preparatory work for future use when route-level authentication becomes required. It is not currently integrated into the routing but can be easily added when needed. See `docs/AUTH0-SETUP.md` for usage examples.
+
+The application currently uses optional authentication - users can browse the app without logging in, with certain features restricted based on authentication status.
 
 ### Component Library
 
@@ -120,10 +136,11 @@ The following shadcn/ui components are available:
 1. ✅ Add shadcn/ui component library
 2. ✅ Implement routing with React Router
 3. ✅ Create responsive navigation layout
-4. Add state management (TanStack Query or Zustand)
-5. Connect to backend API for real data
-6. Implement authentication with Auth0
+4. ✅ Implement authentication with Auth0
+5. Add state management (TanStack Query or Zustand)
+6. Connect to backend API for real data
 7. Add Table, Select, DropdownMenu components as needed
 8. Implement dark mode toggle (optional)
+9. Integrate ProtectedRoute for route-level authentication (when required)
 
 See [business-management-app-analysis.md](../business-management-app-analysis.md) for full requirements.

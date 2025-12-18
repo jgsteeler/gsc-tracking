@@ -2,14 +2,27 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using GscTracking.Api.Data;
 using GscTracking.Api.Services;
 using GscTracking.Api.Validators;
 using GscTracking.Api.Utils;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load .env file in development
+if (builder.Environment.IsDevelopment())
+{
+    Env.Load();
+}
+
+// Configure Auth0 settings (used by both Swagger and Authentication)
+var auth0Domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN") ?? builder.Configuration["Auth0:Domain"];
+var auth0Audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE") ?? builder.Configuration["Auth0:Audience"];
 
 // Add services to the container.
 // Add Swagger/OpenAPI documentation
@@ -28,6 +41,44 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
+    // Configure OAuth2 for Auth0
+    if (!string.IsNullOrEmpty(auth0Domain))
+    {
+        options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows
+            {
+                Implicit = new OpenApiOAuthFlow
+                {
+                    AuthorizationUrl = new Uri($"https://{auth0Domain}/authorize"),
+                    TokenUrl = new Uri($"https://{auth0Domain}/oauth/token"),
+                    Scopes = new Dictionary<string, string>
+                    {
+                        { "openid", "OpenID" },
+                        { "profile", "Profile" },
+                        { "email", "Email" }
+                    }
+                }
+            }
+        });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "oauth2"
+                    }
+                },
+                new[] { "openid", "profile", "email" }
+            }
+        });
+    }
+
     // Include XML comments for documentation
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
@@ -36,25 +87,6 @@ builder.Services.AddSwaggerGen(options =>
         options.IncludeXmlComments(xmlPath);
     }
 });
-
-// Load .env file in development
-if (builder.Environment.IsDevelopment())
-{
-    var envPath = Path.Combine(builder.Environment.ContentRootPath, ".env");
-    if (File.Exists(envPath))
-    {
-        foreach (var line in File.ReadAllLines(envPath))
-        {
-            var parts = line.Split('=', 2);
-            if (parts.Length == 2)
-            {
-                // Trim quotes from the value
-                var value = parts[1].Trim().Trim('"');
-                Environment.SetEnvironmentVariable(parts[0], value);
-            }
-        }
-    }
-}
 
 // Add controllers
 builder.Services.AddControllers();
@@ -151,6 +183,38 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Configure Auth0 Authentication
+// Only configure Auth0 if domain and audience are provided
+if (!string.IsNullOrEmpty(auth0Domain) && !string.IsNullOrEmpty(auth0Audience))
+{
+    throw new InvalidOperationException(
+        "Auth0 configuration is required for application security. " +
+        "Please set AUTH0_DOMAIN and AUTH0_AUDIENCE environment variables or configure 'Auth0:Domain' and 'Auth0:Audience' in appsettings.json. " +
+        "See docs/AUTH0-SETUP.md for configuration instructions."
+    );
+}
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.Authority = $"https://{auth0Domain}/";
+    options.Audience = auth0Audience;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = $"https://{auth0Domain}/",
+        ValidateAudience = true,
+        ValidAudience = auth0Audience,
+        ValidateLifetime = true
+    };
+});
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Run database migrations on startup (for all environments)
@@ -188,6 +252,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 
 app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
+
+// Add authentication and authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Map controllers
 app.MapControllers();

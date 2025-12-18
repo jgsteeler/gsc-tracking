@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { Users, Briefcase, DollarSign, TrendingUp } from 'lucide-react'
 
-export function Dashboard() {
+export default function Dashboard() {
   const { toast } = useToast()
   // Mock data - will be replaced with real API calls
   const stats = [
