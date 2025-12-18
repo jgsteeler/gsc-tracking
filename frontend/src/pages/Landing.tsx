@@ -54,17 +54,20 @@ export default function Landing() {
           <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
             GSC Tracking
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8">
+          <p className="text-xl md:text-2xl text-muted-foreground mb-12">
             Complete business management solution for small engine repair shops
           </p>
           <Button
             size="lg"
             onClick={() => loginWithRedirect()}
             disabled={isLoading}
-            className="text-lg px-8 py-6"
+            className="text-xl px-12 py-8 font-semibold shadow-2xl hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 text-primary-foreground animate-pulse hover:animate-none"
           >
-            {isLoading ? 'Loading...' : 'Log In to Get Started'}
+            {isLoading ? 'Loading...' : '🔐 Log In to Get Started'}
           </Button>
+          <p className="text-sm text-muted-foreground mt-6">
+            Click the button above to securely log in with Auth0
+          </p>
         </div>
 
         {/* Features Grid */}
