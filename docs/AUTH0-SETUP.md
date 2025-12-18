@@ -73,7 +73,6 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 
    **Allowed Callback URLs** (comma-separated):
 
-
    ```
    http://localhost:5173,
    https://gsc-tracking-ui.netlify.app,
@@ -194,7 +193,6 @@ Example for `fly.staging.toml`:
 
    Create `.env.local` in the frontend directory:
 
-
    ```bash
    # Auth0 Configuration
    VITE_AUTH0_DOMAIN=your-tenant.auth0.com
@@ -219,7 +217,6 @@ Example for `fly.staging.toml`:
    **Option B: Using netlify.toml**
 
    Update `netlify.toml`:
-
 
    ```toml
    [context.production.environment]
@@ -292,7 +289,6 @@ public class CustomersController : ControllerBase
 }
 ```
 
-
 ## Protecting Frontend Routes
 
 ### ProtectedRoute Component
@@ -359,7 +355,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 
 The application currently uses optional authentication - users can use the app without logging in, but certain features (like creating/editing) may be restricted based on authentication status. When the business requirements change to require authentication for accessing the application, the `ProtectedRoute` component can be integrated following the example above.
 
->>>>>>>
+
 ## Protecting API Endpoints
 
 ### Controller-Level Protection
