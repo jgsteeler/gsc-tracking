@@ -17,10 +17,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+      - name: Set API version
+        working-directory: backend
+        run: |
+          chmod +x set-version.sh
+          ./set-version.sh GscTracking.Api/GscTracking.Api.csproj ${{ github.run_number }}
+        shell: bash
       - name: Restore dependencies
         run: dotnet restore
         working-directory: backend
