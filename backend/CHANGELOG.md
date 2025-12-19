@@ -1,5 +1,61 @@
 # Changelog
 
+## [2.0.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v1.0.0...backend-v2.0.0) (2025-12-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* Application has been deployed to production behind authentication. Marking this milestone as version 1.0.0 for both frontend and backend components.
+
+### Features
+
+* **api:** add Swagger documentation to backend API ([#84](https://github.com/jgsteeler/gsc-tracking/issues/84)) ([f861ef9](https://github.com/jgsteeler/gsc-tracking/commit/f861ef958472d1c404d01025e533caa498af3a31))
+* **auth:** implement Auth0 authentication for backend and frontend  ([#129](https://github.com/jgsteeler/gsc-tracking/issues/129)) ([472e2f4](https://github.com/jgsteeler/gsc-tracking/commit/472e2f46c16a1f7864d5edf2cec6615ad01bb56f))
+* **backend:** implement assembly version management with build metadata ([#108](https://github.com/jgsteeler/gsc-tracking/issues/108)) ([71dfde4](https://github.com/jgsteeler/gsc-tracking/commit/71dfde4f4a56202be602031216b8801f3dd06e92))
+* **customer:** implement CRUD operations with search and soft delete ([#48](https://github.com/jgsteeler/gsc-tracking/issues/48)) ([c23ae95](https://github.com/jgsteeler/gsc-tracking/commit/c23ae952920f918b3773ba8ab5fa1adf62f3281d))
+* **customer:** implement customer management with CRUD operations ([#83](https://github.com/jgsteeler/gsc-tracking/issues/83)) ([217b831](https://github.com/jgsteeler/gsc-tracking/commit/217b831dd32e21ac0260cddbe6f4d0267c810c44))
+* **docs:** add setup instructions and business management app analysis ([#140](https://github.com/jgsteeler/gsc-tracking/issues/140)) ([de7eb3a](https://github.com/jgsteeler/gsc-tracking/commit/de7eb3ae8424c374de59d7968a42916800b03c5b))
+* **expense:** add backend expense tracking system with CRUD operations ([#121](https://github.com/jgsteeler/gsc-tracking/issues/121)) ([0fa2ec8](https://github.com/jgsteeler/gsc-tracking/commit/0fa2ec8c94222b5f1aa8af1cf32495c8c63662e8))
+* **expense:** add job validation to UpdateExpense endpoint ([#124](https://github.com/jgsteeler/gsc-tracking/issues/124)) ([4b99ddc](https://github.com/jgsteeler/gsc-tracking/commit/4b99ddc372d3dd5c1ec63f468b169b9031ed9bc1))
+* **infra:** add Fly.io deployment with GitHub Flow and staging environment ([#50](https://github.com/jgsteeler/gsc-tracking/issues/50)) ([9230834](https://github.com/jgsteeler/gsc-tracking/commit/9230834908b1a687a579e2b515457d1d7abf3365))
+* **infra:** add PostgreSQL support and comprehensive database documentation ([#67](https://github.com/jgsteeler/gsc-tracking/issues/67)) ([1dc741c](https://github.com/jgsteeler/gsc-tracking/commit/1dc741c399fbba5e9a370f8a9cbc889c282c7883))
+* **infra:** implement pattern-based CORS for Netlify deploy previews ([#112](https://github.com/jgsteeler/gsc-tracking/issues/112)) ([a6008a7](https://github.com/jgsteeler/gsc-tracking/commit/a6008a754d48c2a8fb2b48e9091c127b70a4724c))
+* **job:** add job updates for tracking progress notes ([#96](https://github.com/jgsteeler/gsc-tracking/issues/96)) ([897adbf](https://github.com/jgsteeler/gsc-tracking/commit/897adbf40bd3413e7b5af85eb33465ab9d94f5f2))
+* **job:** implement job management with CRUD operations and unit tests ([#68](https://github.com/jgsteeler/gsc-tracking/issues/68)) ([e0b98be](https://github.com/jgsteeler/gsc-tracking/commit/e0b98be69902e7c5889bb8f6fc8219e239b1f1ff))
+* **test:** implement unit testing framework with CI/CD integration ([#59](https://github.com/jgsteeler/gsc-tracking/issues/59)) ([584d3a8](https://github.com/jgsteeler/gsc-tracking/commit/584d3a809e14466c236a3ec7afa53812ac9e750f))
+* **validation:** implement comprehensive form validation with Zod and FluentValidation ([#101](https://github.com/jgsteeler/gsc-tracking/issues/101)) ([bf61ce9](https://github.com/jgsteeler/gsc-tracking/commit/bf61ce9baeb7955fe551b1f0260a32aa484bc08f))
+
+
+### Bug Fixes
+
+* **db:** ef core connection issues ([#89](https://github.com/jgsteeler/gsc-tracking/issues/89)) ([bca711e](https://github.com/jgsteeler/gsc-tracking/commit/bca711e71a7bf5c72bb21e8b523627fbdb84875f))
+* **db:** improve EF Core PostgreSQL connection handling for Neon ([#85](https://github.com/jgsteeler/gsc-tracking/issues/85)) ([865a2d8](https://github.com/jgsteeler/gsc-tracking/commit/865a2d8b3e49fe39e9a8d0d79c01381a1a1b5dd3))
+* **db:** infra set up staging database ([#87](https://github.com/jgsteeler/gsc-tracking/issues/87)) ([b06883b](https://github.com/jgsteeler/gsc-tracking/commit/b06883bf7db8f75fdc7a99c3ff551f3b3fbc26bb))
+* **db:** remove obsolete TrustServerCertificate parameter ([#94](https://github.com/jgsteeler/gsc-tracking/issues/94)) ([eb690d2](https://github.com/jgsteeler/gsc-tracking/commit/eb690d2e97db09ad1587943271d1c11e28c01f82))
+* **db:** remove obsolete TrustServerCertificate parameter ([#94](https://github.com/jgsteeler/gsc-tracking/issues/94)) ([fad2c07](https://github.com/jgsteeler/gsc-tracking/commit/fad2c07e181c1e4fda0d589ebc7c3afb473e8398))
+* **db:** remove obsolete TrustServerCertificate parameter ([#94](https://github.com/jgsteeler/gsc-tracking/issues/94)) ([1f715b4](https://github.com/jgsteeler/gsc-tracking/commit/1f715b47b80834a728eb31aeed8acd6b35b980ae))
+* **db:** remove obsolete TrustServerCertificate parameter ([#94](https://github.com/jgsteeler/gsc-tracking/issues/94)) ([71c3753](https://github.com/jgsteeler/gsc-tracking/commit/71c37535c2ab2c4f424cfda8b35468473b772ec8))
+* **db:** remove obsolete TrustServerCertificate parameter ([#94](https://github.com/jgsteeler/gsc-tracking/issues/94)) ([ab1e9e2](https://github.com/jgsteeler/gsc-tracking/commit/ab1e9e274ed70e569aadc057ef35ba4b7be8f367))
+* **db:** remove obsolete TrustServerCertificate parameter ([#94](https://github.com/jgsteeler/gsc-tracking/issues/94)) ([97b47ac](https://github.com/jgsteeler/gsc-tracking/commit/97b47ac5f1289a8c1958f7bba853669a31e57db7))
+* **db:** remove obsolete TrustServerCertificate parameter ([#94](https://github.com/jgsteeler/gsc-tracking/issues/94)) ([e389db1](https://github.com/jgsteeler/gsc-tracking/commit/e389db1544d3cc10a39acfbef7bec959621199f4))
+* **db:** remove obsolete TrustServerCertificate parameter ([#94](https://github.com/jgsteeler/gsc-tracking/issues/94)) ([0ac74a3](https://github.com/jgsteeler/gsc-tracking/commit/0ac74a33f2c104d866a01e9217d8afc683592b3e))
+* **db:** restore PostgreSQL resilience and fix cross-database compatibility ([#90](https://github.com/jgsteeler/gsc-tracking/issues/90)) ([1770f49](https://github.com/jgsteeler/gsc-tracking/commit/1770f4966b45d62b55dfcb6630b73b402837bfa8))
+* **db:** validate database URL format before parsing credentials ([#93](https://github.com/jgsteeler/gsc-tracking/issues/93)) ([b77b31e](https://github.com/jgsteeler/gsc-tracking/commit/b77b31e5df94b1621c56bbcf21b20fc659fe1f5c))
+* **db:** validate database URL format before parsing credentials ([#93](https://github.com/jgsteeler/gsc-tracking/issues/93)) ([a313eb3](https://github.com/jgsteeler/gsc-tracking/commit/a313eb3521369ae509d764900497963ce1b8470b))
+* **db:** validate database URL format before parsing credentials ([#93](https://github.com/jgsteeler/gsc-tracking/issues/93)) ([22015cb](https://github.com/jgsteeler/gsc-tracking/commit/22015cb985890b6c35201c0c32d55a7806cfc2d4))
+* **db:** validate database URL format before parsing credentials ([#93](https://github.com/jgsteeler/gsc-tracking/issues/93)) ([5f52d99](https://github.com/jgsteeler/gsc-tracking/commit/5f52d99e85c0ee44b4847a168e897f774b6712f6))
+* **db:** validate database URL format before parsing credentials ([#93](https://github.com/jgsteeler/gsc-tracking/issues/93)) ([d561501](https://github.com/jgsteeler/gsc-tracking/commit/d561501c5e72afb4d82370be94b7149ec0f380a8))
+* **db:** validate database URL format before parsing credentials ([#93](https://github.com/jgsteeler/gsc-tracking/issues/93)) ([6b6c89e](https://github.com/jgsteeler/gsc-tracking/commit/6b6c89eb4c77efe902b44622af8ed79d4f2502c4))
+* **db:** validate database URL format before parsing credentials ([#93](https://github.com/jgsteeler/gsc-tracking/issues/93)) ([14365d6](https://github.com/jgsteeler/gsc-tracking/commit/14365d60302c6433204f3e00c4c4655405f1faa0))
+* **db:** validate database URL format before parsing credentials ([#93](https://github.com/jgsteeler/gsc-tracking/issues/93)) ([8fd0a5a](https://github.com/jgsteeler/gsc-tracking/commit/8fd0a5a1f2fd1d8244a3d9c5d90ef343daa2ee2d))
+* **expense:** add job validation before expense deletion ([#123](https://github.com/jgsteeler/gsc-tracking/issues/123)) ([a600c33](https://github.com/jgsteeler/gsc-tracking/commit/a600c331dcaa1d962d633ba31738196cb391a310))
+* simplify conditions in Fly.io deployment workflows and update configuration files ([#54](https://github.com/jgsteeler/gsc-tracking/issues/54)) ([b5fa2be](https://github.com/jgsteeler/gsc-tracking/commit/b5fa2be91126333860abc905962d8dc49a006c62))
+
+
+### Miscellaneous Chores
+
+* release version 1.0.0 for production deployment ([#154](https://github.com/jgsteeler/gsc-tracking/issues/154)) ([998a6f3](https://github.com/jgsteeler/gsc-tracking/commit/998a6f346104c56f1f178865f161b06793264fbc))
+
 ## [1.0.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.18...backend-v1.0.0) (2025-12-19)
 
 
