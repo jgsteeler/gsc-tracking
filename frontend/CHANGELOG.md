@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.0.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v1.0.0...frontend-v2.0.0) (2025-12-19)
+## [1.0.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.16...frontend-v1.0.0) (2025-12-19)
 
 
 ### ⚠ BREAKING CHANGES

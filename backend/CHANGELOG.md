@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.0.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v1.0.0...backend-v2.0.0) (2025-12-19)
+## [1.0.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v0.1.18...backend-v1.0.0) (2025-12-19)
 
 
 ### ⚠ BREAKING CHANGES
