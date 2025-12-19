@@ -61,7 +61,7 @@ export default function Landing() {
             size="lg"
             onClick={() => loginWithRedirect()}
             disabled={isLoading}
-            className="text-xl px-12 py-8 font-semibold shadow-2xl hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 text-primary-foreground motion-safe:animate-pulse hover:animate-none"
+            className="text-xl px-12 py-8 font-semibold shadow-2xl hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 text-primary-foreground"
             aria-label="Log in to get started with secure authentication"
           >
             <Shield className="h-6 w-6 mr-2" aria-hidden="true" />
