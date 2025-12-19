@@ -1,5 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
 
 interface ProtectedRouteProps {
@@ -8,38 +9,14 @@ interface ProtectedRouteProps {
 
 /**
  * Protected route component that requires authentication
- * 
- * CURRENT STATUS: This component is not currently integrated into the application routing.
- * It has been implemented as preparatory work for future use when route-level authentication
- * becomes a requirement.
- * 
- * FEATURES:
- * - Checks if the user is authenticated using Auth0
- * - Shows a loading spinner while authentication status is being determined
- * - Redirects unauthenticated users to the Auth0 login page
- * - Gracefully handles cases where Auth0 is not configured (allows public access)
- * 
- * FUTURE USAGE:
- * Wrap routes that require authentication with this component in App.tsx:
- * 
- * ```tsx
- * <Route 
- *   path="customers" 
- *   element={
- *     <ProtectedRoute>
- *       <Customers />
- *     </ProtectedRoute>
- *   } 
- * />
- * ```
- * 
- * See docs/AUTH0-SETUP.md for complete usage examples and integration guide.
+ * Redirects unauthenticated users to the landing page before login
  * 
  * @param children - The component(s) to render if the user is authenticated
  * @returns The protected content or a loading/redirect state
  */
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, isLoading } = useAuth0();
+  const navigate = useNavigate();
 
   // If Auth0 is not configured (domain/clientId/audience missing),
   // the useAuth0 hook will not work properly. In this case, allow access.
@@ -47,12 +24,12 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
                                !import.meta.env.VITE_AUTH0_CLIENT_ID ||
                                !import.meta.env.VITE_AUTH0_AUDIENCE;
 
-  // Trigger login redirect when not authenticated
+  // Redirect to landing page when not authenticated
   useEffect(() => {
     if (!auth0NotConfigured && !isAuthenticated && !isLoading) {
-      loginWithRedirect();
+      navigate('/landing');
     }
-  }, [auth0NotConfigured, isAuthenticated, isLoading, loginWithRedirect]);
+  }, [auth0NotConfigured, isAuthenticated, isLoading, navigate]);
 
   if (auth0NotConfigured) {
     // Auth0 not configured, allow access
@@ -74,7 +51,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <p className="text-gray-600">Redirecting to login...</p>
+          <p className="text-gray-600">Redirecting to landing page...</p>
         </div>
       </div>
     );

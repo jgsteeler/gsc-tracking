@@ -258,11 +258,13 @@ Example for `fly.staging.toml`:
 
 3. **Test Login Flow**
    - Navigate to `http://localhost:5173`
-   - Click the "Log In" button in the sidebar
+   - If Auth0 is configured, you will be redirected to `/landing`
+   - Click the "Log In to Get Started" button on the landing page
    - You should be redirected to Auth0's Universal Login page
    - Sign in or create a new account
-   - You should be redirected back to the application
+   - You should be redirected back to the Dashboard
    - Your profile picture and name should appear in the sidebar
+   - If Auth0 is not configured, you will have direct access to all pages
 
 4. **Test Logout Flow**
    - Click the "Log Out" button
@@ -292,69 +294,63 @@ public class CustomersController : ControllerBase
 
 ## Protecting Frontend Routes
 
-### ProtectedRoute Component
+### Landing Page and Protected Routes
 
-The application includes a `ProtectedRoute` component (`frontend/src/components/ProtectedRoute.tsx`) that can be used to protect specific routes in the frontend. This component ensures that only authenticated users can access certain pages.
+The application now implements a **landing page** that is shown to unauthenticated users when Auth0 is configured. The landing page provides an overview of the application features and a prominent "Log In" button.
 
-**Current Status**: The `ProtectedRoute` component is **currently not integrated** into the application routing. It has been implemented as **preparatory work for future use** when route-level authentication is required.
+**Current Implementation**: The `ProtectedRoute` component (`frontend/src/components/ProtectedRoute.tsx`) is **actively used** in the application to protect all main routes (Dashboard, Customers, Jobs).
 
 **Features**:
 
 - Checks if the user is authenticated using Auth0
 - Shows a loading spinner while authentication status is being determined
-- Redirects unauthenticated users to the Auth0 login page
-- Gracefully handles cases where Auth0 is not configured (allows access)
+- Redirects unauthenticated users to the landing page (`/landing`)
+- From the landing page, users can click "Log In" to authenticate via Auth0
+- Gracefully handles cases where Auth0 is not configured (allows access for development)
 - Displays appropriate loading states during redirects
 
-**Future Usage Example**:
+**Authentication Flow**:
 
-When you need to protect specific routes, you can wrap them with the `ProtectedRoute` component:
+1. User navigates to any protected route (`/`, `/customers`, `/jobs`, etc.)
+2. If Auth0 is configured and user is not authenticated:
+   - User is redirected to `/landing`
+   - Landing page displays application features and "Log In" button
+   - User clicks "Log In" and is redirected to Auth0 Universal Login
+   - After successful authentication, user is redirected back to the application
+3. If Auth0 is not configured (development mode):
+   - User is granted access to all routes without authentication
+   - Useful for local development without Auth0 setup
+
+**Current Route Structure**:
 
 ```tsx
 import { ProtectedRoute } from './components/ProtectedRoute';
 
-// In your routing configuration
 <Routes>
-  <Route path="/" element={<MainLayout />}>
+  {/* Public landing page */}
+  <Route path="/landing" element={<Landing />} />
+  
+  {/* Protected routes - require authentication when Auth0 is configured */}
+  <Route path="/" element={
+    <ProtectedRoute>
+      <MainLayout />
+    </ProtectedRoute>
+  }>
     <Route index element={<Dashboard />} />
-    
-    {/* Public routes */}
-    <Route path="about" element={<About />} />
-    
-    {/* Protected routes - require authentication */}
-    <Route 
-      path="customers" 
-      element={
-        <ProtectedRoute>
-          <Customers />
-        </ProtectedRoute>
-      } 
-    />
-    
-    <Route 
-      path="jobs" 
-      element={
-        <ProtectedRoute>
-          <Jobs />
-        </ProtectedRoute>
-      } 
-    />
-    
-    <Route 
-      path="jobs/:id" 
-      element={
-        <ProtectedRoute>
-          <JobDetails />
-        </ProtectedRoute>
-      } 
-    />
+    <Route path="customers" element={<Customers />} />
+    <Route path="jobs" element={<Jobs />} />
+    <Route path="jobs/:id" element={<JobDetails />} />
   </Route>
 </Routes>
 ```
 
-**Why Not Enabled Yet?**
+**Behavior Summary**:
 
-The application currently uses optional authentication - users can use the app without logging in, but certain features (like creating/editing) may be restricted based on authentication status. When the business requirements change to require authentication for accessing the application, the `ProtectedRoute` component can be integrated following the example above.
+| Scenario | Auth0 Configured | User Authenticated | Behavior |
+|----------|------------------|--------------------|------------|
+| Production | ✅ | ✅ | Access granted to all protected routes |
+| Production | ✅ | ❌ | Redirected to landing page, must log in |
+| Development | ❌ | N/A | Access granted (graceful degradation) |
 
 
 ## Protecting API Endpoints
