@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.16](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.15...frontend-v0.1.16) (2025-12-19)
+
+
+### Features
+
+* **auth:** add landing page with prominent accessible login ([#147](https://github.com/jgsteeler/gsc-tracking/issues/147)) ([ff5c6af](https://github.com/jgsteeler/gsc-tracking/commit/ff5c6af5085a7870daedc800a5910c08ea007271))
+
 ## [0.1.15](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v0.1.14...frontend-v0.1.15) (2025-12-18)
 
 
