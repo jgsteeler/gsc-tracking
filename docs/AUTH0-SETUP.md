@@ -234,8 +234,8 @@ For staging and production environments, the frontend uses environment variables
 
    - `VITE_AUTH0_DOMAIN`: `your-production-domain`
    - `VITE_AUTH0_CLIENT_ID`: `your-production-client-id`
-   - `VITE_AUTH0_AUDIENCE`: `https://api.gsc-tracking.com`
-   - `VITE_API_URL`: `https://gsc-tracking-api.fly.dev/api`
+   - `VITE_AUTH0_AUDIENCE`: `https://api.gsctracking.com`
+   - `VITE_API_URL`: `https://api.your-production-domain.com/api`
 
 2. **Kubernetes**
 
