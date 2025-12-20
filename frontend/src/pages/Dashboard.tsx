@@ -28,7 +28,7 @@ export default function Dashboard() {
     },
     {
       name: 'Total Jobs',
-      value: stats.recentJobs.length > 0 ? (stats.recentJobs.length + '+').toString() : '0',
+      value: stats.totalJobs.toString(),
       icon: TrendingUp,
       description: 'Total jobs tracked',
     },

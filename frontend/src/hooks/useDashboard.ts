@@ -6,6 +6,7 @@ import { jobService } from '@/services/jobService'
 
 export interface DashboardStats {
   totalCustomers: number
+  totalJobs: number
   activeJobs: number
   revenue: number
   recentJobs: Job[]
@@ -15,6 +16,7 @@ export interface DashboardStats {
 export function useDashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalCustomers: 0,
+    totalJobs: 0,
     activeJobs: 0,
     revenue: 0,
     recentJobs: [],
@@ -36,16 +38,21 @@ export function useDashboard() {
 
       // Calculate statistics
       const totalCustomers = customers.length
+      const totalJobs = jobs.length
       const activeJobs = jobs.filter(job => job.status === 'InProgress').length
       
-      // Calculate revenue from completed, invoiced, or paid jobs
+      // Calculate revenue from completed, invoiced, or paid jobs in the current month
+      // Only use dateCompleted for revenue calculation to ensure job is actually finished
       const currentMonth = new Date().getMonth()
       const currentYear = new Date().getFullYear()
       
       const revenue = jobs
         .filter(job => {
-          const jobDate = new Date(job.dateCompleted || job.createdAt)
-          const isCurrentMonth = jobDate.getMonth() === currentMonth && jobDate.getFullYear() === currentYear
+          // Only include jobs that have been completed
+          if (!job.dateCompleted) return false
+          
+          const completedDate = new Date(job.dateCompleted)
+          const isCurrentMonth = completedDate.getMonth() === currentMonth && completedDate.getFullYear() === currentYear
           const isPaid = ['Completed', 'Invoiced', 'Paid'].includes(job.status)
           return isCurrentMonth && isPaid
         })
@@ -63,6 +70,7 @@ export function useDashboard() {
 
       setStats({
         totalCustomers,
+        totalJobs,
         activeJobs,
         revenue,
         recentJobs,

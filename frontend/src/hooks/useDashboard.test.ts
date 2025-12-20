@@ -157,6 +157,7 @@ describe('useDashboard', () => {
     expect(result.current.loading).toBe(true);
     expect(result.current.stats).toEqual({
       totalCustomers: 0,
+      totalJobs: 0,
       activeJobs: 0,
       revenue: 0,
       recentJobs: [],
@@ -168,6 +169,7 @@ describe('useDashboard', () => {
     });
 
     expect(result.current.stats.totalCustomers).toBe(3);
+    expect(result.current.stats.totalJobs).toBe(5);
     expect(result.current.stats.activeJobs).toBe(2); // Two jobs with InProgress status
     expect(result.current.stats.revenue).toBe(95.00); // Only job 2 is completed this month
     expect(result.current.stats.recentJobs.length).toBe(5);
@@ -257,6 +259,7 @@ describe('useDashboard', () => {
     });
 
     expect(result.current.stats.totalCustomers).toBe(0);
+    expect(result.current.stats.totalJobs).toBe(0);
     expect(result.current.stats.activeJobs).toBe(0);
     expect(result.current.stats.revenue).toBe(0);
     expect(result.current.stats.recentJobs).toEqual([]);
@@ -278,6 +281,7 @@ describe('useDashboard', () => {
     expect(result.current.error).toBe(errorMessage);
     expect(result.current.stats).toEqual({
       totalCustomers: 0,
+      totalJobs: 0,
       activeJobs: 0,
       revenue: 0,
       recentJobs: [],
@@ -299,6 +303,7 @@ describe('useDashboard', () => {
     expect(result.current.error).toBe(errorMessage);
     expect(result.current.stats).toEqual({
       totalCustomers: 0,
+      totalJobs: 0,
       activeJobs: 0,
       revenue: 0,
       recentJobs: [],
