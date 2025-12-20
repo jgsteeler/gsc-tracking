@@ -14,44 +14,17 @@
   # Environment variables for the build
   [build.environment]
     NODE_VERSION = "20"
-  SECRETS_SCAN_OMIT_KEYS = "VITE_AUTH0_CLIENT_ID,VITE_AUTH0_AUDIENCE"
+    SECRETS_SCAN_OMIT_KEYS = "VITE_AUTH0_CLIENT_ID,VITE_AUTH0_AUDIENCE"
 [context.production]
   command = "npm run build"
-  [context.production.environment]
-    # Production API URL - update this after setting up production backend
-    VITE_API_URL = "https://gsc-tracking-api.fly.dev/api"
-    # Auth0 Configuration - Set these in Netlify UI: Site settings -> Environment variables
-    # VITE_AUTH0_DOMAIN = "your-tenant.auth0.com"
-    # VITE_AUTH0_CLIENT_ID = "your-production-client-id"
-    # VITE_AUTH0_AUDIENCE = "https://api.gsc-tracking.com"
-
-# Deploy Preview configuration (for PRs - serves as staging environment)
 [context.deploy-preview]
   command = "npm run build"
-  [context.deploy-preview.environment]
-    # Staging API URL - uses the Fly.io staging backend
-    VITE_API_URL = "https://gsc-tracking-api-staging.fly.dev/api"
-    # Note: Deploy previews may not have Auth0 configured
-    # as their URLs are not registered in Auth0
-
-# Branch deploy configuration (for non-production branches)
+  
 [context.branch-deploy]
   command = "npm run build"
-  [context.branch-deploy.environment]
-    # Default to staging API for branch deploys
-    VITE_API_URL = "https://gsc-tracking-api-staging.fly.dev/api"
-    # Note: Branch deploys may not have Auth0 configured
 
-# Staging branch configuration (for Auth0 testing)
 [context.staging]
   command = "npm run build"
-  [context.staging.environment]
-    # Staging API URL
-    VITE_API_URL = "https://gsc-tracking-api-staging.fly.dev/api"
-    # Auth0 Configuration - Set these in Netlify UI: Site settings -> Environment variables
-    # VITE_AUTH0_DOMAIN = "your-tenant.auth0.com"
-    # VITE_AUTH0_CLIENT_ID = "your-staging-client-id"
-    # VITE_AUTH0_AUDIENCE = "https://api.gsc-tracking.com"
 
 # Redirect rules for SPA routing
 [[redirects]]

@@ -16,6 +16,8 @@ build/
 */bin/
 */obj/
 
+docs.local/
+
 # Dependencies
 node_modules/
 **/node_modules/

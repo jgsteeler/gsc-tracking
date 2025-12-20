@@ -134,11 +134,10 @@ The backend is configured to read Auth0 settings primarily from environment vari
 In `Program.cs`, the application attempts to load configuration in this order:
 
 1. **Environment Variables**: `AUTH0_DOMAIN` and `AUTH0_AUDIENCE`. This is the primary method for production and staging.
-2. **`appsettings.json`**: `Auth0:Domain` and `Auth0:Audience`. This is a fallback, useful for shared development settings.
+2. **`.env` File**: For local development, the `DotNetEnv` NuGet package is used to load environment variables from a `.env` file automatically.
+3. **`appsettings.json`**: `Auth0:Domain` and `Auth0:Audience`. This is a fallback, useful for shared development settings.
 
-**If both `AUTH0_DOMAIN` and `AUTH0_AUDIENCE` are not set (either via environment variables or appsettings.json), the application will throw an `InvalidOperationException` and fail to start.**
-
-For local development, the `DotNetEnv` NuGet package is used to automatically load a `.env` file if it exists.
+**If both `AUTH0_DOMAIN` and `AUTH0_AUDIENCE` are not set (either via environment variables or `.env`), the application will throw an `InvalidOperationException` and fail to start.**
 
 ### 1. Local Development (`.env` file)
 
@@ -152,39 +151,58 @@ AUTH0_DOMAIN="your-dev-tenant.us.auth0.com"
 AUTH0_AUDIENCE="https://gsc-tracking-api"
 ```
 
-### 2. Fly.io Configuration (Staging & Production)
+### 2. Staging and Production
 
-For deployed environments like Fly.io, you should use secrets to store your environment variables securely.
+For staging and production environments, the backend uses environment variables set on the hosting platform. This ensures sensitive information is securely managed and not exposed in the repository.
 
-**Option A: Use `flyctl secrets set` (Recommended)**
+1. **Netlify**
 
-This is the most secure method. Run these commands from your terminal:
+   Set the following environment variables in the Netlify dashboard:
 
-```bash
-# Staging Environment
-flyctl secrets set AUTH0_DOMAIN="your-staging-domain" --app gsc-tracking-api-staging
-flyctl secrets set AUTH0_AUDIENCE="your-staging-audience" --app gsc-tracking-api-staging
+   - `AUTH0_DOMAIN`: `your-production-domain`
+   - `AUTH0_AUDIENCE`: `https://gsc-tracking-api`
 
-# Production Environment
-flyctl secrets set AUTH0_DOMAIN="your-production-domain" --app gsc-tracking-api
-flyctl secrets set AUTH0_AUDIENCE="your-production-audience" --app gsc-tracking-api
-```
+2. **Kubernetes**
 
-**Option B: Use `fly.toml` (Less Secure)**
+   Use Kubernetes secrets to store and manage environment variables. For example:
 
-You can also place environment variables in your `fly.toml` file. This is less secure as the file is committed to version control, but can be useful if the values are not highly sensitive.
+   ```yaml
+   apiVersion: v1
+   kind: Secret
+   metadata:
+     name: auth0-secrets
+   type: Opaque
+   data:
+     AUTH0_DOMAIN: <base64-encoded-domain>
+     AUTH0_AUDIENCE: <base64-encoded-audience>
+   ```
 
-Example for `fly.staging.toml`:
+   Then, mount these secrets as environment variables in your deployment:
 
-```toml
-[env]
-  ASPNETCORE_ENVIRONMENT = 'Staging'
-  ASPNETCORE_URLS = 'http://+:8080'
-  AUTH0_DOMAIN = 'dev-axm38gs1176ibx7p.us.auth0.com'
-  AUTH0_AUDIENCE = 'https://gsc-tracking-api'
-```
+   ```yaml
+   env:
+     - name: AUTH0_DOMAIN
+       valueFrom:
+         secretKeyRef:
+           name: auth0-secrets
+           key: AUTH0_DOMAIN
+     - name: AUTH0_AUDIENCE
+       valueFrom:
+         secretKeyRef:
+           name: auth0-secrets
+           key: AUTH0_AUDIENCE
+   ```
 
-**Note:** Secrets set with `flyctl secrets set` will override any values in `fly.toml`. The recommended practice is to use secrets for all sensitive data
+3. **Fly.io**
+
+   Use `flyctl secrets` to securely set environment variables:
+
+   ```bash
+   flyctl secrets set AUTH0_DOMAIN="your-production-domain"
+   flyctl secrets set AUTH0_AUDIENCE="https://gsc-tracking-api"
+   ```
+
+---
 
 ## Frontend Configuration
 
@@ -195,6 +213,8 @@ Example for `fly.staging.toml`:
    Create `.env.local` in the frontend directory:
 
    ```bash
+   # frontend/.env.local
+
    # Auth0 Configuration
    VITE_AUTH0_DOMAIN=your-tenant.auth0.com
    VITE_AUTH0_CLIENT_ID=your-client-id
@@ -204,39 +224,22 @@ Example for `fly.staging.toml`:
    VITE_API_URL=http://localhost:5091/api
    ```
 
-2. **Netlify Configuration**
-   **Option A: Using Netlify UI**
+2. **Staging and Production**
 
-- Go to your Netlify site dashboard
-- Navigate to **Site settings** → **Environment variables**
-- Add the following variables:
-  - `VITE_AUTH0_DOMAIN`: `your-tenant.auth0.com`
-  - `VITE_AUTH0_CLIENT_ID`: `your-client-id`
-  - `VITE_AUTH0_AUDIENCE`: `https://api.gsc-tracking.com`
-  - `VITE_API_URL`: `https://gsc-tracking-api.fly.dev/api`
+For staging and production environments, the frontend uses environment variables set on the hosting platform (e.g., Netlify).
 
-   **Option B: Using netlify.toml**
+1. **Netlify**
 
-   Update `netlify.toml`:
+   Set the following environment variables in the Netlify dashboard:
 
-   ```toml
-   [context.production.environment]
-     VITE_API_URL = "https://gsc-tracking-api.fly.dev/api"
-     VITE_AUTH0_DOMAIN = "your-tenant.auth0.com"
-     VITE_AUTH0_CLIENT_ID = "your-production-client-id"
-     VITE_AUTH0_AUDIENCE = "https://api.gsc-tracking.com"
+   - `VITE_AUTH0_DOMAIN`: `your-production-domain`
+   - `VITE_AUTH0_CLIENT_ID`: `your-production-client-id`
+   - `VITE_AUTH0_AUDIENCE`: `https://api.gsctracking.com`
+   - `VITE_API_URL`: `https://api.your-production-domain.com/api`
 
-   [context.staging.environment]
-     VITE_API_URL = "https://gsc-tracking-api-staging.fly.dev/api"
-     VITE_AUTH0_DOMAIN = "your-tenant.auth0.com"
-     VITE_AUTH0_CLIENT_ID = "your-staging-client-id"
-     VITE_AUTH0_AUDIENCE = "https://api.gsc-tracking.com"
+2. **Kubernetes**
 
-   [context.deploy-preview.environment]
-     VITE_API_URL = "https://gsc-tracking-api-staging.fly.dev/api"
-     # Note: Deploy previews may not have Auth0 configured
-     # as their URLs are not registered in Auth0
-   ```
+   Use Kubernetes secrets to store and manage environment variables, similar to the backend configuration.
 
 ## Testing Authentication
 

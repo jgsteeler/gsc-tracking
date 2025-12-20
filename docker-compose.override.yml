@@ -10,6 +10,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
+      DATABASE_URL: ${DATABASE_URL}
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+      MOCK_AUTH: ${MOCK_AUTH:-false}
     volumes:
       # Mount source code for hot reload
       - ./backend:/app
