@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.0.0...frontend-v2.1.0) (2025-12-20)
+
+
+### Features
+
+* **dashboard:** implement functional dashboard with real API data ([#158](https://github.com/jgsteeler/gsc-tracking/issues/158)) ([e7770cf](https://github.com/jgsteeler/gsc-tracking/commit/e7770cf83737ec65d694a143f4ab1cdb6f3ff783))
+
+
+### Bug Fixes
+
+* **docs:** update Auth0 setup instructions for local development ([#161](https://github.com/jgsteeler/gsc-tracking/issues/161)) ([d59003e](https://github.com/jgsteeler/gsc-tracking/commit/d59003eca4c77e4c8ea65309938d146885881a01))
+
 ## [2.0.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v1.0.0...frontend-v2.0.0) (2025-12-20)
 
 

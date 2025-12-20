@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.0.0...backend-v2.0.1) (2025-12-20)
+
+
+### Bug Fixes
+
+* **docs:** update Auth0 setup instructions for local development ([#161](https://github.com/jgsteeler/gsc-tracking/issues/161)) ([d59003e](https://github.com/jgsteeler/gsc-tracking/commit/d59003eca4c77e4c8ea65309938d146885881a01))
+
 ## [2.0.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v1.0.0...backend-v2.0.0) (2025-12-20)
 
 
