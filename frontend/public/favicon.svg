@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Gradient definitions -->
+  <defs>
+    <linearGradient id="gearGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="centerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  
+  <!-- Gear shape (representing small engine repair) -->
+  <g transform="translate(32, 32)">
+    <!-- Gear teeth -->
+    <path d="M 0,-18 L 3,-20 L 3,-24 L -3,-24 L -3,-20 Z" fill="url(#gearGrad)"/>
+    <path d="M 12.7,-12.7 L 14.1,-14.1 L 17,-17 L 12.7,-21.2 L 9.9,-18.4 Z" fill="url(#gearGrad)" transform="rotate(45)"/>
+    <path d="M 18,0 L 20,-3 L 24,-3 L 24,3 L 20,3 Z" fill="url(#gearGrad)" transform="rotate(90)"/>
+    <path d="M 12.7,12.7 L 14.1,14.1 L 17,17 L 12.7,21.2 L 9.9,18.4 Z" fill="url(#gearGrad)" transform="rotate(135)"/>
+    <path d="M 0,18 L 3,20 L 3,24 L -3,24 L -3,20 Z" fill="url(#gearGrad)" transform="rotate(180)"/>
+    <path d="M -12.7,12.7 L -14.1,14.1 L -17,17 L -12.7,21.2 L -9.9,18.4 Z" fill="url(#gearGrad)" transform="rotate(225)"/>
+    <path d="M -18,0 L -20,-3 L -24,-3 L -24,3 L -20,3 Z" fill="url(#gearGrad)" transform="rotate(270)"/>
+    <path d="M -12.7,-12.7 L -14.1,-14.1 L -17,-17 L -12.7,-21.2 L -9.9,-18.4 Z" fill="url(#gearGrad)" transform="rotate(315)"/>
+    
+    <!-- Main gear body -->
+    <circle cx="0" cy="0" r="14" fill="url(#gearGrad)"/>
+    
+    <!-- Center circle -->
+    <circle cx="0" cy="0" r="6" fill="url(#centerGrad)"/>
+    
+    <!-- GSC text -->
+    <text x="0" y="2" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="white">GSC</text>
+  </g>
+</svg>
