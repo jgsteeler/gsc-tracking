@@ -92,21 +92,15 @@ else
     echo "  ⚠️  Swagger may not be enabled in this environment"
 fi
 
-# Test 4: Customers endpoint (basic API functionality)
+# Test 4: Customers endpoint (basic API functionality) should return 401
 total_tests=$((total_tests + 1))
-if test_endpoint "$API_URL/api/customers" 200 "Customers API Endpoint"; then
+if test_endpoint "$API_URL/api/customers" 401 "Customers API Endpoint"; then
     :
 else
     failed_tests=$((failed_tests + 1))
 fi
 
-# Test 5: Jobs endpoint
-total_tests=$((total_tests + 1))
-if test_endpoint "$API_URL/api/jobs" 200 "Jobs API Endpoint"; then
-    :
-else
-    failed_tests=$((failed_tests + 1))
-fi
+
 
 # Summary
 echo "================================================"

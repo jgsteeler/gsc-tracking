@@ -1,15 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-// Uncomment the following line to enable authentication for this controller:
 using Microsoft.AspNetCore.Authorization;
 using GscTracking.Api.DTOs;
 using GscTracking.Api.Services;
 
 namespace GscTracking.Api.Controllers;
 
-// To protect all endpoints in this controller, add [Authorize] attribute here:
-// [Authorize]
 [ApiController]
 [Route("api/[controller]")]
+[Authorize] // Require authentication for all endpoints
 public class CustomersController : ControllerBase
 {
     private readonly ICustomerService _customerService;
@@ -82,6 +80,7 @@ public class CustomersController : ControllerBase
     /// <response code="400">Validation error - check response for details</response>
     /// <response code="500">Internal server error</response>
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(typeof(CustomerDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(object), StatusCodes.Status500InternalServerError)]
@@ -123,6 +122,7 @@ public class CustomersController : ControllerBase
     /// <response code="404">Customer not found</response>
     /// <response code="500">Internal server error</response>
     [HttpPut("{id}")]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(typeof(CustomerDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
@@ -154,7 +154,7 @@ public class CustomersController : ControllerBase
     /// <param name="id">Customer ID</param>
     /// <returns>No content if successful</returns>
     [HttpDelete("{id}")]
-    [Authorize] 
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> DeleteCustomer(int id)
     {
         try
