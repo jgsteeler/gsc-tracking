@@ -26,6 +26,7 @@ import type { Job } from '@/types/job'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, JOB_STATUSES } from '@/types/job'
 import { JobDialog } from '@/components/JobDialog'
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
+import { CsvExportButtons } from '@/components/CsvExportButtons'
 import type { JobFormValues } from '@/lib/validations'
 import { useToast } from '@/hooks/use-toast'
 
@@ -135,12 +136,15 @@ export default function Jobs() {
             Track and manage repair jobs and service requests
           </p>
         </div>
-        {isAdmin && (
-          <Button onClick={handleAddJob}>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Job
-          </Button>
-        )}
+        <div className="flex gap-2">
+          <CsvExportButtons type="jobs" status={statusFilter || undefined} />
+          {isAdmin && (
+            <Button onClick={handleAddJob}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Job
+            </Button>
+          )}
+        </div>
       </div>
 
       <Card>
