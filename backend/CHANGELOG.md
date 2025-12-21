@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.0.1...backend-v2.1.0) (2025-12-21)
+
+
+### Features
+
+* **auth:** add tracker-admin role authorization to API endpoints ([#166](https://github.com/jgsteeler/gsc-tracking/issues/166)) ([00f89a9](https://github.com/jgsteeler/gsc-tracking/commit/00f89a9089d49e94f45512c48321891b81d8630e))
+* **scripts:** add set-version.sh for versioning and build metadata i… ([#168](https://github.com/jgsteeler/gsc-tracking/issues/168)) ([46326aa](https://github.com/jgsteeler/gsc-tracking/commit/46326aa34aac69ce6df5bfb4c4bdebea0efab13e))
+
 ## [2.0.1](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.0.0...backend-v2.0.1) (2025-12-20)
 
 
