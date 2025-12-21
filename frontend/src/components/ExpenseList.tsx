@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table'
 import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react'
 import { expenseService } from '@/services/expenseService'
+import { useUserRole } from '@/hooks/useUserRole'
 import type { Expense } from '@/types/expense'
 import { EXPENSE_TYPE_COLORS, EXPENSE_TYPE_LABELS } from '@/types/expense'
 import { ExpenseDialog } from '@/components/ExpenseDialog'
@@ -26,6 +27,7 @@ interface ExpenseListProps {
 
 export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
   const { toast } = useToast()
+  const { isAdmin } = useUserRole()
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -153,10 +155,12 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
               <CardTitle>Expenses</CardTitle>
               <CardDescription>Track all costs associated with this job</CardDescription>
             </div>
-            <Button onClick={handleAddNew}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Expense
-            </Button>
+            {isAdmin && (
+              <Button onClick={handleAddNew}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Expense
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
@@ -180,7 +184,7 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
                     <TableHead>Date</TableHead>
                     <TableHead>Receipt</TableHead>
                     <TableHead className="text-right">Amount</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    {isAdmin && <TableHead className="text-right">Actions</TableHead>}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -199,24 +203,26 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
                       <TableCell className="text-right font-medium">
                         {formatCurrency(expense.amount)}
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(expense)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteClick(expense)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+                      {isAdmin && (
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEdit(expense)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteClick(expense)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>

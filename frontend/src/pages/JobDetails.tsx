@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Pencil, Loader2 } from 'lucide-react'
 import { jobService } from '@/services/jobService'
+import { useUserRole } from '@/hooks/useUserRole'
 import type { Job } from '@/types/job'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS } from '@/types/job'
 import { JobDialog } from '@/components/JobDialog'
@@ -17,6 +18,7 @@ export default function JobDetails() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { isAdmin } = useUserRole()
   const [job, setJob] = useState<Job | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -128,10 +130,12 @@ export default function JobDetails() {
             </p>
           </div>
         </div>
-        <Button onClick={() => setDialogOpen(true)}>
-          <Pencil className="mr-2 h-4 w-4" />
-          Edit Job
-        </Button>
+        {isAdmin && (
+          <Button onClick={() => setDialogOpen(true)}>
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit Job
+          </Button>
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

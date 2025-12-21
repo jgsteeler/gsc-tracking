@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table'
 import { Plus, Pencil, Trash2, Search } from 'lucide-react'
 import { useCustomers } from '@/hooks/useCustomers'
+import { useUserRole } from '@/hooks/useUserRole'
 import type { Customer } from '@/types/customer'
 import { CustomerDialog } from '@/components/CustomerDialog'
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
@@ -28,6 +29,7 @@ export default function Customers() {
   
   const { customers, loading, error, createCustomer, updateCustomer, deleteCustomer } = useCustomers(debouncedSearch)
   const { toast } = useToast()
+  const { isAdmin } = useUserRole()
 
   const handleSearch = (value: string) => {
     setSearchTerm(value)
@@ -108,10 +110,12 @@ export default function Customers() {
             Manage your customer information and service history
           </p>
         </div>
-        <Button onClick={handleAddCustomer}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Customer
-        </Button>
+        {isAdmin && (
+          <Button onClick={handleAddCustomer}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Customer
+          </Button>
+        )}
       </div>
 
       <Card>
@@ -153,7 +157,7 @@ export default function Customers() {
                   <TableHead>Email</TableHead>
                   <TableHead>Phone</TableHead>
                   <TableHead>Address</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  {isAdmin && <TableHead className="text-right">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -163,24 +167,26 @@ export default function Customers() {
                     <TableCell>{customer.email || '-'}</TableCell>
                     <TableCell>{customer.phone || '-'}</TableCell>
                     <TableCell>{customer.address || '-'}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEditCustomer(customer)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDeleteClick(customer)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+                    {isAdmin && (
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEditCustomer(customer)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteClick(customer)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>

@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Trash2, MessageSquarePlus, Loader2 } from 'lucide-react'
 import { useJobUpdates } from '@/hooks/useJobUpdates'
+import { useUserRole } from '@/hooks/useUserRole'
 import { useToast } from '@/hooks/use-toast'
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
 import type { JobUpdate } from '@/types/job'
@@ -16,6 +17,7 @@ interface JobUpdatesProps {
 export function JobUpdates({ jobId }: JobUpdatesProps) {
   const { updates, loading, error, createUpdate, deleteUpdate } = useJobUpdates(jobId)
   const { toast } = useToast()
+  const { isAdmin } = useUserRole()
   const [newUpdateText, setNewUpdateText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -165,14 +167,16 @@ export function JobUpdates({ jobId }: JobUpdatesProps) {
                     <Badge variant="outline" className="text-xs">
                       {formatDate(update.createdAt)}
                     </Badge>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteClick(update)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {isAdmin && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteClick(update)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
                   <p className="text-sm whitespace-pre-wrap">{update.updateText}</p>
                 </div>

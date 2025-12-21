@@ -21,6 +21,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Plus, Pencil, Trash2, Search, Eye } from 'lucide-react'
 import { useJobs } from '@/hooks/useJobs'
+import { useUserRole } from '@/hooks/useUserRole'
 import type { Job } from '@/types/job'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, JOB_STATUSES } from '@/types/job'
 import { JobDialog } from '@/components/JobDialog'
@@ -40,6 +41,7 @@ export default function Jobs() {
   
   const { jobs, loading, error, createJob, updateJob, deleteJob } = useJobs(debouncedSearch, statusFilter || undefined)
   const { toast } = useToast()
+  const { isAdmin } = useUserRole()
 
   const handleSearch = (value: string) => {
     setSearchTerm(value)
@@ -133,10 +135,12 @@ export default function Jobs() {
             Track and manage repair jobs and service requests
           </p>
         </div>
-        <Button onClick={handleAddJob}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Job
-        </Button>
+        {isAdmin && (
+          <Button onClick={handleAddJob}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create Job
+          </Button>
+        )}
       </div>
 
       <Card>
@@ -225,21 +229,25 @@ export default function Jobs() {
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEditJob(job)}
-                          className="mr-2"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDeleteClick(job)}
-                        >
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
+                        {isAdmin && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEditJob(job)}
+                              className="mr-2"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDeleteClick(job)}
+                            >
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
