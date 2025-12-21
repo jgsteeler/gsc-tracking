@@ -400,6 +400,41 @@ public class CustomersController : ControllerBase
 
 ### Role-Based Authorization
 
+The GSC Tracking API uses role-based authorization to control access to modification endpoints.
+
+**Current Roles:**
+- `tracker-admin` - Full administrative access; required for all POST, PUT, and DELETE operations
+
+**Authorization Rules:**
+- All API endpoints require authentication (except `/api/hello`)
+- GET endpoints require authentication only
+- POST, PUT, DELETE endpoints require authentication AND the `tracker-admin` role
+
+**Implementation:**
+
+The API uses an authorization policy named `AdminOnly` that checks for the `tracker-admin` role:
+
+```csharp
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireRole("tracker-admin"));
+});
+```
+
+Controllers are protected at the class level with `[Authorize]` for authentication, and modification endpoints use `[Authorize(Policy = "AdminOnly")]` for role-based access.
+
+**Assigning Roles to Users:**
+
+1. In Auth0 Dashboard, go to **User Management** → **Roles**
+2. Select the `tracker-admin` role (already created)
+3. Click **Users** tab
+4. Click **Add Users** and search for users to assign the role
+
+### Role-Based Authorization (Deprecated Examples)
+
+The following examples show alternative ways to implement role-based authorization that are not currently used in this application, but are provided for reference:
+
 Protect endpoints with specific roles:
 
 ```csharp

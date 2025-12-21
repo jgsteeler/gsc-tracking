@@ -14,11 +14,8 @@ To configure Auth0, follow the detailed instructions in the [Auth0 Setup Guide](
 
 1. Set up an Auth0 tenant and application.
 2. Configure environment variables for the backend and frontend.
-3. Create the required roles for RBAC:
-   - `tracking-admin`
-   - `tracking-read`
-   - `tracking-write`
-4. Assign roles to users as needed.
+3. The `tracker-admin` role is already created in Auth0 for role-based access control (RBAC).
+4. Assign the `tracker-admin` role to users who need to create, update, or delete data.
 5. Test the login, logout, and role-based access flows.
 
 For more details, see the [Auth0 Setup Guide](./AUTH0-SETUP.md).
