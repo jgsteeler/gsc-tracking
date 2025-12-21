@@ -10,13 +10,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, Loader2, Upload } from 'lucide-react'
 import { expenseService } from '@/services/expenseService'
 import { useUserRole } from '@/hooks/useUserRole'
 import type { Expense } from '@/types/expense'
 import { EXPENSE_TYPE_COLORS, EXPENSE_TYPE_LABELS } from '@/types/expense'
 import { ExpenseDialog } from '@/components/ExpenseDialog'
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
+import { CsvImportDialog } from '@/components/CsvImportDialog'
+import { CsvExportButtons } from '@/components/CsvExportButtons'
 import type { ExpenseFormValues } from '@/lib/validations'
 import { useToast } from '@/hooks/use-toast'
 
@@ -33,6 +35,7 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
   const [error, setError] = useState<string | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [importDialogOpen, setImportDialogOpen] = useState(false)
   const [selectedExpense, setSelectedExpense] = useState<Expense | undefined>()
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null)
 
@@ -131,6 +134,11 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
     setDialogOpen(true)
   }
 
+  const handleImportComplete = () => {
+    fetchExpenses()
+    onExpenseChange?.()
+  }
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -155,12 +163,21 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
               <CardTitle>Expenses</CardTitle>
               <CardDescription>Track all costs associated with this job</CardDescription>
             </div>
-            {isAdmin && (
-              <Button onClick={handleAddNew}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Expense
-              </Button>
-            )}
+            <div className="flex gap-2">
+              <CsvExportButtons type="expenses" jobId={jobId} />
+              {isAdmin && (
+                <>
+                  <Button variant="outline" size="sm" onClick={() => setImportDialogOpen(true)}>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Import
+                  </Button>
+                  <Button onClick={handleAddNew}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Expense
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -245,6 +262,12 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
         onConfirm={handleDelete}
         title="Delete Expense"
         description={`Are you sure you want to delete this expense? This action cannot be undone.`}
+      />
+
+      <CsvImportDialog
+        open={importDialogOpen}
+        onOpenChange={setImportDialogOpen}
+        onImportComplete={handleImportComplete}
       />
     </>
   )
