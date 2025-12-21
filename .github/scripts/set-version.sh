@@ -3,8 +3,7 @@
 # This script is intended to be run during CI/CD builds to inject
 # version information with commit hash and build number
 
-PROJECT_PATH="${1:-GscTracking.Api/GscTracking.Api.csproj}"
-BUILD_NUMBER="${2:-}"
+BUILD_NUMBER="${1:-}"
 
 # Get the git commit hash (short version)
 COMMIT_HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
@@ -13,16 +12,17 @@ if [ "$COMMIT_HASH" = "unknown" ]; then
     echo "Warning: Could not get git commit hash. Using 'unknown'."
 fi
 
-# Read the current version from the .csproj file
-if [ ! -f "$PROJECT_PATH" ]; then
-    echo "Error: Project file not found at $PROJECT_PATH"
+# Read the current version from the .release-please-manifest.json file
+MANIFEST_FILE=".github/.release-please-manifest.json"
+if [ ! -f "$MANIFEST_FILE" ]; then
+    echo "Error: Manifest file not found at $MANIFEST_FILE"
     exit 1
 fi
 
-VERSION=$(grep -oP '<Version>\K[^<]+' "$PROJECT_PATH")
+VERSION=$(jq -r '.backend' "$MANIFEST_FILE")
 
-if [ -z "$VERSION" ]; then
-    echo "Error: Could not find Version tag in $PROJECT_PATH"
+if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
+    echo "Error: Could not find backend version in $MANIFEST_FILE"
     exit 1
 fi
 
@@ -37,6 +37,8 @@ else
 fi
 
 echo "Setting InformationalVersion to: $INFORMATIONAL_VERSION"
+
+PROJECT_PATH="GscTracking.Api/GscTracking.Api.csproj"
 
 # Check if InformationalVersion already exists in the file
 if grep -q '<InformationalVersion>' "$PROJECT_PATH"; then
