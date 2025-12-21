@@ -11,6 +11,14 @@ interface CsvExportButtonsProps {
   className?: string
 }
 
+const generateFilename = (type: string, filter?: string | number) => {
+  const date = new Date().toISOString().split('T')[0]
+  if (filter !== undefined) {
+    return `${type}_${filter}_${date}.csv`
+  }
+  return `${type}_${date}.csv`
+}
+
 export function CsvExportButtons({ type, jobId, status, className }: CsvExportButtonsProps) {
   const [isExporting, setIsExporting] = useState(false)
   const { toast } = useToast()
@@ -23,14 +31,10 @@ export function CsvExportButtons({ type, jobId, status, className }: CsvExportBu
 
       if (type === 'expenses') {
         blob = await csvService.exportExpenses(jobId)
-        filename = jobId 
-          ? `expenses_job_${jobId}_${new Date().toISOString().split('T')[0]}.csv`
-          : `expenses_${new Date().toISOString().split('T')[0]}.csv`
+        filename = jobId ? generateFilename('expenses_job', jobId) : generateFilename('expenses')
       } else {
         blob = await csvService.exportJobs(status)
-        filename = status
-          ? `jobs_${status}_${new Date().toISOString().split('T')[0]}.csv`
-          : `jobs_${new Date().toISOString().split('T')[0]}.csv`
+        filename = status ? generateFilename('jobs', status) : generateFilename('jobs')
       }
 
       csvService.downloadBlob(blob, filename)

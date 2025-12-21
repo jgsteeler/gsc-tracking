@@ -62,15 +62,12 @@ export function CsvImportDialog({ open, onOpenChange, onImportComplete }: CsvImp
           description: `Successfully imported ${result.successCount} expense(s).`,
         })
         onImportComplete()
-        // Close dialog after successful import with no errors
-        setTimeout(() => {
-          handleClose()
-        }, 2000)
       } else if (result.successCount > 0) {
         toast({
           title: 'Import partially successful',
           description: `Imported ${result.successCount} expense(s), ${result.errorCount} failed.`,
         })
+        onImportComplete()
       } else {
         toast({
           variant: 'destructive',

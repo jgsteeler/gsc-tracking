@@ -5,6 +5,7 @@ using GscTracking.Api.DTOs;
 using GscTracking.Api.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -14,13 +15,21 @@ public class ImportControllerTests
 {
     private readonly Mock<ICsvService> _mockCsvService;
     private readonly Mock<ILogger<ImportController>> _mockLogger;
+    private readonly Mock<IConfiguration> _mockConfiguration;
     private readonly ImportController _controller;
 
     public ImportControllerTests()
     {
         _mockCsvService = new Mock<ICsvService>();
         _mockLogger = new Mock<ILogger<ImportController>>();
-        _controller = new ImportController(_mockCsvService.Object, _mockLogger.Object);
+        _mockConfiguration = new Mock<IConfiguration>();
+        
+        // Setup configuration section for max file size
+        var mockConfigSection = new Mock<IConfigurationSection>();
+        mockConfigSection.Setup(s => s.Value).Returns((10 * 1024 * 1024).ToString());
+        _mockConfiguration.Setup(c => c.GetSection("CsvImport:MaxFileSizeBytes")).Returns(mockConfigSection.Object);
+        
+        _controller = new ImportController(_mockCsvService.Object, _mockLogger.Object, _mockConfiguration.Object);
     }
 
     [Fact]

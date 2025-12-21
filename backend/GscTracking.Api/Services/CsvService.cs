@@ -119,11 +119,18 @@ public class CsvService : ICsvService
 
         try
         {
-            // Read all records first to collect any parsing errors
-            await foreach (var record in csv.GetRecordsAsync<ExpenseImportDto>())
+            // Read all records synchronously for better performance with large files
+            csv.Read();
+            csv.ReadHeader();
+            lineNumber++;
+
+            while (csv.Read())
             {
-                lineNumber++;
-                records.Add(record);
+                var record = csv.GetRecord<ExpenseImportDto>();
+                if (record != null)
+                {
+                    records.Add(record);
+                }
             }
         }
         catch (Exception ex)
@@ -136,6 +143,11 @@ public class CsvService : ICsvService
             });
             return result;
         }
+
+        // Pre-validate all job IDs to avoid N+1 queries
+        var jobIds = records.Select(r => r.JobId).Distinct().ToList();
+        var existingJobs = await _jobService.GetAllJobsAsync();
+        var validJobIds = new HashSet<int>(existingJobs.Select(j => j.Id));
 
         // Process each record
         lineNumber = 1; // Reset for processing
@@ -159,9 +171,8 @@ public class CsvService : ICsvService
                     continue;
                 }
 
-                // Validate job exists
-                var job = await _jobService.GetJobByIdAsync(record.JobId);
-                if (job == null)
+                // Check if job exists using pre-loaded data
+                if (!validJobIds.Contains(record.JobId))
                 {
                     result.Errors.Add(new ImportErrorDto
                     {

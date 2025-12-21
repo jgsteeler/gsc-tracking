@@ -12,12 +12,16 @@ public class ImportController : ControllerBase
 {
     private readonly ICsvService _csvService;
     private readonly ILogger<ImportController> _logger;
-    private const long MaxFileSize = 10 * 1024 * 1024; // 10 MB
+    private readonly IConfiguration _configuration;
+    private readonly long _maxFileSize;
 
-    public ImportController(ICsvService csvService, ILogger<ImportController> logger)
+    public ImportController(ICsvService csvService, ILogger<ImportController> logger, IConfiguration configuration)
     {
         _csvService = csvService;
         _logger = logger;
+        _configuration = configuration;
+        // Default to 10 MB if not configured
+        _maxFileSize = _configuration.GetValue<long>("CsvImport:MaxFileSizeBytes", 10 * 1024 * 1024);
     }
 
     /// <summary>
@@ -57,9 +61,9 @@ public class ImportController : ControllerBase
             }
 
             // Check file size
-            if (file.Length > MaxFileSize)
+            if (file.Length > _maxFileSize)
             {
-                return BadRequest(new { message = $"File size exceeds the maximum allowed size of {MaxFileSize / 1024 / 1024} MB." });
+                return BadRequest(new { message = $"File size exceeds the maximum allowed size of {_maxFileSize / 1024 / 1024} MB." });
             }
 
             // Check file extension
