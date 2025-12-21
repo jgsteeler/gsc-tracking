@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using GscTracking.Api.DTOs;
 using GscTracking.Api.Services;
 
@@ -6,6 +7,7 @@ namespace GscTracking.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize] // Require authentication for all endpoints
 public class JobsController : ControllerBase
 {
     private readonly IJobService _jobService;
@@ -105,6 +107,7 @@ public class JobsController : ControllerBase
     /// <response code="400">Validation error - check response for details</response>
     /// <response code="500">Internal server error</response>
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(typeof(JobDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(object), StatusCodes.Status500InternalServerError)]
@@ -156,6 +159,7 @@ public class JobsController : ControllerBase
     /// <response code="404">Job not found</response>
     /// <response code="500">Internal server error</response>
     [HttpPut("{id}")]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(typeof(JobDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
@@ -193,6 +197,7 @@ public class JobsController : ControllerBase
     /// <param name="id">Job ID</param>
     /// <returns>No content if successful</returns>
     [HttpDelete("{id}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> DeleteJob(int id)
     {
         try

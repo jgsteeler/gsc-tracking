@@ -213,7 +213,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireRole("tracker-admin"));
+});
 
 var app = builder.Build();
 
@@ -260,7 +264,7 @@ app.UseAuthorization();
 // Map controllers
 app.MapControllers();
 
-// Hello World endpoint for GSC Tracking API
+// Hello World endpoint for GSC Tracking API (no authentication required)
 app.MapGet("/api/hello", () => 
 {
     var assembly = Assembly.GetExecutingAssembly();
@@ -277,6 +281,7 @@ app.MapGet("/api/hello", () =>
     };
 })
 .WithName("GetHello")
-.WithTags("System");
+.WithTags("System")
+.AllowAnonymous();
 
 app.Run();

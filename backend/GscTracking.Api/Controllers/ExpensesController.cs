@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using GscTracking.Api.DTOs;
 using GscTracking.Api.Services;
 
@@ -6,6 +7,7 @@ namespace GscTracking.Api.Controllers;
 
 [ApiController]
 [Route("api/jobs/{jobId}/expenses")]
+[Authorize] // Require authentication for all endpoints
 public class ExpensesController : ControllerBase
 {
     private readonly IExpenseService _expenseService;
@@ -57,6 +59,7 @@ public class ExpensesController : ControllerBase
     /// <response code="400">Validation error - check response for details</response>
     /// <response code="500">Internal server error</response>
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(typeof(ExpenseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(object), StatusCodes.Status500InternalServerError)]
@@ -135,6 +138,7 @@ public class ExpensesController : ControllerBase
     /// <response code="404">Expense not found</response>
     /// <response code="500">Internal server error</response>
     [HttpPut("{id}")]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(typeof(ExpenseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
@@ -187,6 +191,7 @@ public class ExpensesController : ControllerBase
     /// <param name="id">Expense ID</param>
     /// <returns>No content if successful</returns>
     [HttpDelete("{id}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> DeleteExpense(int jobId, int id)
     {
         try

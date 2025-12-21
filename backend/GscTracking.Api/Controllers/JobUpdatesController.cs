@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using GscTracking.Api.DTOs;
 using GscTracking.Api.Services;
 
@@ -6,6 +7,7 @@ namespace GscTracking.Api.Controllers;
 
 [ApiController]
 [Route("api/jobs/{jobId}/updates")]
+[Authorize] // Require authentication for all endpoints
 public class JobUpdatesController : ControllerBase
 {
     private readonly IJobUpdateService _jobUpdateService;
@@ -73,6 +75,7 @@ public class JobUpdatesController : ControllerBase
     /// <param name="updateRequest">Update data</param>
     /// <returns>Created job update</returns>
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<JobUpdateDto>> CreateJobUpdate(int jobId, [FromBody] JobUpdateRequestDto updateRequest)
     {
         try
@@ -103,6 +106,7 @@ public class JobUpdatesController : ControllerBase
     /// <param name="id">Update ID</param>
     /// <returns>No content if successful</returns>
     [HttpDelete("{id}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> DeleteJobUpdate(int jobId, int id)
     {
         try
