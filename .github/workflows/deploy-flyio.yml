@@ -36,7 +36,7 @@ jobs:
         working-directory: backend
         run: |
           chmod +x set-version.sh
-          ./set-version.sh GscTracking.Api/GscTracking.Api.csproj ${{ github.run_number }}
+          ./set-version.sh ${{ github.run_number }}
         shell: bash
 
       - name: Setup Fly.io CLI
@@ -85,7 +85,7 @@ jobs:
         working-directory: backend
         run: |
           chmod +x set-version.sh
-          ./set-version.sh GscTracking.Api/GscTracking.Api.csproj ${{ github.run_number }}
+          ./set-version.sh ${{ github.run_number }}
         shell: bash
 
       - name: Setup Fly.io CLI
