@@ -26,8 +26,8 @@ jobs:
       - name: Set API version
         working-directory: backend
         run: |
-          chmod +x ../scripts/set-version.sh
-          ../scripts/set-version.sh GscTracking.Api/GscTracking.Api.csproj ${{ github.run_number }}
+          chmod +x .github/scripts/set-version.sh
+          .github/scripts/set-version.sh GscTracking.Api/GscTracking.Api.csproj ${{ github.run_number }}
         shell: bash
       - name: Restore dependencies
         run: dotnet restore
