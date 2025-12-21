@@ -13,7 +13,7 @@ if [ "$COMMIT_HASH" = "unknown" ]; then
 fi
 
 # Read the current version from the .release-please-manifest.json file
-MANIFEST_FILE=".github/.release-please-manifest.json"
+MANIFEST_FILE="../.github/.release-please-manifest.json"
 if [ ! -f "$MANIFEST_FILE" ]; then
     echo "Error: Manifest file not found at $MANIFEST_FILE"
     exit 1
