@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.1.0...frontend-v2.2.0) (2025-12-21)
+
+
+### Features
+
+* **ui:** replace Vite favicon with custom GSC-themed favicon ([#164](https://github.com/jgsteeler/gsc-tracking/issues/164)) ([099bc9a](https://github.com/jgsteeler/gsc-tracking/commit/099bc9a28ea3f8ba1136d836da501788483feb48))
+
 ## [2.1.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.0.0...frontend-v2.1.0) (2025-12-20)
 
 
