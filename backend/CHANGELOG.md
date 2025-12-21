@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.1.0...backend-v2.2.0) (2025-12-21)
+
+
+### Features
+
+* **mvp:** implement CSV import/export for expenses and jobs ([#171](https://github.com/jgsteeler/gsc-tracking/issues/171)) ([08cfd4f](https://github.com/jgsteeler/gsc-tracking/commit/08cfd4f938863788a02a3f7b9a42529c18aae3e1))
+
 ## [2.1.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.0.1...backend-v2.1.0) (2025-12-21)
 
 
