@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.2.0...frontend-v2.3.0) (2025-12-21)
+
+
+### Features
+
+* **auth:** implement UI authorization based on tracker-admin role ([#169](https://github.com/jgsteeler/gsc-tracking/issues/169)) ([6000c78](https://github.com/jgsteeler/gsc-tracking/commit/6000c78ed6c4b0df1a2ef4d7732936ebd254737b))
+
 ## [2.2.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.1.0...frontend-v2.2.0) (2025-12-21)
 
 
