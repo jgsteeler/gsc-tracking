@@ -14,6 +14,16 @@ vi.mock('@/services/jobService', () => ({
   },
 }))
 
+// Mock useAccessToken with a stable getToken function
+const mockGetToken = vi.fn().mockResolvedValue(null);
+vi.mock('@/hooks/useAccessToken', () => ({
+  useAccessToken: () => ({
+    getToken: mockGetToken,
+    isAuthEnabled: false,
+    isAuthenticated: false,
+  }),
+}))
+
 describe('useJobs', () => {
   const mockJobs: Job[] = [
     {
@@ -72,7 +82,7 @@ describe('useJobs', () => {
       expect(result.current.loading).toBe(false)
     })
 
-    expect(jobService.getAll).toHaveBeenCalledWith('lawn', undefined)
+    expect(jobService.getAll).toHaveBeenCalledWith('lawn', undefined, null)
   })
 
   it('should fetch jobs with status filter', async () => {
@@ -84,7 +94,7 @@ describe('useJobs', () => {
       expect(result.current.loading).toBe(false)
     })
 
-    expect(jobService.getAll).toHaveBeenCalledWith(undefined, 'InProgress')
+    expect(jobService.getAll).toHaveBeenCalledWith(undefined, 'InProgress', null)
   })
 
   it('should handle fetch error', async () => {
@@ -136,7 +146,7 @@ describe('useJobs', () => {
       await result.current.createJob(jobRequest)
     })
 
-    expect(jobService.create).toHaveBeenCalledWith(jobRequest)
+    expect(jobService.create).toHaveBeenCalledWith(jobRequest, null)
     expect(result.current.jobs).toHaveLength(3)
     expect(result.current.jobs[0]).toEqual(newJob)
   })
@@ -169,7 +179,7 @@ describe('useJobs', () => {
       await result.current.updateJob(1, jobRequest)
     })
 
-    expect(jobService.update).toHaveBeenCalledWith(1, jobRequest)
+    expect(jobService.update).toHaveBeenCalledWith(1, jobRequest, null)
     expect(result.current.jobs[0].description).toBe('Oil change and blade sharpening')
     expect(result.current.jobs[0].status).toBe('InProgress')
   })
@@ -190,7 +200,7 @@ describe('useJobs', () => {
       await result.current.deleteJob(1)
     })
 
-    expect(jobService.delete).toHaveBeenCalledWith(1)
+    expect(jobService.delete).toHaveBeenCalledWith(1, null)
     expect(result.current.jobs).toHaveLength(1)
     expect(result.current.jobs[0].id).toBe(2)
   })

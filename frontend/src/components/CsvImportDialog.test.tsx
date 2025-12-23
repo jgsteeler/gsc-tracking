@@ -12,6 +12,16 @@ vi.mock('@/hooks/use-toast', () => ({
   }),
 }))
 
+// Mock useAccessToken with a stable getToken function
+const mockGetToken = vi.fn().mockResolvedValue(null);
+vi.mock('@/hooks/useAccessToken', () => ({
+  useAccessToken: () => ({
+    getToken: mockGetToken,
+    isAuthEnabled: false,
+    isAuthenticated: false,
+  }),
+}))
+
 describe('CsvImportDialog', () => {
   const mockOnOpenChange = vi.fn()
   const mockOnImportComplete = vi.fn()
@@ -117,7 +127,7 @@ describe('CsvImportDialog', () => {
     await user.click(importButton)
 
     await waitFor(() => {
-      expect(csvService.importExpenses).toHaveBeenCalledWith(file)
+      expect(csvService.importExpenses).toHaveBeenCalledWith(file, null)
       expect(mockOnImportComplete).toHaveBeenCalled()
       expect(screen.getByText('Import Summary')).toBeInTheDocument()
       expect(screen.getByText(/Successful: 2/)).toBeInTheDocument()

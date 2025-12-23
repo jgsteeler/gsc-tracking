@@ -37,7 +37,9 @@ describe('jobService', () => {
 
       const result = await jobService.getAll()
 
-      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs`)
+      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs`, expect.objectContaining({
+        headers: expect.any(Object)
+      }))
       expect(result).toEqual(mockJobs)
     })
 
@@ -50,7 +52,9 @@ describe('jobService', () => {
 
       await jobService.getAll('lawn')
 
-      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs?search=lawn`)
+      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs?search=lawn`, expect.objectContaining({
+        headers: expect.any(Object)
+      }))
     })
 
     it('should fetch jobs with status filter', async () => {
@@ -62,7 +66,9 @@ describe('jobService', () => {
 
       await jobService.getAll(undefined, 'InProgress')
 
-      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs?status=InProgress`)
+      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs?status=InProgress`, expect.objectContaining({
+        headers: expect.any(Object)
+      }))
     })
 
     it('should fetch jobs with both search and status filter', async () => {
@@ -74,7 +80,9 @@ describe('jobService', () => {
 
       await jobService.getAll('lawn', 'Quote')
 
-      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs?search=lawn&status=Quote`)
+      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs?search=lawn&status=Quote`, expect.objectContaining({
+        headers: expect.any(Object)
+      }))
     })
 
     it('should throw error when fetch fails', async () => {
@@ -108,7 +116,9 @@ describe('jobService', () => {
 
       const result = await jobService.getById(1)
 
-      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs/1`)
+      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs/1`, expect.objectContaining({
+        headers: expect.any(Object)
+      }))
       expect(result).toEqual(mockJob)
     })
 
@@ -145,7 +155,9 @@ describe('jobService', () => {
 
       const result = await jobService.getByCustomerId(1)
 
-      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs/customer/1`)
+      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs/customer/1`, expect.objectContaining({
+        headers: expect.any(Object)
+      }))
       expect(result).toEqual(mockJobs)
     })
   })
@@ -268,9 +280,10 @@ describe('jobService', () => {
 
       await jobService.delete(1)
 
-      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs/1`, {
+      expect(fetch).toHaveBeenCalledWith(`${API_BASE_URL}/jobs/1`, expect.objectContaining({
         method: 'DELETE',
-      })
+        headers: expect.any(Object)
+      }))
     })
 
     it('should throw error when deletion fails', async () => {

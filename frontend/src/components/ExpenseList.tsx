@@ -13,6 +13,7 @@ import {
 import { Plus, Pencil, Trash2, Loader2, Upload } from 'lucide-react'
 import { expenseService } from '@/services/expenseService'
 import { useUserRole } from '@/hooks/useUserRole'
+import { useAccessToken } from '@/hooks/useAccessToken'
 import type { Expense } from '@/types/expense'
 import { EXPENSE_TYPE_COLORS, EXPENSE_TYPE_LABELS } from '@/types/expense'
 import { ExpenseDialog } from '@/components/ExpenseDialog'
@@ -30,6 +31,7 @@ interface ExpenseListProps {
 export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
   const { toast } = useToast()
   const { isAdmin } = useUserRole()
+  const { getToken } = useAccessToken()
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -42,7 +44,8 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
   const fetchExpenses = useCallback(async () => {
     try {
       setLoading(true)
-      const data = await expenseService.getByJobId(jobId)
+      const token = await getToken()
+      const data = await expenseService.getByJobId(jobId, token)
       setExpenses(data)
       setError(null)
     } catch (err) {
@@ -50,7 +53,7 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
     } finally {
       setLoading(false)
     }
-  }, [jobId])
+  }, [jobId, getToken])
 
   useEffect(() => {
     fetchExpenses()
@@ -58,7 +61,8 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
 
   const handleCreate = async (data: ExpenseFormValues) => {
     try {
-      await expenseService.create(jobId, data)
+      const token = await getToken()
+      await expenseService.create(jobId, data, token)
       toast({
         title: 'Success',
         description: 'Expense created successfully',
@@ -79,7 +83,8 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
     if (!selectedExpense) return
 
     try {
-      await expenseService.update(jobId, selectedExpense.id, data)
+      const token = await getToken()
+      await expenseService.update(jobId, selectedExpense.id, data, token)
       toast({
         title: 'Success',
         description: 'Expense updated successfully',
@@ -101,7 +106,8 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
     if (!expenseToDelete) return
 
     try {
-      await expenseService.delete(jobId, expenseToDelete.id)
+      const token = await getToken()
+      await expenseService.delete(jobId, expenseToDelete.id, token)
       toast({
         title: 'Success',
         description: 'Expense deleted successfully',

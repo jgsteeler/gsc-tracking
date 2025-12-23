@@ -14,6 +14,16 @@ vi.mock('@/services/customerService', () => ({
   },
 }));
 
+// Mock useAccessToken with a stable getToken function
+const mockGetToken = vi.fn().mockResolvedValue(null);
+vi.mock('@/hooks/useAccessToken', () => ({
+  useAccessToken: () => ({
+    getToken: mockGetToken,
+    isAuthEnabled: false,
+    isAuthenticated: false,
+  }),
+}));
+
 describe('useCustomers', () => {
   const mockCustomers: Customer[] = [
     {
@@ -54,7 +64,7 @@ describe('useCustomers', () => {
 
     expect(result.current.customers).toEqual(mockCustomers);
     expect(result.current.error).toBeNull();
-    expect(customerService.getAll).toHaveBeenCalledWith(undefined);
+    expect(customerService.getAll).toHaveBeenCalledWith(undefined, null);
   });
 
   it('should fetch customers with search term', async () => {
@@ -68,7 +78,7 @@ describe('useCustomers', () => {
     });
 
     expect(result.current.customers).toEqual([mockCustomers[0]]);
-    expect(customerService.getAll).toHaveBeenCalledWith(searchTerm);
+    expect(customerService.getAll).toHaveBeenCalledWith(searchTerm, null);
   });
 
   it('should handle fetch error', async () => {

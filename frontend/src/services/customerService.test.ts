@@ -41,7 +41,12 @@ describe('customerService', () => {
 
       expect(result).toEqual(mockCustomers);
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/customers')
+        expect.stringContaining('/customers'),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json'
+          })
+        })
       );
     });
 
@@ -54,7 +59,12 @@ describe('customerService', () => {
       await customerService.getAll('john');
 
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('search=john')
+        expect.stringContaining('search=john'),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json'
+          })
+        })
       );
     });
 
@@ -89,7 +99,12 @@ describe('customerService', () => {
 
       expect(result).toEqual(mockCustomer);
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/customers/1')
+        expect.stringContaining('/customers/1'),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json'
+          })
+        })
       );
     });
 
@@ -218,6 +233,9 @@ describe('customerService', () => {
         expect.stringContaining('/customers/1'),
         expect.objectContaining({
           method: 'DELETE',
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json'
+          })
         })
       );
     });
