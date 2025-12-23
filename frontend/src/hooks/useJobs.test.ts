@@ -14,6 +14,15 @@ vi.mock('@/services/jobService', () => ({
   },
 }))
 
+// Mock useAccessToken
+vi.mock('@/hooks/useAccessToken', () => ({
+  useAccessToken: () => ({
+    getToken: vi.fn().mockResolvedValue(null),
+    isAuthEnabled: false,
+    isAuthenticated: false,
+  }),
+}))
+
 describe('useJobs', () => {
   const mockJobs: Job[] = [
     {
@@ -72,7 +81,7 @@ describe('useJobs', () => {
       expect(result.current.loading).toBe(false)
     })
 
-    expect(jobService.getAll).toHaveBeenCalledWith('lawn', undefined)
+    expect(jobService.getAll).toHaveBeenCalledWith('lawn', undefined, null)
   })
 
   it('should fetch jobs with status filter', async () => {
@@ -84,7 +93,7 @@ describe('useJobs', () => {
       expect(result.current.loading).toBe(false)
     })
 
-    expect(jobService.getAll).toHaveBeenCalledWith(undefined, 'InProgress')
+    expect(jobService.getAll).toHaveBeenCalledWith(undefined, 'InProgress', null)
   })
 
   it('should handle fetch error', async () => {
