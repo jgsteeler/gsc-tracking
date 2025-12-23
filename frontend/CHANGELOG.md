@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.1](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.4.0...frontend-v2.4.1) (2025-12-23)
+
+
+### Bug Fixes
+
+* **auth:** pass access tokens to API endpoints ([#173](https://github.com/jgsteeler/gsc-tracking/issues/173)) ([dffb426](https://github.com/jgsteeler/gsc-tracking/commit/dffb426fcb3030d985a59ff57af979041fd37d2d))
+
 ## [2.4.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.3.0...frontend-v2.4.0) (2025-12-21)
 
 
