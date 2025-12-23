@@ -12,6 +12,16 @@ vi.mock('@/hooks/use-toast', () => ({
   }),
 }))
 
+// Mock useAccessToken with a stable getToken function
+const mockGetToken = vi.fn().mockResolvedValue(null);
+vi.mock('@/hooks/useAccessToken', () => ({
+  useAccessToken: () => ({
+    getToken: mockGetToken,
+    isAuthEnabled: false,
+    isAuthenticated: false,
+  }),
+}))
+
 describe('CsvExportButtons', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -39,7 +49,7 @@ describe('CsvExportButtons', () => {
     await user.click(button)
 
     await waitFor(() => {
-      expect(csvService.exportExpenses).toHaveBeenCalledWith(undefined)
+      expect(csvService.exportExpenses).toHaveBeenCalledWith(undefined, null)
       expect(csvService.downloadBlob).toHaveBeenCalledWith(
         mockBlob,
         expect.stringContaining('expenses_')
@@ -59,7 +69,7 @@ describe('CsvExportButtons', () => {
     await user.click(button)
 
     await waitFor(() => {
-      expect(csvService.exportJobs).toHaveBeenCalledWith('Completed')
+      expect(csvService.exportJobs).toHaveBeenCalledWith('Completed', null)
       expect(csvService.downloadBlob).toHaveBeenCalledWith(
         mockBlob,
         expect.stringContaining('jobs_Completed_')

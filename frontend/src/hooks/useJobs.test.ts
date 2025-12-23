@@ -14,10 +14,11 @@ vi.mock('@/services/jobService', () => ({
   },
 }))
 
-// Mock useAccessToken
+// Mock useAccessToken with a stable getToken function
+const mockGetToken = vi.fn().mockResolvedValue(null);
 vi.mock('@/hooks/useAccessToken', () => ({
   useAccessToken: () => ({
-    getToken: vi.fn().mockResolvedValue(null),
+    getToken: mockGetToken,
     isAuthEnabled: false,
     isAuthenticated: false,
   }),
@@ -145,7 +146,7 @@ describe('useJobs', () => {
       await result.current.createJob(jobRequest)
     })
 
-    expect(jobService.create).toHaveBeenCalledWith(jobRequest)
+    expect(jobService.create).toHaveBeenCalledWith(jobRequest, null)
     expect(result.current.jobs).toHaveLength(3)
     expect(result.current.jobs[0]).toEqual(newJob)
   })
@@ -178,7 +179,7 @@ describe('useJobs', () => {
       await result.current.updateJob(1, jobRequest)
     })
 
-    expect(jobService.update).toHaveBeenCalledWith(1, jobRequest)
+    expect(jobService.update).toHaveBeenCalledWith(1, jobRequest, null)
     expect(result.current.jobs[0].description).toBe('Oil change and blade sharpening')
     expect(result.current.jobs[0].status).toBe('InProgress')
   })
@@ -199,7 +200,7 @@ describe('useJobs', () => {
       await result.current.deleteJob(1)
     })
 
-    expect(jobService.delete).toHaveBeenCalledWith(1)
+    expect(jobService.delete).toHaveBeenCalledWith(1, null)
     expect(result.current.jobs).toHaveLength(1)
     expect(result.current.jobs[0].id).toBe(2)
   })

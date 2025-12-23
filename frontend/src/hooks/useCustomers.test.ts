@@ -14,10 +14,11 @@ vi.mock('@/services/customerService', () => ({
   },
 }));
 
-// Mock useAccessToken
+// Mock useAccessToken with a stable getToken function
+const mockGetToken = vi.fn().mockResolvedValue(null);
 vi.mock('@/hooks/useAccessToken', () => ({
   useAccessToken: () => ({
-    getToken: vi.fn().mockResolvedValue(null),
+    getToken: mockGetToken,
     isAuthEnabled: false,
     isAuthenticated: false,
   }),
