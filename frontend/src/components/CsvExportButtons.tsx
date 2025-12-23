@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { csvService } from '@/services/csvService'
+import { useAccessToken } from '@/hooks/useAccessToken'
 import { useToast } from '@/hooks/use-toast'
 import { Download } from 'lucide-react'
 
@@ -22,18 +23,20 @@ const generateFilename = (type: string, filter?: string | number) => {
 export function CsvExportButtons({ type, jobId, status, className }: CsvExportButtonsProps) {
   const [isExporting, setIsExporting] = useState(false)
   const { toast } = useToast()
+  const { getToken } = useAccessToken()
 
   const handleExport = async () => {
     setIsExporting(true)
     try {
+      const token = await getToken()
       let blob: Blob
       let filename: string
 
       if (type === 'expenses') {
-        blob = await csvService.exportExpenses(jobId)
+        blob = await csvService.exportExpenses(jobId, token)
         filename = jobId ? generateFilename('expenses_job', jobId) : generateFilename('expenses')
       } else {
-        blob = await csvService.exportJobs(status)
+        blob = await csvService.exportJobs(status, token)
         filename = status ? generateFilename('jobs', status) : generateFilename('jobs')
       }
 

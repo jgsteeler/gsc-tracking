@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { csvService } from '@/services/csvService'
+import { useAccessToken } from '@/hooks/useAccessToken'
 import type { ImportResult } from '@/types/csv'
 import { useToast } from '@/hooks/use-toast'
 import Papa from 'papaparse'
@@ -24,6 +25,7 @@ export function CsvImportDialog({ open, onOpenChange, onImportComplete }: CsvImp
   const [isLoading, setIsLoading] = useState(false)
   const [importResult, setImportResult] = useState<ImportResult | null>(null)
   const { toast } = useToast()
+  const { getToken } = useAccessToken()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -53,7 +55,8 @@ export function CsvImportDialog({ open, onOpenChange, onImportComplete }: CsvImp
 
     setIsLoading(true)
     try {
-      const result = await csvService.importExpenses(file)
+      const token = await getToken()
+      const result = await csvService.importExpenses(file, token)
       setImportResult(result)
 
       if (result.errorCount === 0) {

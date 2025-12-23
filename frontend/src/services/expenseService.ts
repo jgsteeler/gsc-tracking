@@ -3,16 +3,33 @@ import { formatDateForApi } from '@/lib/utils'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5091/api'
 
+/**
+ * Helper function to create headers with optional Authorization token
+ */
+const createHeaders = (token?: string | null): HeadersInit => {
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  }
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
+  return headers
+}
+
 export const expenseService = {
-  async getByJobId(jobId: number): Promise<Expense[]> {
-    const response = await fetch(`${API_BASE_URL}/jobs/${jobId}/expenses`)
+  async getByJobId(jobId: number, token?: string | null): Promise<Expense[]> {
+    const response = await fetch(`${API_BASE_URL}/jobs/${jobId}/expenses`, {
+      headers: createHeaders(token),
+    })
     if (!response.ok) {
       throw new Error('Failed to fetch expenses')
     }
     return response.json()
   },
 
-  async create(jobId: number, data: ExpenseRequestDto): Promise<Expense> {
+  async create(jobId: number, data: ExpenseRequestDto, token?: string | null): Promise<Expense> {
     // Ensure date is in proper format for backend
     const submitData = {
       ...data,
@@ -21,9 +38,7 @@ export const expenseService = {
     
     const response = await fetch(`${API_BASE_URL}/jobs/${jobId}/expenses`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: createHeaders(token),
       body: JSON.stringify(submitData),
     })
     
@@ -34,7 +49,7 @@ export const expenseService = {
     return response.json()
   },
 
-  async update(jobId: number, id: number, data: ExpenseRequestDto): Promise<Expense> {
+  async update(jobId: number, id: number, data: ExpenseRequestDto, token?: string | null): Promise<Expense> {
     // Ensure date is in proper format for backend
     const submitData = {
       ...data,
@@ -43,9 +58,7 @@ export const expenseService = {
     
     const response = await fetch(`${API_BASE_URL}/jobs/${jobId}/expenses/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: createHeaders(token),
       body: JSON.stringify(submitData),
     })
     
@@ -56,9 +69,10 @@ export const expenseService = {
     return response.json()
   },
 
-  async delete(jobId: number, id: number): Promise<void> {
+  async delete(jobId: number, id: number, token?: string | null): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/jobs/${jobId}/expenses/${id}`, {
       method: 'DELETE',
+      headers: createHeaders(token),
     })
     
     if (!response.ok) {

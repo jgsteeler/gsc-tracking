@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Pencil, Loader2 } from 'lucide-react'
 import { jobService } from '@/services/jobService'
 import { useUserRole } from '@/hooks/useUserRole'
+import { useAccessToken } from '@/hooks/useAccessToken'
 import type { Job } from '@/types/job'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS } from '@/types/job'
 import { JobDialog } from '@/components/JobDialog'
@@ -19,6 +20,7 @@ export default function JobDetails() {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { isAdmin } = useUserRole()
+  const { getToken } = useAccessToken()
   const [job, setJob] = useState<Job | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -30,7 +32,8 @@ export default function JobDetails() {
 
       try {
         setLoading(true)
-        const data = await jobService.getById(parseInt(id))
+        const token = await getToken()
+        const data = await jobService.getById(parseInt(id), token)
         setJob(data)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load job')
@@ -40,13 +43,14 @@ export default function JobDetails() {
     }
 
     fetchJob()
-  }, [id])
+  }, [id, getToken])
 
   const handleUpdate = async (data: JobFormValues) => {
     if (!job) return
 
     try {
-      const updatedJob = await jobService.update(job.id, data)
+      const token = await getToken()
+      const updatedJob = await jobService.update(job.id, data, token)
       setJob(updatedJob)
       toast({
         title: 'Success',
@@ -66,7 +70,8 @@ export default function JobDetails() {
     // Refresh job data to get updated totals
     if (!id) return
     try {
-      const data = await jobService.getById(parseInt(id))
+      const token = await getToken()
+      const data = await jobService.getById(parseInt(id), token)
       setJob(data)
     } catch (err) {
       console.error('Failed to refresh job data:', err)
