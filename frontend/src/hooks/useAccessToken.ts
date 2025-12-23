@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 
 /**
@@ -32,7 +33,7 @@ export const useAccessToken = () => {
                                  import.meta.env.VITE_AUTH0_CLIENT_ID &&
                                  import.meta.env.VITE_AUTH0_AUDIENCE);
 
-  const getToken = async (): Promise<string | null> => {
+  const getToken = useCallback(async (): Promise<string | null> => {
     if (!isAuthEnabled || !isAuthenticated) {
       return null;
     }
@@ -48,7 +49,7 @@ export const useAccessToken = () => {
       console.error('Error getting access token:', error);
       return null;
     }
-  };
+  }, [isAuthEnabled, isAuthenticated, getAccessTokenSilently]);
 
   return { 
     getToken, 

@@ -19,6 +19,16 @@ vi.mock('@/services/jobService', () => ({
   },
 }));
 
+// Mock useAccessToken with a stable getToken function
+const mockGetToken = vi.fn().mockResolvedValue(null);
+vi.mock('@/hooks/useAccessToken', () => ({
+  useAccessToken: () => ({
+    getToken: mockGetToken,
+    isAuthEnabled: false,
+    isAuthenticated: false,
+  }),
+}));
+
 describe('useDashboard', () => {
   const now = new Date();
   const currentMonth = now.getMonth();
