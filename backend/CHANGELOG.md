@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.2.0...backend-v2.2.1) (2025-12-24)
+
+
+### Bug Fixes
+
+* **auth:** map Auth0 role claims to .NET authorization ([#178](https://github.com/jgsteeler/gsc-tracking/issues/178)) ([a39fcf3](https://github.com/jgsteeler/gsc-tracking/commit/a39fcf3550d1f4ae15a91ecbca9a5887c5caaf60))
+
 ## [2.2.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.1.0...backend-v2.2.0) (2025-12-21)
 
 
