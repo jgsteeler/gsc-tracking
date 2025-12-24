@@ -46,7 +46,7 @@ To simplify local development, you can enable mock authentication by setting env
 
 ### Limitations of Mock Authentication
 
-- Mock authentication does not support RBAC testing. All mock users will default to the `tracking-admin` role.
+- Mock authentication does not support RBAC testing. All mock users will default to the `tracker-admin` role.
 - Developers must test role-based access control (RBAC) with proper Auth0 configuration before submitting a merge request.
 
 > **⚠️ Important:** All new features must be tested locally with proper RBAC and authorization configured. Merge requests will not be accepted unless RBAC functionality has been verified.

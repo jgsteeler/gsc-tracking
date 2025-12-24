@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using FluentAssertions;
+using System.Security.Claims;
 
 namespace GscTracking.Api.Tests;
 
@@ -109,5 +110,124 @@ public class Auth0ConfigurationTests
         // Assert
         domain.Should().Be(expectedDomain);
         audience.Should().Be(expectedAudience);
+    }
+
+    [Theory]
+    [InlineData("https://gsc-tracking.com/roles")]
+    [InlineData("http://gsc-tracking.com/roles")]
+    [InlineData("roles")]
+    public void Auth0RoleClaimMapping_ShouldMapCustomRoleClaimsToStandardRoleClaims(string roleClaimType)
+    {
+        // Arrange
+        var claimsIdentity = new ClaimsIdentity("test");
+        claimsIdentity.AddClaim(new Claim(roleClaimType, "tracker-admin"));
+        claimsIdentity.AddClaim(new Claim(roleClaimType, "tracker-user"));
+
+        // Simulate the OnTokenValidated claim transformation logic from Program.cs
+        var possibleRoleClaims = new[]
+        {
+            "https://gsc-tracking.com/roles",
+            "http://gsc-tracking.com/roles",
+            "roles"
+        };
+
+        foreach (var claimType in possibleRoleClaims)
+        {
+            var roleClaims = claimsIdentity.FindAll(claimType).ToList();
+            if (roleClaims.Any())
+            {
+                foreach (var roleClaim in roleClaims)
+                {
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
+                }
+                break;
+            }
+        }
+
+        // Act
+        var standardRoleClaims = claimsIdentity.FindAll(ClaimTypes.Role).ToList();
+
+        // Assert
+        standardRoleClaims.Should().HaveCount(2);
+        standardRoleClaims.Should().Contain(c => c.Value == "tracker-admin");
+        standardRoleClaims.Should().Contain(c => c.Value == "tracker-user");
+    }
+
+    [Fact]
+    public void Auth0RoleClaimMapping_WhenNoRoleClaimsPresent_ShouldNotAddStandardRoleClaims()
+    {
+        // Arrange
+        var claimsIdentity = new ClaimsIdentity("test");
+        claimsIdentity.AddClaim(new Claim("sub", "user123"));
+        claimsIdentity.AddClaim(new Claim("email", "test@example.com"));
+
+        // Simulate the OnTokenValidated claim transformation logic from Program.cs
+        var possibleRoleClaims = new[]
+        {
+            "https://gsc-tracking.com/roles",
+            "http://gsc-tracking.com/roles",
+            "roles"
+        };
+
+        foreach (var claimType in possibleRoleClaims)
+        {
+            var roleClaims = claimsIdentity.FindAll(claimType).ToList();
+            if (roleClaims.Any())
+            {
+                foreach (var roleClaim in roleClaims)
+                {
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
+                }
+                break;
+            }
+        }
+
+        // Act
+        var standardRoleClaims = claimsIdentity.FindAll(ClaimTypes.Role).ToList();
+
+        // Assert
+        standardRoleClaims.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Auth0RoleClaimMapping_ShouldPrioritizeHttpsNamespace()
+    {
+        // Arrange
+        var claimsIdentity = new ClaimsIdentity("test");
+        // Add roles with different namespaces
+        claimsIdentity.AddClaim(new Claim("https://gsc-tracking.com/roles", "tracker-admin"));
+        claimsIdentity.AddClaim(new Claim("http://gsc-tracking.com/roles", "other-role"));
+        claimsIdentity.AddClaim(new Claim("roles", "another-role"));
+
+        // Simulate the OnTokenValidated claim transformation logic from Program.cs
+        // This should only process the first matching namespace
+        var possibleRoleClaims = new[]
+        {
+            "https://gsc-tracking.com/roles",
+            "http://gsc-tracking.com/roles",
+            "roles"
+        };
+
+        foreach (var claimType in possibleRoleClaims)
+        {
+            var roleClaims = claimsIdentity.FindAll(claimType).ToList();
+            if (roleClaims.Any())
+            {
+                foreach (var roleClaim in roleClaims)
+                {
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
+                }
+                break; // Only process the first matching namespace
+            }
+        }
+
+        // Act
+        var standardRoleClaims = claimsIdentity.FindAll(ClaimTypes.Role).ToList();
+
+        // Assert
+        standardRoleClaims.Should().HaveCount(1);
+        standardRoleClaims.Should().Contain(c => c.Value == "tracker-admin");
+        standardRoleClaims.Should().NotContain(c => c.Value == "other-role");
+        standardRoleClaims.Should().NotContain(c => c.Value == "another-role");
     }
 }

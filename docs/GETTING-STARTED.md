@@ -82,17 +82,18 @@ The application uses Auth0 for authentication and authorization. To configure Au
 
 The backend API is configured to use Auth0 for securing endpoints. Role-based access control (RBAC) is implemented to manage user permissions. The following roles are available:
 
-- `tracking-admin`: Full access to all features.
-- `tracking-read`: Read-only access to data.
-- `tracking-write`: Write access to data, but no administrative privileges.
+- `tracker-admin`: Full access to all features.
+- `tracker-read`: Read-only access to data (planned for future implementation).
+- `tracker-write`: Write access to data, but no administrative privileges (planned for future implementation).
 
 To test authorization locally:
 
 1. Ensure your Auth0 credentials are correctly set in the `.env` file.
 2. Use the provided test accounts or create new ones in your Auth0 tenant.
 3. Assign the appropriate roles to your test accounts in Auth0.
+4. Configure Auth0 to include roles in JWT tokens (see [Auth0 Setup Guide](./AUTH0-SETUP.md#configuring-role-claims)).
 
-> **Note:** RBAC is not supported with mock authentication. All mock users will default to the `tracking-admin` role. Proper RBAC testing requires a fully configured Auth0 setup.
+> **Note:** RBAC is not supported with mock authentication. All mock users will default to the `tracker-admin` role. Proper RBAC testing requires a fully configured Auth0 setup.
 
 ### Database Setup
 
