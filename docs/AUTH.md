@@ -14,11 +14,54 @@ To configure Auth0, follow the detailed instructions in the [Auth0 Setup Guide](
 
 1. Set up an Auth0 tenant and application.
 2. Configure environment variables for the backend and frontend.
-3. The `tracker-admin` role is already created in Auth0 for role-based access control (RBAC).
-4. Assign the `tracker-admin` role to users who need to create, update, or delete data.
+3. Create the required roles in Auth0 for role-based access control (RBAC).
+4. Assign appropriate roles to users based on their access needs.
 5. Test the login, logout, and role-based access flows.
 
 For more details, see the [Auth0 Setup Guide](./AUTH0-SETUP.md).
+
+---
+
+## Role-Based Access Control (RBAC)
+
+The GSC Tracking application implements three role levels:
+
+### Roles
+
+1. **`tracker-admin`** - Full administrative access
+   - Can create, read, update, and delete all resources (customers, jobs, expenses, job updates)
+   - Can import data via CSV
+   - Can export data to CSV
+   - Required for creating and managing customers and jobs
+
+2. **`tracker-write`** - Write access for field operations
+   - Can read all data (customers, jobs, expenses, job updates)
+   - Can create and update expenses
+   - Can create job updates
+   - Can export data to CSV
+   - Cannot create/modify/delete customers or jobs
+   - Cannot delete expenses or job updates
+
+3. **`tracker-read`** - Read-only access
+   - Can view all data (customers, jobs, expenses, job updates)
+   - Can export data to CSV
+   - Cannot create, update, or delete any resources
+
+### Endpoint Authorization
+
+| Endpoint Type | Admin | Write | Read |
+|--------------|-------|-------|------|
+| GET (view data) | ✅ | ✅ | ✅ |
+| POST/PUT Customer | ✅ | ❌ | ❌ |
+| POST/PUT Job | ✅ | ❌ | ❌ |
+| POST/PUT Expense | ✅ | ✅ | ❌ |
+| POST Job Update | ✅ | ✅ | ❌ |
+| DELETE Customer | ✅ | ❌ | ❌ |
+| DELETE Job | ✅ | ❌ | ❌ |
+| DELETE Expense | ✅ | ❌ | ❌ |
+| DELETE Job Update | ✅ | ❌ | ❌ |
+| Import CSV | ✅ | ❌ | ❌ |
+| Export CSV | ✅ | ✅ | ✅ |
 
 ---
 

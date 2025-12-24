@@ -12,17 +12,20 @@ namespace GscTracking.Api.Tests.Controllers;
 public class AuthorizationAttributeTests
 {
     [Theory]
-    [InlineData(typeof(CustomersController))]
-    [InlineData(typeof(JobsController))]
-    [InlineData(typeof(ExpensesController))]
-    [InlineData(typeof(JobUpdatesController))]
-    public void Controller_ShouldHaveAuthorizeAttribute(Type controllerType)
+    [InlineData(typeof(CustomersController), "ReadAccess")]
+    [InlineData(typeof(JobsController), "ReadAccess")]
+    [InlineData(typeof(ExpensesController), "ReadAccess")]
+    [InlineData(typeof(JobUpdatesController), "ReadAccess")]
+    [InlineData(typeof(ExportController), "ReadAccess")]
+    [InlineData(typeof(ImportController), "AdminOnly")]
+    public void Controller_ShouldHaveCorrectAuthorizePolicy(Type controllerType, string expectedPolicy)
     {
         // Act
         var authorizeAttribute = controllerType.GetCustomAttribute<AuthorizeAttribute>();
 
         // Assert
         authorizeAttribute.Should().NotBeNull($"{controllerType.Name} should have [Authorize] attribute");
+        authorizeAttribute!.Policy.Should().Be(expectedPolicy, $"{controllerType.Name} should require {expectedPolicy} policy");
     }
 
     [Theory]
@@ -35,44 +38,43 @@ public class AuthorizationAttributeTests
     [InlineData(typeof(ExpensesController), nameof(ExpensesController.GetExpenseById))]
     [InlineData(typeof(JobUpdatesController), nameof(JobUpdatesController.GetJobUpdates))]
     [InlineData(typeof(JobUpdatesController), nameof(JobUpdatesController.GetJobUpdate))]
-    public void GetEndpoint_ShouldNotHaveAdminPolicy(Type controllerType, string methodName)
+    public void GetEndpoint_ShouldNotHaveMethodLevelPolicy(Type controllerType, string methodName)
     {
         // Arrange
         var method = controllerType.GetMethod(methodName);
 
         // Act
         var authorizeAttributes = method?.GetCustomAttributes<AuthorizeAttribute>();
-        var adminPolicyAttribute = authorizeAttributes?.FirstOrDefault(a => a.Policy == "AdminOnly");
 
         // Assert
         method.Should().NotBeNull($"{controllerType.Name}.{methodName} should exist");
-        adminPolicyAttribute.Should().BeNull($"{controllerType.Name}.{methodName} should not require AdminOnly policy");
+        authorizeAttributes.Should().BeEmpty($"{controllerType.Name}.{methodName} should rely on controller-level policy");
     }
 
     [Theory]
-    [InlineData(typeof(CustomersController), nameof(CustomersController.CreateCustomer))]
-    [InlineData(typeof(CustomersController), nameof(CustomersController.UpdateCustomer))]
-    [InlineData(typeof(CustomersController), nameof(CustomersController.DeleteCustomer))]
-    [InlineData(typeof(JobsController), nameof(JobsController.CreateJob))]
-    [InlineData(typeof(JobsController), nameof(JobsController.UpdateJob))]
-    [InlineData(typeof(JobsController), nameof(JobsController.DeleteJob))]
-    [InlineData(typeof(ExpensesController), nameof(ExpensesController.CreateExpense))]
-    [InlineData(typeof(ExpensesController), nameof(ExpensesController.UpdateExpense))]
-    [InlineData(typeof(ExpensesController), nameof(ExpensesController.DeleteExpense))]
-    [InlineData(typeof(JobUpdatesController), nameof(JobUpdatesController.CreateJobUpdate))]
-    [InlineData(typeof(JobUpdatesController), nameof(JobUpdatesController.DeleteJobUpdate))]
-    public void ModificationEndpoint_ShouldHaveAdminPolicy(Type controllerType, string methodName)
+    [InlineData(typeof(CustomersController), nameof(CustomersController.CreateCustomer), "AdminOnly")]
+    [InlineData(typeof(CustomersController), nameof(CustomersController.UpdateCustomer), "AdminOnly")]
+    [InlineData(typeof(CustomersController), nameof(CustomersController.DeleteCustomer), "AdminOnly")]
+    [InlineData(typeof(JobsController), nameof(JobsController.CreateJob), "AdminOnly")]
+    [InlineData(typeof(JobsController), nameof(JobsController.UpdateJob), "AdminOnly")]
+    [InlineData(typeof(JobsController), nameof(JobsController.DeleteJob), "AdminOnly")]
+    [InlineData(typeof(ExpensesController), nameof(ExpensesController.CreateExpense), "WriteAccess")]
+    [InlineData(typeof(ExpensesController), nameof(ExpensesController.UpdateExpense), "WriteAccess")]
+    [InlineData(typeof(ExpensesController), nameof(ExpensesController.DeleteExpense), "AdminOnly")]
+    [InlineData(typeof(JobUpdatesController), nameof(JobUpdatesController.CreateJobUpdate), "WriteAccess")]
+    [InlineData(typeof(JobUpdatesController), nameof(JobUpdatesController.DeleteJobUpdate), "AdminOnly")]
+    public void ModificationEndpoint_ShouldHaveCorrectPolicy(Type controllerType, string methodName, string expectedPolicy)
     {
         // Arrange
         var method = controllerType.GetMethod(methodName);
 
         // Act
         var authorizeAttributes = method?.GetCustomAttributes<AuthorizeAttribute>();
-        var adminPolicyAttribute = authorizeAttributes?.FirstOrDefault(a => a.Policy == "AdminOnly");
+        var policyAttribute = authorizeAttributes?.FirstOrDefault(a => a.Policy == expectedPolicy);
 
         // Assert
         method.Should().NotBeNull($"{controllerType.Name}.{methodName} should exist");
-        adminPolicyAttribute.Should().NotBeNull($"{controllerType.Name}.{methodName} should have [Authorize(Policy = \"AdminOnly\")] attribute");
+        policyAttribute.Should().NotBeNull($"{controllerType.Name}.{methodName} should have [Authorize(Policy = \"{expectedPolicy}\")] attribute");
     }
 
     [Theory]

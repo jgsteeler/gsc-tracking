@@ -109,21 +109,36 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 
 ### Configure Roles and Permissions
 
-**IMPORTANT:** The GSC Tracking application requires the `tracker-admin` role to be configured in Auth0 for role-based access control (RBAC).
+**IMPORTANT:** The GSC Tracking application requires three roles to be configured in Auth0 for proper role-based access control (RBAC).
 
 1. **Create Roles**
    - Go to **User Management** → **Roles**
    - Click **Create Role**
-   - Create the following role:
+   - Create the following roles:
+   
+     **Role 1: Admin**
      - **Name**: `tracker-admin`
-     - **Description**: Full administrative access for GSC Tracking application
+     - **Description**: Full administrative access - can create, read, update, and delete all resources
+     
+     **Role 2: Write**
+     - **Name**: `tracker-write`
+     - **Description**: Write access for field operations - can add expenses and job updates, view all data
+     
+     **Role 3: Read**
+     - **Name**: `tracker-read`
+     - **Description**: Read-only access - can view all data but cannot modify anything
 
 2. **Assign Permissions to Roles (Optional)**
    - Select a role
    - Navigate to **Permissions** tab
    - Click **Add Permissions**
    - Select your API and assign relevant permissions
-   - For MVP, the application only checks for the `tracker-admin` role, not specific permissions
+   - For the current implementation, the application checks for role names, not specific permissions
+
+3. **Role Assignment Guidelines**
+   - **tracker-admin**: Assign to managers and administrators who need full access
+   - **tracker-write**: Assign to field technicians who need to add expenses and job updates
+   - **tracker-read**: Assign to users who only need to view data (e.g., accounting staff)
 
 ### Configuring Role Claims
 
@@ -471,36 +486,63 @@ public class CustomersController : ControllerBase
 
 ### Role-Based Authorization
 
-The GSC Tracking API uses role-based authorization to control access to modification endpoints.
+The GSC Tracking API uses role-based authorization to control access to endpoints based on user roles.
 
-**Current Roles:**
-- `tracker-admin` - Full administrative access; required for all POST, PUT, and DELETE operations
+**Implemented Roles:**
+- `tracker-admin` - Full administrative access to all operations
+- `tracker-write` - Write access for adding expenses and job updates
+- `tracker-read` - Read-only access to view data
 
 **Authorization Rules:**
-- All API endpoints require authentication (except `/api/hello`)
-- GET endpoints require authentication only
-- POST, PUT, DELETE endpoints require authentication AND the `tracker-admin` role
+
+| Operation | Admin | Write | Read |
+|-----------|-------|-------|------|
+| View data (GET) | ✅ | ✅ | ✅ |
+| Create/Update Customers & Jobs | ✅ | ❌ | ❌ |
+| Create/Update Expenses | ✅ | ✅ | ❌ |
+| Create Job Updates | ✅ | ✅ | ❌ |
+| Delete any resource | ✅ | ❌ | ❌ |
+| Import data | ✅ | ❌ | ❌ |
+| Export data | ✅ | ✅ | ✅ |
 
 **Implementation:**
 
-The API uses an authorization policy named `AdminOnly` that checks for the `tracker-admin` role:
+The API uses authorization policies that check for specific roles:
 
 ```csharp
 builder.Services.AddAuthorization(options =>
 {
+    // Admin role has full access to all functionality
     options.AddPolicy("AdminOnly", policy =>
         policy.RequireRole("tracker-admin"));
+    
+    // Write access for adding expenses and job updates (admin + write roles)
+    options.AddPolicy("WriteAccess", policy =>
+        policy.RequireRole("tracker-admin", "tracker-write"));
+    
+    // Read access for viewing data (admin + write + read roles)
+    options.AddPolicy("ReadAccess", policy =>
+        policy.RequireRole("tracker-admin", "tracker-write", "tracker-read"));
 });
 ```
 
-Controllers are protected at the class level with `[Authorize]` for authentication, and modification endpoints use `[Authorize(Policy = "AdminOnly")]` for role-based access.
+Controllers are protected with appropriate policies:
+- Most controllers use `[Authorize(Policy = "ReadAccess")]` at the class level for viewing data
+- Modification endpoints use `[Authorize(Policy = "AdminOnly")]` for admin-only operations
+- Expense and job update creation/updates use `[Authorize(Policy = "WriteAccess")]` for write operations
 
 **Assigning Roles to Users:**
 
 1. In Auth0 Dashboard, go to **User Management** → **Roles**
-2. Select the `tracker-admin` role (already created)
+2. Select the appropriate role (`tracker-admin`, `tracker-write`, or `tracker-read`)
 3. Click **Users** tab
 4. Click **Add Users** and search for users to assign the role
+
+**Role Assignment Best Practices:**
+- Assign `tracker-admin` to managers and administrators
+- Assign `tracker-write` to field technicians who need to add expenses and updates
+- Assign `tracker-read` to users who only need to view data (e.g., accounting staff)
+- Users can have multiple roles, but they will inherit the highest level of access
 
 ### Role-Based Authorization (Deprecated Examples)
 

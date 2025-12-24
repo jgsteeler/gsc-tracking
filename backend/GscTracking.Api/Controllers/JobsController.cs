@@ -7,7 +7,7 @@ namespace GscTracking.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize] // Require authentication for all endpoints
+[Authorize(Policy = "ReadAccess")] // Require read access for all endpoints
 public class JobsController : ControllerBase
 {
     private readonly IJobService _jobService;

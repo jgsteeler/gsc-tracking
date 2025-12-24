@@ -253,8 +253,17 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
+    // Admin role has full access to all functionality
     options.AddPolicy("AdminOnly", policy =>
         policy.RequireRole("tracker-admin"));
+    
+    // Write access for adding expenses and job updates (admin + write roles)
+    options.AddPolicy("WriteAccess", policy =>
+        policy.RequireRole("tracker-admin", "tracker-write"));
+    
+    // Read access for viewing data (admin + write + read roles)
+    options.AddPolicy("ReadAccess", policy =>
+        policy.RequireRole("tracker-admin", "tracker-write", "tracker-read"));
 });
 
 var app = builder.Build();
