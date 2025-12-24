@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.2.1...backend-v2.3.0) (2025-12-24)
+
+
+### Features
+
+* **auth:** implement three-tier role-based access control with Auth0 permissions support ([#181](https://github.com/jgsteeler/gsc-tracking/issues/181)) ([6ba3bbf](https://github.com/jgsteeler/gsc-tracking/commit/6ba3bbf4cce7a1cb0272dbeed830d16305932b9d))
+
 ## [2.2.1](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.2.0...backend-v2.2.1) (2025-12-24)
 
 
