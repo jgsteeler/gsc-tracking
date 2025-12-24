@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.2](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.4.1...frontend-v2.4.2) (2025-12-24)
+
+
+### Bug Fixes
+
+* **auth:** memoize getToken to prevent infinite loop ([#175](https://github.com/jgsteeler/gsc-tracking/issues/175)) ([74b405e](https://github.com/jgsteeler/gsc-tracking/commit/74b405e26e63ff3e9a57fd8b42d311471ad599de))
+
 ## [2.4.1](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.4.0...frontend-v2.4.1) (2025-12-23)
 
 
