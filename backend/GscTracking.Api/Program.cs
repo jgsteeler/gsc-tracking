@@ -210,9 +210,7 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = $"https://{auth0Domain}/",
         ValidateAudience = true,
         ValidAudience = auth0Audience,
-        ValidateLifetime = true,
-        // Map Auth0's role claim to the standard role claim
-        RoleClaimType = "https://gsc-tracking.com/roles"
+        ValidateLifetime = true
     };
     
     // Transform claims to map Auth0 custom role claims to standard role claims

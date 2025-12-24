@@ -33,9 +33,7 @@ Modified the JWT Bearer authentication configuration to transform Auth0's custom
         ValidIssuer = $"https://{auth0Domain}/",
         ValidateAudience = true,
         ValidAudience = auth0Audience,
-        ValidateLifetime = true,
-        // Map Auth0's role claim to the standard role claim
-        RoleClaimType = "https://gsc-tracking.com/roles"
+        ValidateLifetime = true
     };
     
     // Transform claims to map Auth0 custom role claims to standard role claims
@@ -77,10 +75,10 @@ Modified the JWT Bearer authentication configuration to transform Auth0's custom
 ```
 
 This configuration:
-- Sets the `RoleClaimType` to match Auth0's namespace
-- Uses the `OnTokenValidated` event to transform claims
+- Uses the `OnTokenValidated` event to transform claims at runtime
 - Supports multiple Auth0 role claim formats (https://, http://, plain "roles")
-- Maps each role to the standard .NET `ClaimTypes.Role`
+- Maps each role from Auth0's custom namespace to the standard .NET `ClaimTypes.Role`
+- Processes only the first matching namespace to avoid duplicate role claims
 
 ### 2. Auth0 Configuration
 
