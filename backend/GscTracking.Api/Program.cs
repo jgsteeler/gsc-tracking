@@ -210,7 +210,46 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = $"https://{auth0Domain}/",
         ValidateAudience = true,
         ValidAudience = auth0Audience,
-        ValidateLifetime = true
+        ValidateLifetime = true,
+        // Map Auth0's role claim to the standard role claim
+        RoleClaimType = "https://gsc-tracking.com/roles"
+    };
+    
+    // Transform claims to map Auth0 custom role claims to standard role claims
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = context =>
+        {
+            var claimsIdentity = context.Principal?.Identity as System.Security.Claims.ClaimsIdentity;
+            if (claimsIdentity != null)
+            {
+                // Check for roles in various Auth0 claim formats
+                var possibleRoleClaims = new[]
+                {
+                    "https://gsc-tracking.com/roles",
+                    "http://gsc-tracking.com/roles",
+                    "roles"
+                };
+
+                foreach (var roleClaimType in possibleRoleClaims)
+                {
+                    var roleClaims = claimsIdentity.FindAll(roleClaimType).ToList();
+                    if (roleClaims.Any())
+                    {
+                        // Add each role as a standard role claim
+                        foreach (var roleClaim in roleClaims)
+                        {
+                            // Add as standard role claim type for .NET authorization
+                            claimsIdentity.AddClaim(new System.Security.Claims.Claim(
+                                System.Security.Claims.ClaimTypes.Role, 
+                                roleClaim.Value));
+                        }
+                        break; // Found roles, no need to check other claim types
+                    }
+                }
+            }
+            return Task.CompletedTask;
+        }
     };
 });
 
