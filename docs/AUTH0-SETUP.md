@@ -109,7 +109,40 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 
 ### Configure Roles and Permissions
 
-**IMPORTANT:** The GSC Tracking application requires three roles to be configured in Auth0 for proper role-based access control (RBAC).
+**IMPORTANT:** The GSC Tracking application uses Auth0 permissions for role-based access control (RBAC). The backend maps Auth0 permissions to internal role names.
+
+#### Option 1: Using Permissions (Recommended)
+
+This is the recommended approach as it's simpler to configure in Auth0.
+
+1. **Configure API Permissions**
+   - Go to **Applications** → **APIs** in your Auth0 Dashboard
+   - Select your GSC Tracking API
+   - Navigate to the **Permissions** tab
+   - Add the following permissions:
+   
+     | Permission | Description |
+     |------------|-------------|
+     | `admin` | Full administrative access - can create, read, update, and delete all resources |
+     | `write` | Write access for field operations - can add expenses and job updates, view all data |
+     | `read` | Read-only access - can view all data but cannot modify anything |
+
+2. **Assign Permissions to Users**
+   - Go to **User Management** → **Users**
+   - Select a user
+   - Navigate to the **Permissions** tab
+   - Click **Assign Permissions**
+   - Select your API and assign the appropriate permissions
+   
+3. **Permission Assignment Guidelines**
+   - **admin**: Assign to managers and administrators who need full access
+   - **write**: Assign to field technicians who need to add expenses and job updates
+   - **read**: Assign to users who only need to view data (e.g., accounting staff)
+   - Users can have multiple permissions; they will inherit the highest level of access
+
+#### Option 2: Using Roles (Alternative)
+
+If you prefer to use Auth0 Roles, you can create roles and the backend will recognize them.
 
 1. **Create Roles**
    - Go to **User Management** → **Roles**
@@ -118,44 +151,39 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
    
      **Role 1: Admin**
      - **Name**: `tracker-admin`
-     - **Description**: Full administrative access - can create, read, update, and delete all resources
+     - **Description**: Full administrative access
      
      **Role 2: Write**
      - **Name**: `tracker-write`
-     - **Description**: Write access for field operations - can add expenses and job updates, view all data
+     - **Description**: Write access for field operations
      
      **Role 3: Read**
      - **Name**: `tracker-read`
-     - **Description**: Read-only access - can view all data but cannot modify anything
+     - **Description**: Read-only access
 
-2. **Assign Permissions to Roles (Optional)**
+2. **Assign Roles to Users**
+   - Go to **User Management** → **Roles**
    - Select a role
-   - Navigate to **Permissions** tab
-   - Click **Add Permissions**
-   - Select your API and assign relevant permissions
-   - For the current implementation, the application checks for role names, not specific permissions
+   - Click **Users** tab
+   - Click **Add Users** and search for users to assign the role
 
-3. **Role Assignment Guidelines**
-   - **tracker-admin**: Assign to managers and administrators who need full access
-   - **tracker-write**: Assign to field technicians who need to add expenses and job updates
-   - **tracker-read**: Assign to users who only need to view data (e.g., accounting staff)
+### Configuring Permission/Role Claims
 
-### Configuring Role Claims
+**CRITICAL STEP:** Auth0 must be configured to include user permissions (or roles) in the JWT access token. By default, Auth0 does not add these to tokens automatically.
 
-**CRITICAL STEP:** Auth0 must be configured to include user roles in the JWT access token. By default, Auth0 does not add roles to tokens automatically.
-
-1. **Create an Action to Add Roles to Token**
+1. **Create an Action to Add Permissions/Roles to Token**
    
    Navigate to **Actions** → **Library** in your Auth0 Dashboard, then:
    
    a. Click **Build Custom**
    
-   b. Name your action: `Add Roles to Access Token`
+   b. Name your action: `Add Permissions to Access Token`
    
    c. Set the trigger: **Login / Post Login**
    
    d. Add the following code:
    
+   **For Permissions (Recommended):**
    ```javascript
    /**
     * Handler that will be called during the execution of a PostLogin flow.
@@ -167,7 +195,24 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
      const namespace = 'https://gsc-tracking.com';
      
      if (event.authorization) {
+       // Add permissions to the access token
+       // The backend expects permission values: "admin", "write", "read"
+       api.accessToken.setCustomClaim(`${namespace}/permissions`, event.authorization.permissions);
+       
+       // Optionally add permissions to the ID token as well
+       api.idToken.setCustomClaim(`${namespace}/permissions`, event.authorization.permissions);
+     }
+   };
+   ```
+   
+   **For Roles (Alternative):**
+   ```javascript
+   exports.onExecutePostLogin = async (event, api) => {
+     const namespace = 'https://gsc-tracking.com';
+     
+     if (event.authorization) {
        // Add roles to the access token
+       // The backend expects role values: "tracker-admin", "tracker-write", "tracker-read"
        api.accessToken.setCustomClaim(`${namespace}/roles`, event.authorization.roles);
        
        // Optionally add roles to the ID token as well
@@ -182,31 +227,43 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
    
    Navigate to **Actions** → **Flows** → **Login**:
    
-   a. Drag and drop your **Add Roles to Access Token** action from the right sidebar to the flow
+   a. Drag and drop your action from the right sidebar to the flow
    
    b. Place it after the **Start** node
    
    c. Click **Apply**
 
-3. **Verify Role Claims**
+3. **Verify Permission/Role Claims**
    
-   After configuration, the JWT access token will contain a custom claim like:
+   After configuration, the JWT access token will contain a custom claim. The format depends on which approach you chose:
    
+   **For Permissions:**
    ```json
    {
-     "https://gsc-tracking.com/roles": ["tracker-admin"]
+     "https://gsc-tracking.com/permissions": ["admin", "write"]
    }
    ```
    
-   The backend API is configured to automatically map this custom claim to the standard .NET role claim for authorization.
+   **For Roles:**
+   ```json
+   {
+     "https://gsc-tracking.com/roles": ["tracker-admin", "tracker-write"]
+   }
+   ```
+   
+   The backend API is configured to automatically:
+   - Check for permissions first (with values: "admin", "write", "read")
+   - Map permissions to internal roles ("tracker-admin", "tracker-write", "tracker-read")
+   - Fall back to checking for roles if no permissions are found
+   - Map all claims to the standard .NET role claim for authorization
 
-> **Note:** The namespace `https://gsc-tracking.com` is used to avoid claim collision with standard JWT claims. This is a best practice recommended by Auth0. The backend automatically handles this namespace and maps it to standard .NET role claims.
+> **Note:** The namespace `https://gsc-tracking.com` is used to avoid claim collision with standard JWT claims. This is a best practice recommended by Auth0. The backend automatically handles this namespace.
 
 4. **Alternative Namespace Configuration**
    
    If you prefer to use a different namespace, you can update:
    - The Auth0 Action code above
-   - The backend configuration in `Program.cs` (look for `possibleRoleClaims` array)
+   - The backend configuration in `Program.cs` (look for `possiblePermissionClaims` and `possibleRoleClaims` arrays)
    - The frontend configuration in `useUserRole.ts` (look for `possibleNamespaces` array)
 
 ## Backend Configuration

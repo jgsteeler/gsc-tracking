@@ -230,4 +230,131 @@ public class Auth0ConfigurationTests
         standardRoleClaims.Should().NotContain(c => c.Value == "other-role");
         standardRoleClaims.Should().NotContain(c => c.Value == "another-role");
     }
+
+    [Theory]
+    [InlineData("https://gsc-tracking.com/permissions")]
+    [InlineData("http://gsc-tracking.com/permissions")]
+    [InlineData("permissions")]
+    public void Auth0PermissionClaimMapping_ShouldMapPermissionsToTrackerRoles(string permissionClaimType)
+    {
+        // Arrange
+        var claimsIdentity = new ClaimsIdentity();
+        claimsIdentity.AddClaim(new Claim(permissionClaimType, "admin"));
+        claimsIdentity.AddClaim(new Claim(permissionClaimType, "write"));
+        claimsIdentity.AddClaim(new Claim(permissionClaimType, "read"));
+
+        // Simulate the claim transformation logic from Program.cs
+        var possiblePermissionClaims = new[]
+        {
+            "https://gsc-tracking.com/permissions",
+            "http://gsc-tracking.com/permissions",
+            "permissions"
+        };
+
+        bool foundPermissions = false;
+        foreach (var claimType in possiblePermissionClaims)
+        {
+            var permissionClaims = claimsIdentity.FindAll(claimType).ToList();
+            if (permissionClaims.Any())
+            {
+                foreach (var permissionClaim in permissionClaims)
+                {
+                    var mappedRole = permissionClaim.Value switch
+                    {
+                        "admin" => "tracker-admin",
+                        "write" => "tracker-write",
+                        "read" => "tracker-read",
+                        _ => permissionClaim.Value
+                    };
+                    
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, mappedRole));
+                }
+                foundPermissions = true;
+                break;
+            }
+        }
+
+        // Act
+        var standardRoleClaims = claimsIdentity.FindAll(ClaimTypes.Role).ToList();
+
+        // Assert
+        foundPermissions.Should().BeTrue();
+        standardRoleClaims.Should().HaveCount(3);
+        standardRoleClaims.Should().Contain(c => c.Value == "tracker-admin");
+        standardRoleClaims.Should().Contain(c => c.Value == "tracker-write");
+        standardRoleClaims.Should().Contain(c => c.Value == "tracker-read");
+    }
+
+    [Fact]
+    public void Auth0PermissionClaimMapping_ShouldPrioritizePermissionsOverRoles()
+    {
+        // Arrange
+        var claimsIdentity = new ClaimsIdentity();
+        // Add both permissions and roles
+        claimsIdentity.AddClaim(new Claim("https://gsc-tracking.com/permissions", "admin"));
+        claimsIdentity.AddClaim(new Claim("https://gsc-tracking.com/roles", "tracker-read"));
+
+        // Simulate the claim transformation logic from Program.cs
+        var possiblePermissionClaims = new[]
+        {
+            "https://gsc-tracking.com/permissions",
+            "http://gsc-tracking.com/permissions",
+            "permissions"
+        };
+
+        bool foundPermissions = false;
+        foreach (var claimType in possiblePermissionClaims)
+        {
+            var permissionClaims = claimsIdentity.FindAll(claimType).ToList();
+            if (permissionClaims.Any())
+            {
+                foreach (var permissionClaim in permissionClaims)
+                {
+                    var mappedRole = permissionClaim.Value switch
+                    {
+                        "admin" => "tracker-admin",
+                        "write" => "tracker-write",
+                        "read" => "tracker-read",
+                        _ => permissionClaim.Value
+                    };
+                    
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, mappedRole));
+                }
+                foundPermissions = true;
+                break;
+            }
+        }
+
+        // Only check roles if no permissions were found
+        if (!foundPermissions)
+        {
+            var possibleRoleClaims = new[]
+            {
+                "https://gsc-tracking.com/roles",
+                "http://gsc-tracking.com/roles",
+                "roles"
+            };
+
+            foreach (var roleClaimType in possibleRoleClaims)
+            {
+                var roleClaims = claimsIdentity.FindAll(roleClaimType).ToList();
+                if (roleClaims.Any())
+                {
+                    foreach (var roleClaim in roleClaims)
+                    {
+                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Act
+        var standardRoleClaims = claimsIdentity.FindAll(ClaimTypes.Role).ToList();
+
+        // Assert
+        standardRoleClaims.Should().HaveCount(1);
+        standardRoleClaims.Should().Contain(c => c.Value == "tracker-admin");
+        standardRoleClaims.Should().NotContain(c => c.Value == "tracker-read");
+    }
 }
