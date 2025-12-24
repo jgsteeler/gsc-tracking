@@ -1,26 +1,30 @@
 import { useAuth0 } from '@auth0/auth0-react';
 
 /**
- * Custom hook to check if the current user has specific roles
+ * Custom hook to check if the current user has specific roles or permissions
  * 
- * Auth0 roles are typically included in the token under a custom namespace claim.
- * By default, Auth0 adds roles to the token as:
- * - `<namespace>/roles` (array of role strings)
+ * Auth0 can send either permissions or roles in the token under a custom namespace claim.
+ * This hook supports both approaches:
+ * - Permissions: "admin", "write", "read" (recommended)
+ * - Roles: "tracker-admin", "tracker-write", "tracker-read" (alternative)
  * 
  * @returns An object containing:
- * - isAdmin: Whether the user has the tracker-admin role
- * - roles: Array of role strings the user has
+ * - isAdmin: Whether the user has admin access (full permissions)
+ * - canWrite: Whether the user has write access (can add expenses and job updates)
+ * - canRead: Whether the user has read access (can view data)
+ * - roles: Array of role/permission strings the user has
  * - isLoading: Whether the user data is still loading
  * 
  * @example
  * ```tsx
- * const { isAdmin, isLoading } = useUserRole();
+ * const { isAdmin, canWrite, canRead, isLoading } = useUserRole();
  * 
  * if (isLoading) return <div>Loading...</div>;
  * 
  * return (
  *   <div>
  *     {isAdmin && <Button>Admin Action</Button>}
+ *     {canWrite && <Button>Add Expense</Button>}
  *   </div>
  * );
  * ```
@@ -32,45 +36,66 @@ export const useUserRole = () => {
   if (!isAuthenticated || isLoading || !user) {
     return {
       isAdmin: false,
+      canWrite: false,
+      canRead: false,
       roles: [],
       isLoading,
     };
   }
 
-  // Auth0 can store roles in different claim formats depending on configuration
-  // Common locations:
-  // 1. Direct in user object (less common): user.roles
-  // 2. In a namespaced claim: user['https://your-domain.com/roles']
-  // 3. In the access token claims (requires getIdTokenClaims)
+  // Auth0 can store permissions/roles in different claim formats
+  // Priority: Check for permissions first, then fall back to roles
   
-  // Try to extract roles from common locations
   let roles: string[] = [];
   
-  // Check for roles in user object
-  if (Array.isArray(user.roles)) {
-    roles = user.roles as string[];
-  }
-  
-  // Check for namespaced roles (common Auth0 pattern)
-  // Auth0 typically uses a namespace like https://your-app.com/roles
-  const possibleNamespaces = [
-    'https://gsc-tracking.com/roles',
-    'http://gsc-tracking.com/roles',
-    'roles',
+  // First, check for permissions claim (recommended approach)
+  const possiblePermissionNamespaces = [
+    'https://gsc-tracking.com/permissions',
+    'http://gsc-tracking.com/permissions',
+    'permissions',
   ];
   
-  for (const namespace of possibleNamespaces) {
+  let foundPermissions = false;
+  for (const namespace of possiblePermissionNamespaces) {
     if (Array.isArray(user[namespace])) {
       roles = user[namespace] as string[];
+      foundPermissions = true;
       break;
     }
   }
+  
+  // If no permissions found, check for roles (alternative approach)
+  if (!foundPermissions) {
+    // Check for roles in user object
+    if (Array.isArray(user.roles)) {
+      roles = user.roles as string[];
+    } else {
+      // Check for namespaced roles
+      const possibleRoleNamespaces = [
+        'https://gsc-tracking.com/roles',
+        'http://gsc-tracking.com/roles',
+        'roles',
+      ];
+      
+      for (const namespace of possibleRoleNamespaces) {
+        if (Array.isArray(user[namespace])) {
+          roles = user[namespace] as string[];
+          break;
+        }
+      }
+    }
+  }
 
-  // Check if user has the tracker-admin role
-  const isAdmin = roles.includes('tracker-admin');
+  // Map permissions/roles to access levels
+  // Supports both permission format (admin, write, read) and role format (tracker-admin, tracker-write, tracker-read)
+  const isAdmin = roles.includes('admin') || roles.includes('tracker-admin');
+  const canWrite = isAdmin || roles.includes('write') || roles.includes('tracker-write');
+  const canRead = canWrite || roles.includes('read') || roles.includes('tracker-read');
 
   return {
     isAdmin,
+    canWrite,
+    canRead,
     roles,
     isLoading: false,
   };

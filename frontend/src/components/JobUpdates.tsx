@@ -17,7 +17,7 @@ interface JobUpdatesProps {
 export function JobUpdates({ jobId }: JobUpdatesProps) {
   const { updates, loading, error, createUpdate, deleteUpdate } = useJobUpdates(jobId)
   const { toast } = useToast()
-  const { isAdmin } = useUserRole()
+  const { isAdmin, canWrite } = useUserRole()
   const [newUpdateText, setNewUpdateText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -117,35 +117,37 @@ export function JobUpdates({ jobId }: JobUpdatesProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Add new update form */}
-          <form onSubmit={handleSubmit} className="space-y-2">
-            <Textarea
-              placeholder="Add a job update... (e.g., 'I finished the diagnostics on Jim's snow blower, the leak is from the crankcase cover')"
-              value={newUpdateText}
-              onChange={(e) => setNewUpdateText(e.target.value)}
-              rows={3}
-              disabled={isSubmitting}
-              className="resize-none"
-            />
-            <div className="flex justify-end">
-              <Button 
-                type="submit" 
-                disabled={isSubmitting || !newUpdateText.trim()}
-                size="sm"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <MessageSquarePlus className="mr-2 h-4 w-4" />
-                    Add Update
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
+          {canWrite && (
+            <form onSubmit={handleSubmit} className="space-y-2">
+              <Textarea
+                placeholder="Add a job update... (e.g., 'I finished the diagnostics on Jim's snow blower, the leak is from the crankcase cover')"
+                value={newUpdateText}
+                onChange={(e) => setNewUpdateText(e.target.value)}
+                rows={3}
+                disabled={isSubmitting}
+                className="resize-none"
+              />
+              <div className="flex justify-end">
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting || !newUpdateText.trim()}
+                  size="sm"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <MessageSquarePlus className="mr-2 h-4 w-4" />
+                      Add Update
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          )}
 
           {/* Updates list */}
           {loading ? (
