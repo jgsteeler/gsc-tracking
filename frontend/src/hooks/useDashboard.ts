@@ -3,6 +3,7 @@ import type { Customer } from '@/types/customer'
 import type { Job } from '@/types/job'
 import { customerService } from '@/services/customerService'
 import { jobService } from '@/services/jobService'
+import { useAccessToken } from '@/hooks/useAccessToken'
 
 export interface DashboardStats {
   totalCustomers: number
@@ -24,16 +25,20 @@ export function useDashboard() {
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { getToken } = useAccessToken()
 
   const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
 
+      // Get token for API calls
+      const token = await getToken()
+
       // Fetch all data in parallel
       const [customers, jobs] = await Promise.all([
-        customerService.getAll(),
-        jobService.getAll(),
+        customerService.getAll(undefined, token),
+        jobService.getAll(undefined, undefined, token),
       ])
 
       // Calculate statistics
@@ -81,7 +86,7 @@ export function useDashboard() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [getToken])
 
   useEffect(() => {
     fetchDashboardData()
