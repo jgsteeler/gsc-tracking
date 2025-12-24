@@ -7,7 +7,7 @@ namespace GscTracking.Api.Controllers;
 
 [ApiController]
 [Route("api/jobs/{jobId}/expenses")]
-[Authorize] // Require authentication for all endpoints
+[Authorize(Policy = "ReadAccess")] // Require read access for all endpoints
 public class ExpensesController : ControllerBase
 {
     private readonly IExpenseService _expenseService;
@@ -59,7 +59,7 @@ public class ExpensesController : ControllerBase
     /// <response code="400">Validation error - check response for details</response>
     /// <response code="500">Internal server error</response>
     [HttpPost]
-    [Authorize(Policy = "AdminOnly")]
+    [Authorize(Policy = "WriteAccess")]
     [ProducesResponseType(typeof(ExpenseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(object), StatusCodes.Status500InternalServerError)]
@@ -138,7 +138,7 @@ public class ExpensesController : ControllerBase
     /// <response code="404">Expense not found</response>
     /// <response code="500">Internal server error</response>
     [HttpPut("{id}")]
-    [Authorize(Policy = "AdminOnly")]
+    [Authorize(Policy = "WriteAccess")]
     [ProducesResponseType(typeof(ExpenseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]

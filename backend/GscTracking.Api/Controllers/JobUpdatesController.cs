@@ -7,7 +7,7 @@ namespace GscTracking.Api.Controllers;
 
 [ApiController]
 [Route("api/jobs/{jobId}/updates")]
-[Authorize] // Require authentication for all endpoints
+[Authorize(Policy = "ReadAccess")] // Require read access for all endpoints
 public class JobUpdatesController : ControllerBase
 {
     private readonly IJobUpdateService _jobUpdateService;
@@ -75,7 +75,7 @@ public class JobUpdatesController : ControllerBase
     /// <param name="updateRequest">Update data</param>
     /// <returns>Created job update</returns>
     [HttpPost]
-    [Authorize(Policy = "AdminOnly")]
+    [Authorize(Policy = "WriteAccess")]
     public async Task<ActionResult<JobUpdateDto>> CreateJobUpdate(int jobId, [FromBody] JobUpdateRequestDto updateRequest)
     {
         try

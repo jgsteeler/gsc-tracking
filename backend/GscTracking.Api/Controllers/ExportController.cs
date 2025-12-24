@@ -6,7 +6,7 @@ namespace GscTracking.Api.Controllers;
 
 [ApiController]
 [Route("api/export")]
-[Authorize]
+[Authorize(Policy = "ReadAccess")]
 public class ExportController : ControllerBase
 {
     private readonly ICsvService _csvService;

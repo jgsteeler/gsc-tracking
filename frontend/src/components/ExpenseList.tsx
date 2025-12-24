@@ -30,7 +30,7 @@ interface ExpenseListProps {
 
 export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
   const { toast } = useToast()
-  const { isAdmin } = useUserRole()
+  const { isAdmin, canWrite } = useUserRole()
   const { getToken } = useAccessToken()
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
@@ -171,7 +171,7 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
             </div>
             <div className="flex gap-2">
               <CsvExportButtons type="expenses" jobId={jobId} />
-              {isAdmin && (
+              {canWrite && (
                 <>
                   <Button variant="outline" size="sm" onClick={() => setImportDialogOpen(true)}>
                     <Upload className="mr-2 h-4 w-4" />
@@ -207,7 +207,7 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
                     <TableHead>Date</TableHead>
                     <TableHead>Receipt</TableHead>
                     <TableHead className="text-right">Amount</TableHead>
-                    {isAdmin && <TableHead className="text-right">Actions</TableHead>}
+                    {canWrite && <TableHead className="text-right">Actions</TableHead>}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -226,7 +226,7 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
                       <TableCell className="text-right font-medium">
                         {formatCurrency(expense.amount)}
                       </TableCell>
-                      {isAdmin && (
+                      {canWrite && (
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button
@@ -236,13 +236,15 @@ export function ExpenseList({ jobId, onExpenseChange }: ExpenseListProps) {
                             >
                               <Pencil className="h-4 w-4" />
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteClick(expense)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            {isAdmin && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteClick(expense)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
                           </div>
                         </TableCell>
                       )}

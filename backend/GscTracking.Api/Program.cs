@@ -213,7 +213,7 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true
     };
     
-    // Transform claims to map Auth0 custom role claims to standard role claims
+    // Transform claims to map Auth0 custom permissions/roles to standard role claims
     options.Events = new JwtBearerEvents
     {
         OnTokenValidated = context =>
@@ -221,28 +221,66 @@ builder.Services.AddAuthentication(options =>
             var claimsIdentity = context.Principal?.Identity as System.Security.Claims.ClaimsIdentity;
             if (claimsIdentity != null)
             {
-                // Check for roles in various Auth0 claim formats
-                var possibleRoleClaims = new[]
+                // Check for permissions claim (primary method)
+                var possiblePermissionClaims = new[]
                 {
-                    "https://gsc-tracking.com/roles",
-                    "http://gsc-tracking.com/roles",
-                    "roles"
+                    "https://gsc-tracking.com/permissions",
+                    "http://gsc-tracking.com/permissions",
+                    "permissions"
                 };
 
-                foreach (var roleClaimType in possibleRoleClaims)
+                bool foundPermissions = false;
+                foreach (var permissionClaimType in possiblePermissionClaims)
                 {
-                    var roleClaims = claimsIdentity.FindAll(roleClaimType).ToList();
-                    if (roleClaims.Any())
+                    var permissionClaims = claimsIdentity.FindAll(permissionClaimType).ToList();
+                    if (permissionClaims.Any())
                     {
-                        // Add each role as a standard role claim
-                        foreach (var roleClaim in roleClaims)
+                        // Map permissions to tracker-* role format
+                        foreach (var permissionClaim in permissionClaims)
                         {
+                            var mappedRole = permissionClaim.Value switch
+                            {
+                                "admin" => "tracker-admin",
+                                "write" => "tracker-write",
+                                "read" => "tracker-read",
+                                _ => permissionClaim.Value // Keep as-is if not recognized
+                            };
+                            
                             // Add as standard role claim type for .NET authorization
                             claimsIdentity.AddClaim(new System.Security.Claims.Claim(
                                 System.Security.Claims.ClaimTypes.Role, 
-                                roleClaim.Value));
+                                mappedRole));
                         }
-                        break; // Found roles, no need to check other claim types
+                        foundPermissions = true;
+                        break; // Found permissions, no need to check other claim types
+                    }
+                }
+
+                // Fall back to checking for roles in various Auth0 claim formats
+                if (!foundPermissions)
+                {
+                    var possibleRoleClaims = new[]
+                    {
+                        "https://gsc-tracking.com/roles",
+                        "http://gsc-tracking.com/roles",
+                        "roles"
+                    };
+
+                    foreach (var roleClaimType in possibleRoleClaims)
+                    {
+                        var roleClaims = claimsIdentity.FindAll(roleClaimType).ToList();
+                        if (roleClaims.Any())
+                        {
+                            // Add each role as a standard role claim
+                            foreach (var roleClaim in roleClaims)
+                            {
+                                // Add as standard role claim type for .NET authorization
+                                claimsIdentity.AddClaim(new System.Security.Claims.Claim(
+                                    System.Security.Claims.ClaimTypes.Role, 
+                                    roleClaim.Value));
+                            }
+                            break; // Found roles, no need to check other claim types
+                        }
                     }
                 }
             }
@@ -253,8 +291,17 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
+    // Admin role has full access to all functionality
     options.AddPolicy("AdminOnly", policy =>
         policy.RequireRole("tracker-admin"));
+    
+    // Write access for adding expenses and job updates (admin + write roles)
+    options.AddPolicy("WriteAccess", policy =>
+        policy.RequireRole("tracker-admin", "tracker-write"));
+    
+    // Read access for viewing data (admin + write + read roles)
+    options.AddPolicy("ReadAccess", policy =>
+        policy.RequireRole("tracker-admin", "tracker-write", "tracker-read"));
 });
 
 var app = builder.Build();
