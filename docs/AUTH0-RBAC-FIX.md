@@ -1,18 +1,61 @@
-# Auth0 Role-Based Access Control (RBAC) Fix
+# Auth0 Permission-Based Access Control (RBAC) Fix
 
 ## Problem Summary
 
-The GSC Tracking application was experiencing issues with Auth0 role-based access control. The `tracker-admin` role was:
+The GSC Tracking application was experiencing issues with Auth0 permission-based access control. Admin users with the `admin` permission were:
 - ✅ Configured in Auth0
 - ✅ Assigned to users in Auth0
 - ✅ Reaching the frontend successfully
-- ❌ NOT reaching the backend, causing 403 Forbidden errors on protected endpoints
+- ❌ NOT properly recognized by the backend when sent as role claims, causing 403 Forbidden errors on protected endpoints
 
 ## Root Cause
 
-Auth0 includes user roles in JWT tokens as **custom namespace claims** (e.g., `https://gsc-tracking.com/roles`), but the .NET JWT Bearer authentication middleware looks for roles in the **standard `role` claim** by default.
+Auth0 includes user permissions in JWT tokens as **custom namespace claims** (e.g., `https://gsc-tracking.com/permissions`), but the .NET JWT Bearer authentication middleware looks for roles in the **standard `role` claim** by default.
 
-Without explicit configuration to map these custom claims to standard .NET role claims, the backend authorization middleware cannot recognize user roles, resulting in access denied errors.
+Without explicit configuration to map these custom permission/role claims to standard .NET role claims, the backend authorization middleware cannot recognize user permissions, resulting in access denied errors.
+
+## Current Configuration
+
+**IMPORTANT**: The application uses **permissions as the primary method** for authorization:
+- Auth0 sends permissions in the `permissions` claim with values: `"admin"`, `"write"`, `"read"`
+- The backend checks for permissions FIRST, then falls back to roles if no permissions are found
+- Both permissions and roles are mapped to internal role names: `"tracker-admin"`, `"tracker-write"`, `"tracker-read"`
+
+### Authorization Levels
+
+1. **read permission** (tracker-read role):
+   - Can view all data (customers, jobs, expenses, job updates)
+   - Cannot modify anything
+
+2. **write permission** (tracker-write role):
+   - All read permissions
+   - Can add job updates to existing jobs
+   - Can add expenses to existing jobs
+   - **Can export data to CSV**
+   - Cannot add/edit customers or jobs
+
+3. **admin permission** (tracker-admin role):
+   - All write permissions
+   - Can add/edit/delete customers
+   - Can add/edit/delete jobs
+   - Can edit/delete expenses
+   - **Can import data from CSV**
+   - Full administrative access
+
+### API Endpoint Authorization
+
+- **ReadAccess Policy** (requires read, write, OR admin):
+  - GET endpoints for viewing customers, jobs, expenses, job updates
+
+- **WriteAccess Policy** (requires write OR admin):
+  - POST endpoints for creating job updates and expenses
+  - PUT endpoints for updating job updates and expenses
+  - **Export endpoints** (GET /api/export/*)
+
+- **AdminOnly Policy** (requires admin only):
+  - POST/PUT/DELETE endpoints for customers and jobs
+  - DELETE endpoints for expenses and job updates
+  - **Import endpoints** (POST /api/import/*)
 
 ## Solution
 
@@ -20,7 +63,7 @@ The fix involves two parts:
 
 ### 1. Backend Configuration (Program.cs)
 
-Modified the JWT Bearer authentication configuration to transform Auth0's custom role claims into standard .NET role claims:
+Modified the JWT Bearer authentication configuration to transform Auth0's custom permission/role claims into standard .NET role claims:
 
 ```csharp
 .AddJwtBearer(options =>
@@ -167,21 +210,26 @@ If your Auth0 role uses a different naming convention:
 ## How to Verify the Fix
 
 1. **Check Auth0 Configuration:**
-   - Verify the role name in Auth0 uses one of the supported formats:
+   - **PRIMARY METHOD**: Verify the Auth0 Action sends permissions in the `permissions` claim:
+     - Permission values should be: `admin`, `write`, `read`
+   - **FALLBACK METHOD**: If using roles instead, they should be in the `roles` claim:
      - Short format: `admin`, `write`, `read`
      - Full format: `tracker-admin`, `tracker-write`, `tracker-read`
    - Verify the Auth0 Action is deployed and added to the Login Flow
    - Test by logging in and decoding the JWT token at [jwt.io](https://jwt.io)
-   - Confirm the token includes either:
-     - `"https://gsc-tracking.com/roles": ["admin"]` (will be mapped to "tracker-admin")
-     - `"https://gsc-tracking.com/roles": ["tracker-admin"]` (will be used as-is)
-     - `"https://gsc-tracking.com/permissions": ["admin"]` (will be mapped to "tracker-admin")
+   - Confirm the token includes (in order of priority):
+     1. **Preferred**: `"https://gsc-tracking.com/permissions": ["admin"]` (will be mapped to "tracker-admin")
+     2. **Alternative**: `"https://gsc-tracking.com/roles": ["admin"]` (will be mapped to "tracker-admin")
+     3. **Alternative**: `"https://gsc-tracking.com/roles": ["tracker-admin"]` (will be used as-is)
 
 2. **Test Backend Authorization:**
    - Log in to the frontend
-   - Attempt to create, update, or delete a customer/job/expense
-   - Should succeed if you have the `admin` or `tracker-admin` role/permission
-   - Should fail with 403 Forbidden if you don't have the appropriate role/permission
+   - Test the following authorization levels:
+     - **read permission**: Can view all data
+     - **write permission**: Can view data + add job updates + add expenses + export data
+     - **admin permission**: Can do everything write can + add/edit customers + add/edit jobs + edit expenses + import data
+   - Should succeed if you have the appropriate permission
+   - Should fail with 403 Forbidden if you don't have the required permission
 
 3. **Check Browser Console:**
    - Look for authentication-related errors
@@ -189,7 +237,7 @@ If your Auth0 role uses a different naming convention:
 
 4. **Check Backend Logs:**
    - Look for authentication/authorization errors
-   - Verify the role claims are being processed
+   - Verify the permission/role claims are being processed
 
 ## Next Steps
 
