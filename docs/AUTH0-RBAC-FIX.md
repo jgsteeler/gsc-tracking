@@ -131,27 +131,57 @@ The correct role name is **`tracker-admin`**, not `tracking-admin`.
 - Frontend code uses: `tracker-admin`
 - Authorization policy checks for: `tracker-admin`
 
-If your Auth0 role is named `tracking-admin`, you need to either:
-1. Rename it to `tracker-admin` in Auth0, OR
-2. Update the backend authorization policy in `Program.cs`:
+### Supported Role Formats
+
+As of December 2025, the backend now supports **two role formats** for flexibility:
+
+1. **Short format**: `"admin"`, `"write"`, `"read"` (automatically mapped to tracker-* format)
+2. **Full format**: `"tracker-admin"`, `"tracker-write"`, `"tracker-read"` (used as-is)
+
+The backend automatically maps short role names to the full tracker-* format:
+- `"admin"` → `"tracker-admin"`
+- `"write"` → `"tracker-write"`
+- `"read"` → `"tracker-read"`
+
+This means you can configure Auth0 to send roles as either:
+- `"https://gsc-tracking.com/roles": ["admin"]` (will be mapped)
+- `"https://gsc-tracking.com/roles": ["tracker-admin"]` (will be used as-is)
+
+Both formats work correctly. The mapping ensures backward compatibility and simplifies Auth0 configuration.
+
+### If Your Roles Don't Match
+
+If your Auth0 role uses a different naming convention:
+
+1. **Option A (Recommended)**: Update your Auth0 role to use one of the supported formats:
+   - Short: `admin`, `write`, `read`
+   - Full: `tracker-admin`, `tracker-write`, `tracker-read`
+
+2. **Option B**: Update the backend authorization policy in `Program.cs`:
    ```csharp
    options.AddPolicy("AdminOnly", policy =>
-       policy.RequireRole("tracking-admin")); // Change to match your Auth0 role
+       policy.RequireRole("your-custom-role-name")); // Change to match your Auth0 role
    ```
+   And update the mapping switch statement to include your custom role names.
 
 ## How to Verify the Fix
 
 1. **Check Auth0 Configuration:**
-   - Verify the role name in Auth0 matches the backend expectation
+   - Verify the role name in Auth0 uses one of the supported formats:
+     - Short format: `admin`, `write`, `read`
+     - Full format: `tracker-admin`, `tracker-write`, `tracker-read`
    - Verify the Auth0 Action is deployed and added to the Login Flow
    - Test by logging in and decoding the JWT token at [jwt.io](https://jwt.io)
-   - Confirm the token includes: `"https://gsc-tracking.com/roles": ["tracker-admin"]`
+   - Confirm the token includes either:
+     - `"https://gsc-tracking.com/roles": ["admin"]` (will be mapped to "tracker-admin")
+     - `"https://gsc-tracking.com/roles": ["tracker-admin"]` (will be used as-is)
+     - `"https://gsc-tracking.com/permissions": ["admin"]` (will be mapped to "tracker-admin")
 
 2. **Test Backend Authorization:**
    - Log in to the frontend
    - Attempt to create, update, or delete a customer/job/expense
-   - Should succeed if you have the `tracker-admin` role
-   - Should fail with 403 Forbidden if you don't have the role
+   - Should succeed if you have the `admin` or `tracker-admin` role/permission
+   - Should fail with 403 Forbidden if you don't have the appropriate role/permission
 
 3. **Check Browser Console:**
    - Look for authentication-related errors
@@ -180,4 +210,4 @@ If you continue to experience issues:
 
 ---
 
-**Last Updated:** 2025-12-24
+**Last Updated:** 2025-12-25
