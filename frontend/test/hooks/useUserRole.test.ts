@@ -52,7 +52,6 @@ describe('useUserRole', () => {
     const { result } = renderHook(() => useUserRole());
 
     await waitFor(() => {
-      console.log('Decoded roles:', result.current.roles);
       expect(result.current.roles).toEqual(['admin', 'write']);
       expect(result.current.isAdmin).toBe(true);
       expect(result.current.canWrite).toBe(true);
