@@ -62,7 +62,7 @@ export const useUserRole = () => {
 
   return {
     isAdmin: asyncRoles.includes('admin') || asyncRoles.includes('tracker-admin'),
-    canWrite: asyncRoles.includes('write') || asyncRoles.includes('tracker-write') || asyncRoles.includes('admin'),
+    canWrite: asyncRoles.includes('write') || asyncRoles.includes('tracker-write') || asyncRoles.includes('admin')|| asyncRoles.includes('tracker-admin'), 
     canRead: asyncRoles.includes('read') || asyncRoles.includes('tracker-read') || asyncRoles.includes('write'),
     roles: asyncRoles,
     isLoading: isLoading || !foundPermissions,
