@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { jobService } from './jobService'
+import { jobService } from '../../src/services/jobService'
 import type { Job, JobRequestDto } from '@/types/job'
 
-const API_BASE_URL = 'http://localhost:5091/api'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 describe('jobService', () => {
   beforeEach(() => {

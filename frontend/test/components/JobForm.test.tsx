@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { JobForm } from './JobForm';
+import { JobForm } from '@/components/JobForm';
 import { useCustomers } from '@/hooks/useCustomers';
 import type { Customer } from '@/types/customer';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -12,7 +12,7 @@ vi.mock('@/hooks/useCustomers', () => ({
 }));
 
 // Mock the CustomerDialog component
-vi.mock('./CustomerDialog', () => ({
+vi.mock('@/components/CustomerDialog', () => ({
   CustomerDialog: ({
     open,
     onSubmit,
@@ -335,5 +335,40 @@ describe('JobForm - Customer Creation Feature', () => {
     );
 
     expect(screen.getByRole('button', { name: /update/i })).toBeInTheDocument();
+  });
+
+  it('should update customerDialogOpen state when "Add new customer" button is clicked', async () => {
+    const user = userEvent.setup();
+
+    renderWithProviders(
+      <JobForm
+        onSubmit={mockOnSubmit}
+        onCancel={mockOnCancel}
+      />
+    );
+
+    const addButton = screen.getByRole('button', { name: /add new customer/i });
+    await user.click(addButton);
+
+    // Debugging log to verify state update
+    await waitFor(() => {
+      expect(screen.getByTestId('customer-dialog')).toBeInTheDocument();
+    });
+  });
+
+  it('should open the CustomerDialog when the add new customer button is clicked', async () => {
+    const mockOnSubmit = vi.fn();
+    const mockOnCancel = vi.fn();
+
+    renderWithProviders(<JobForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
+
+    // Find and click the "Add new customer" button
+    const addCustomerButton = screen.getByTitle('Add new customer');
+    fireEvent.click(addCustomerButton);
+
+    // Wait for the CustomerDialog to appear
+    await waitFor(() => {
+      expect(screen.getByTestId('customer-dialog')).toBeInTheDocument();
+    });
   });
 });

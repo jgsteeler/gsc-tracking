@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { renderHook, waitFor, act } from '@testing-library/react'
-import { useJobs } from './useJobs'
+import { useJobs } from '../../src/hooks/useJobs'
 import { jobService } from '@/services/jobService'
 import type { Job, JobRequestDto } from '@/types/job'
 

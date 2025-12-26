@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CsvImportDialog } from './CsvImportDialog'
-import { csvService } from '@/services/csvService'
+import { CsvImportDialog } from '../../src/components/CsvImportDialog'
+import { csvService } from '../../src/services/csvService'
 
 // Mock the services and hooks
 vi.mock('@/services/csvService')
