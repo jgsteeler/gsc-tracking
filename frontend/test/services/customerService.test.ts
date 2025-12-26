@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { customerService } from './customerService';
+import { customerService } from '../../src/services/customerService';
 import type { Customer, CustomerRequestDto } from '@/types/customer';
 
 // Mock fetch

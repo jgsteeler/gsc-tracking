@@ -11,6 +11,7 @@ using GscTracking.Api.Services;
 using GscTracking.Api.Validators;
 using GscTracking.Api.Utils;
 using DotNetEnv;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -292,6 +293,7 @@ builder.Services.AddAuthentication(options =>
                         }
                     }
                 }
+
             }
             return Task.CompletedTask;
         }

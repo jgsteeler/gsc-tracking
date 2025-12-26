@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { useDashboard } from './useDashboard';
+import { useDashboard } from '../../src/hooks/useDashboard';
 import { customerService } from '@/services/customerService';
 import { jobService } from '@/services/jobService';
 import type { Customer } from '@/types/customer';

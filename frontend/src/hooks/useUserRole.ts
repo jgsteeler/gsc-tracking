@@ -1,4 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react';
+import { jwtDecode } from 'jwt-decode';
+import { useEffect, useState } from 'react';
 
 /**
  * Custom hook to check if the current user has specific roles or permissions
@@ -30,73 +32,39 @@ import { useAuth0 } from '@auth0/auth0-react';
  * ```
  */
 export const useUserRole = () => {
-  const { user, isLoading, isAuthenticated } = useAuth0();
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
-  // If not authenticated or loading, return defaults
-  if (!isAuthenticated || isLoading || !user) {
-    return {
-      isAdmin: false,
-      canWrite: false,
-      canRead: false,
-      roles: [],
-      isLoading,
-    };
-  }
+  const [asyncRoles, setAsyncRoles] = useState<string[]>([]);
+  const [foundPermissions, setFoundPermissions] = useState(false);
 
-  // Auth0 can store permissions/roles in different claim formats
-  // Priority: Check for permissions first, then fall back to roles
-  
-  let roles: string[] = [];
-  
-  // First, check for permissions claim (recommended approach)
-  const possiblePermissionNamespaces = [
-    'https://gsc-tracking.com/permissions',
-    'http://gsc-tracking.com/permissions',
-    'permissions',
-  ];
-  
-  let foundPermissions = false;
-  for (const namespace of possiblePermissionNamespaces) {
-    if (Array.isArray(user[namespace])) {
-      roles = user[namespace] as string[];
-      foundPermissions = true;
-      break;
+  useEffect(() => {
+    if (!isAuthenticated || isLoading) {
+      setFoundPermissions(true); // Ensure isLoading becomes false for unauthenticated state
+      return;
     }
-  }
-  
-  // If no permissions found, check for roles (alternative approach)
-  if (!foundPermissions) {
-    // Check for roles in user object
-    if (Array.isArray(user.roles)) {
-      roles = user.roles as string[];
-    } else {
-      // Check for namespaced roles
-      const possibleRoleNamespaces = [
-        'https://gsc-tracking.com/roles',
-        'http://gsc-tracking.com/roles',
-        'roles',
-      ];
-      
-      for (const namespace of possibleRoleNamespaces) {
-        if (Array.isArray(user[namespace])) {
-          roles = user[namespace] as string[];
-          break;
+
+    const fetchAccessToken = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently();
+        const decodedToken = jwtDecode<{ permissions?: string[] }>(accessToken);
+        if (decodedToken.permissions) {
+          setAsyncRoles(decodedToken.permissions);
         }
+      } catch (error) {
+        console.error('Error fetching or decoding access token:', error);
+      } finally {
+        setFoundPermissions(true); // Ensure isLoading becomes false even on error
       }
-    }
-  }
+    };
 
-  // Map permissions/roles to access levels
-  // Supports both permission format (admin, write, read) and role format (tracker-admin, tracker-write, tracker-read)
-  const isAdmin = roles.includes('admin') || roles.includes('tracker-admin');
-  const canWrite = isAdmin || roles.includes('write') || roles.includes('tracker-write');
-  const canRead = canWrite || roles.includes('read') || roles.includes('tracker-read');
+    fetchAccessToken();
+  }, [isAuthenticated, isLoading, getAccessTokenSilently]);
 
   return {
-    isAdmin,
-    canWrite,
-    canRead,
-    roles,
-    isLoading: false,
+    isAdmin: asyncRoles.includes('admin') || asyncRoles.includes('tracker-admin'),
+    canWrite: asyncRoles.includes('write') || asyncRoles.includes('tracker-write') || asyncRoles.includes('admin') || asyncRoles.includes('tracker-admin'), 
+    canRead: asyncRoles.includes('read') || asyncRoles.includes('tracker-read') || asyncRoles.includes('write') || asyncRoles.includes('admin') || asyncRoles.includes('tracker-admin'),
+    roles: asyncRoles,
+    isLoading: isLoading || !foundPermissions,
   };
 };

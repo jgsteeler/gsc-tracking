@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { customerSchema } from './customer.schema'
+import { customerSchema } from '../../../src/lib/validations/customer.schema'
 
 describe('customerSchema', () => {
   describe('name field', () => {

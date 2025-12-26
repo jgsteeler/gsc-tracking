@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { jobService } from './jobService'
+import { jobService } from '../../src/services/jobService'
 import type { Job, JobRequestDto } from '@/types/job'
 
-const API_BASE_URL = 'http://localhost:5091/api'
+// Keep the expected base URL in sync with the service default.
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5091/api'
 
 describe('jobService', () => {
   beforeEach(() => {

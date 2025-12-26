@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { jobSchema } from './job.schema'
+import { jobSchema } from '../../../src/lib/validations/job.schema'
 
 describe('jobSchema', () => {
   const validJob = {

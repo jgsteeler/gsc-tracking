@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CsvExportButtons } from './CsvExportButtons'
+import { CsvExportButtons } from '@/components/CsvExportButtons'
 import { csvService } from '@/services/csvService'
 
 // Mock the services and hooks

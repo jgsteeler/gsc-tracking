@@ -36,15 +36,16 @@ export function CsvImportDialog({ open, onOpenChange, onImportComplete }: CsvImp
       // Parse CSV for preview
       Papa.parse(selectedFile, {
         preview: 6, // Show first 6 rows (header + 5 data rows)
-        complete: (results) => {
-          setPreview(results.data as string[][])
-        },
-        error: (error) => {
-          toast({
-            variant: 'destructive',
-            title: 'Error parsing CSV',
-            description: error.message,
-          })
+        complete: (results: Papa.ParseResult<string[]>) => {
+          if (results.errors.length > 0) {
+            toast({
+              variant: 'destructive',
+              title: 'Error parsing CSV',
+              description: results.errors[0].message,
+            })
+          } else {
+            setPreview(results.data as string[][])
+          }
         },
       })
     }

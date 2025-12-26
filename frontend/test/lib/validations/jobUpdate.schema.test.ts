@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { jobUpdateSchema } from './jobUpdate.schema'
+import { jobUpdateSchema } from '../../../src/lib/validations/jobUpdate.schema'
 
 describe('jobUpdateSchema', () => {
   describe('updateText field', () => {

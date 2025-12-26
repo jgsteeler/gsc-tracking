@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { cn, formatDateForApi } from './utils';
+import { cn, formatDateForApi } from '../../src/lib/utils';
 
 describe('cn utility function', () => {
   it('should merge class names correctly', () => {
