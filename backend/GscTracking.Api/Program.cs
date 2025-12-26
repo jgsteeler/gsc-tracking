@@ -114,32 +114,10 @@ if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreC
 {
     npgsqlConnectionString = ConnectionStringHelper.BuildNpgsqlConnectionString(connectionString);
 }
-    
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseNpgsql(npgsqlConnectionString, npgsqlOptions =>
-    {
-        // Enable retry on failure for transient errors
-        npgsqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 3,
-            maxRetryDelay: TimeSpan.FromSeconds(5),
-            errorCodesToAdd: null);
-        
-        // Set command timeout (30 seconds)
-        npgsqlOptions.CommandTimeout(30);
-    });
-    
-    // Enable detailed errors in development
-    if (builder.Environment.IsDevelopment())
-    {
-        options.EnableSensitiveDataLogging();
-        options.EnableDetailedErrors();
-    }
-});
 
 // Add Clean Architecture layers
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration, npgsqlConnectionString, builder.Environment.IsDevelopment());
 
 // Legacy services are being phased out - using CQRS pattern instead
 // Keeping CSV service for now until migrated

@@ -9,11 +9,31 @@ namespace GscTracking.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services, 
+        IConfiguration configuration, 
+        string connectionString,
+        bool isDevelopment = false)
     {
         // Register DbContext
-        // Note: Connection string configuration is handled in the API layer
-        // This method assumes DbContext is already registered
+        services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            options.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.EnableRetryOnFailure(
+                    maxRetryCount: 3,
+                    maxRetryDelay: TimeSpan.FromSeconds(5),
+                    errorCodesToAdd: null);
+                npgsqlOptions.CommandTimeout(30);
+            });
+            
+            // Enable detailed errors in development
+            if (isDevelopment)
+            {
+                options.EnableSensitiveDataLogging();
+                options.EnableDetailedErrors();
+            }
+        });
         
         // Register Repositories
         services.AddScoped<ICustomerRepository, CustomerRepository>();
