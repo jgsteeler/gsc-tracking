@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using GscTracking.Api.DTOs;
-using GscTracking.Api.Services;
+using MediatR;
+using GscTracking.Application.DTOs;
+using GscTracking.Application.Customers.Commands;
+using GscTracking.Application.Customers.Queries;
 
 namespace GscTracking.Api.Controllers;
 
@@ -10,12 +12,12 @@ namespace GscTracking.Api.Controllers;
 [Authorize(Policy = "ReadAccess")] // Require read access for all endpoints
 public class CustomersController : ControllerBase
 {
-    private readonly ICustomerService _customerService;
+    private readonly IMediator _mediator;
     private readonly ILogger<CustomersController> _logger;
 
-    public CustomersController(ICustomerService customerService, ILogger<CustomersController> logger)
+    public CustomersController(IMediator mediator, ILogger<CustomersController> logger)
     {
-        _customerService = customerService;
+        _mediator = mediator;
         _logger = logger;
     }
 
@@ -29,7 +31,8 @@ public class CustomersController : ControllerBase
     {
         try
         {
-            var customers = await _customerService.GetAllCustomersAsync(search);
+            var query = new GetAllCustomersQuery(search);
+            var customers = await _mediator.Send(query);
             return Ok(customers);
         }
         catch (Exception ex)
@@ -48,7 +51,8 @@ public class CustomersController : ControllerBase
     {
         try
         {
-            var customer = await _customerService.GetCustomerByIdAsync(id);
+            var query = new GetCustomerByIdQuery(id);
+            var customer = await _mediator.Send(query);
             if (customer == null)
             {
                 return NotFound(new { message = $"Customer with ID {id} not found." });
@@ -92,7 +96,8 @@ public class CustomersController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-            var customer = await _customerService.CreateCustomerAsync(customerRequest);
+            var command = new CreateCustomerCommand(customerRequest);
+            var customer = await _mediator.Send(command);
             return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
         }
         catch (Exception ex)
@@ -135,7 +140,8 @@ public class CustomersController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-            var customer = await _customerService.UpdateCustomerAsync(id, customerRequest);
+            var command = new UpdateCustomerCommand(id, customerRequest);
+            var customer = await _mediator.Send(command);
             if (customer == null)
             {
                 return NotFound(new { message = $"Customer with ID {id} not found." });
@@ -159,7 +165,8 @@ public class CustomersController : ControllerBase
     {
         try
         {
-            var result = await _customerService.DeleteCustomerAsync(id);
+            var command = new DeleteCustomerCommand(id);
+            var result = await _mediator.Send(command);
             if (!result)
             {
                 return NotFound(new { message = $"Customer with ID {id} not found." });
