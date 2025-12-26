@@ -1,0 +1,1 @@
+<content of /Users/jack/code/gsc/gsc-tracking/frontend/src/services/jobService.test.ts>
