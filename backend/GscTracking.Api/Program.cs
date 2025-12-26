@@ -271,13 +271,22 @@ builder.Services.AddAuthentication(options =>
                         var roleClaims = claimsIdentity.FindAll(roleClaimType).ToList();
                         if (roleClaims.Any())
                         {
-                            // Add each role as a standard role claim
+                            // Add each role as a standard role claim with mapping
                             foreach (var roleClaim in roleClaims)
                             {
+                                // Map common role values to tracker-* format
+                                var mappedRole = roleClaim.Value switch
+                                {
+                                    "admin" => "tracker-admin",
+                                    "write" => "tracker-write",
+                                    "read" => "tracker-read",
+                                    _ => roleClaim.Value // Keep as-is if already in correct format or not recognized
+                                };
+                                
                                 // Add as standard role claim type for .NET authorization
                                 claimsIdentity.AddClaim(new System.Security.Claims.Claim(
                                     System.Security.Claims.ClaimTypes.Role, 
-                                    roleClaim.Value));
+                                    mappedRole));
                             }
                             break; // Found roles, no need to check other claim types
                         }

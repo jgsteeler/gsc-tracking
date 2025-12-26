@@ -138,7 +138,16 @@ public class Auth0ConfigurationTests
             {
                 foreach (var roleClaim in roleClaims)
                 {
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
+                    // Map common role values to tracker-* format
+                    var mappedRole = roleClaim.Value switch
+                    {
+                        "admin" => "tracker-admin",
+                        "write" => "tracker-write",
+                        "read" => "tracker-read",
+                        _ => roleClaim.Value // Keep as-is if already in correct format or not recognized
+                    };
+                    
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, mappedRole));
                 }
                 break;
             }
@@ -151,6 +160,58 @@ public class Auth0ConfigurationTests
         standardRoleClaims.Should().HaveCount(2);
         standardRoleClaims.Should().Contain(c => c.Value == "tracker-admin");
         standardRoleClaims.Should().Contain(c => c.Value == "tracker-user");
+    }
+
+    [Theory]
+    [InlineData("https://gsc-tracking.com/roles")]
+    [InlineData("http://gsc-tracking.com/roles")]
+    [InlineData("roles")]
+    public void Auth0RoleClaimMapping_ShouldMapShortRoleNamesToTrackerFormat(string roleClaimType)
+    {
+        // Arrange
+        var claimsIdentity = new ClaimsIdentity("test");
+        claimsIdentity.AddClaim(new Claim(roleClaimType, "admin"));
+        claimsIdentity.AddClaim(new Claim(roleClaimType, "write"));
+        claimsIdentity.AddClaim(new Claim(roleClaimType, "read"));
+
+        // Simulate the OnTokenValidated claim transformation logic from Program.cs
+        var possibleRoleClaims = new[]
+        {
+            "https://gsc-tracking.com/roles",
+            "http://gsc-tracking.com/roles",
+            "roles"
+        };
+
+        foreach (var claimType in possibleRoleClaims)
+        {
+            var roleClaims = claimsIdentity.FindAll(claimType).ToList();
+            if (roleClaims.Any())
+            {
+                foreach (var roleClaim in roleClaims)
+                {
+                    // Map common role values to tracker-* format
+                    var mappedRole = roleClaim.Value switch
+                    {
+                        "admin" => "tracker-admin",
+                        "write" => "tracker-write",
+                        "read" => "tracker-read",
+                        _ => roleClaim.Value // Keep as-is if already in correct format or not recognized
+                    };
+                    
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, mappedRole));
+                }
+                break;
+            }
+        }
+
+        // Act
+        var standardRoleClaims = claimsIdentity.FindAll(ClaimTypes.Role).ToList();
+
+        // Assert
+        standardRoleClaims.Should().HaveCount(3);
+        standardRoleClaims.Should().Contain(c => c.Value == "tracker-admin");
+        standardRoleClaims.Should().Contain(c => c.Value == "tracker-write");
+        standardRoleClaims.Should().Contain(c => c.Value == "tracker-read");
     }
 
     [Fact]
@@ -176,7 +237,16 @@ public class Auth0ConfigurationTests
             {
                 foreach (var roleClaim in roleClaims)
                 {
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
+                    // Map common role values to tracker-* format
+                    var mappedRole = roleClaim.Value switch
+                    {
+                        "admin" => "tracker-admin",
+                        "write" => "tracker-write",
+                        "read" => "tracker-read",
+                        _ => roleClaim.Value // Keep as-is if already in correct format or not recognized
+                    };
+                    
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, mappedRole));
                 }
                 break;
             }
@@ -215,7 +285,16 @@ public class Auth0ConfigurationTests
             {
                 foreach (var roleClaim in roleClaims)
                 {
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
+                    // Map common role values to tracker-* format
+                    var mappedRole = roleClaim.Value switch
+                    {
+                        "admin" => "tracker-admin",
+                        "write" => "tracker-write",
+                        "read" => "tracker-read",
+                        _ => roleClaim.Value // Keep as-is if already in correct format or not recognized
+                    };
+                    
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, mappedRole));
                 }
                 break; // Only process the first matching namespace
             }
@@ -342,7 +421,16 @@ public class Auth0ConfigurationTests
                 {
                     foreach (var roleClaim in roleClaims)
                     {
-                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roleClaim.Value));
+                        // Map common role values to tracker-* format
+                        var mappedRole = roleClaim.Value switch
+                        {
+                            "admin" => "tracker-admin",
+                            "write" => "tracker-write",
+                            "read" => "tracker-read",
+                            _ => roleClaim.Value // Keep as-is if already in correct format or not recognized
+                        };
+                        
+                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, mappedRole));
                     }
                     break;
                 }

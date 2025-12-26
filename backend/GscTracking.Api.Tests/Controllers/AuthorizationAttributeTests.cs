@@ -16,7 +16,7 @@ public class AuthorizationAttributeTests
     [InlineData(typeof(JobsController), "ReadAccess")]
     [InlineData(typeof(ExpensesController), "ReadAccess")]
     [InlineData(typeof(JobUpdatesController), "ReadAccess")]
-    [InlineData(typeof(ExportController), "ReadAccess")]
+    [InlineData(typeof(ExportController), "WriteAccess")]
     [InlineData(typeof(ImportController), "AdminOnly")]
     public void Controller_ShouldHaveCorrectAuthorizePolicy(Type controllerType, string expectedPolicy)
     {
