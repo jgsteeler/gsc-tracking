@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.4.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.3.0...backend-v2.4.0) (2025-12-26)
+
+
+### Features
+
+* **auth:** add permission claim mapping to standard role claims ([#185](https://github.com/jgsteeler/gsc-tracking/issues/185)) ([9e4e127](https://github.com/jgsteeler/gsc-tracking/commit/9e4e127f9d13ad6b4b438d094a323eb8882d6b2d))
+
+
+### Bug Fixes
+
+* **auth:** map Auth0 permission/role values and correct export authorization ([#183](https://github.com/jgsteeler/gsc-tracking/issues/183)) ([1345956](https://github.com/jgsteeler/gsc-tracking/commit/1345956cb451333d6a6e92bd5afefd04a150f5e3))
+
 ## [2.3.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.2.1...backend-v2.3.0) (2025-12-24)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.5.0...frontend-v2.6.0) (2025-12-26)
+
+
+### Features
+
+* **auth:** add permission claim mapping to standard role claims ([#185](https://github.com/jgsteeler/gsc-tracking/issues/185)) ([9e4e127](https://github.com/jgsteeler/gsc-tracking/commit/9e4e127f9d13ad6b4b438d094a323eb8882d6b2d))
+
 ## [2.5.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.4.2...frontend-v2.5.0) (2025-12-24)
 
 
