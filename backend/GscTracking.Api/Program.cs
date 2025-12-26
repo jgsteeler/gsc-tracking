@@ -11,6 +11,7 @@ using GscTracking.Api.Services;
 using GscTracking.Api.Validators;
 using GscTracking.Api.Utils;
 using DotNetEnv;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -290,6 +291,26 @@ builder.Services.AddAuthentication(options =>
                             }
                             break; // Found roles, no need to check other claim types
                         }
+                    }
+                }
+
+                // Check for permissions in Auth0 'permissions' claim
+                var possiblePermissionClaims = new[]
+                {
+                    "permissions"
+                };
+
+                foreach (var permissionClaimType in possiblePermissionClaims)
+                {
+                    var permissionClaims = claimsIdentity.FindAll(permissionClaimType).ToList();
+                    if (permissionClaims.Any())
+                    {
+                        // Add each permission as a standard role claim
+                        foreach (var permissionClaim in permissionClaims)
+                        {
+                            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, permissionClaim.Value));
+                        }
+                        break;
                     }
                 }
             }
