@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using GscTracking.Api.DTOs;
-using GscTracking.Api.Services;
+using MediatR;
+using GscTracking.Application.DTOs;
+using GscTracking.Application.Jobs.Commands;
+using GscTracking.Application.Jobs.Queries;
 
 namespace GscTracking.Api.Controllers;
 
@@ -10,12 +12,12 @@ namespace GscTracking.Api.Controllers;
 [Authorize(Policy = "ReadAccess")] // Require read access for all endpoints
 public class JobsController : ControllerBase
 {
-    private readonly IJobService _jobService;
+    private readonly IMediator _mediator;
     private readonly ILogger<JobsController> _logger;
 
-    public JobsController(IJobService jobService, ILogger<JobsController> logger)
+    public JobsController(IMediator mediator, ILogger<JobsController> logger)
     {
-        _jobService = jobService;
+        _mediator = mediator;
         _logger = logger;
     }
 
@@ -30,7 +32,8 @@ public class JobsController : ControllerBase
     {
         try
         {
-            var jobs = await _jobService.GetAllJobsAsync(search, status);
+            var query = new GetAllJobsQuery(search, status);
+            var jobs = await _mediator.Send(query);
             return Ok(jobs);
         }
         catch (Exception ex)
@@ -50,7 +53,8 @@ public class JobsController : ControllerBase
     {
         try
         {
-            var job = await _jobService.GetJobByIdAsync(id);
+            var query = new GetJobByIdQuery(id);
+            var job = await _mediator.Send(query);
             if (job == null)
             {
                 return NotFound(new { message = $"Job with ID {id} not found." });
@@ -74,7 +78,8 @@ public class JobsController : ControllerBase
     {
         try
         {
-            var jobs = await _jobService.GetJobsByCustomerIdAsync(customerId);
+            var query = new GetJobsByCustomerIdQuery(customerId);
+            var jobs = await _mediator.Send(query);
             return Ok(jobs);
         }
         catch (Exception ex)
@@ -119,7 +124,8 @@ public class JobsController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-            var job = await _jobService.CreateJobAsync(jobRequest);
+            var command = new CreateJobCommand(jobRequest);
+            var job = await _mediator.Send(command);
             return CreatedAtAction(nameof(GetJob), new { id = job.Id }, job);
         }
         catch (ArgumentException ex)
@@ -172,7 +178,8 @@ public class JobsController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-            var job = await _jobService.UpdateJobAsync(id, jobRequest);
+            var command = new UpdateJobCommand(id, jobRequest);
+            var job = await _mediator.Send(command);
             if (job == null)
             {
                 return NotFound(new { message = $"Job with ID {id} not found." });
@@ -202,7 +209,8 @@ public class JobsController : ControllerBase
     {
         try
         {
-            var result = await _jobService.DeleteJobAsync(id);
+            var command = new DeleteJobCommand(id);
+            var result = await _mediator.Send(command);
             if (!result)
             {
                 return NotFound(new { message = $"Job with ID {id} not found." });

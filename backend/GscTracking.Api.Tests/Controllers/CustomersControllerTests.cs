@@ -1,7 +1,9 @@
 using FluentAssertions;
 using GscTracking.Api.Controllers;
-using GscTracking.Api.DTOs;
-using GscTracking.Api.Services;
+using GscTracking.Application.DTOs;
+using GscTracking.Application.Customers.Commands;
+using GscTracking.Application.Customers.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,15 +12,15 @@ namespace GscTracking.Api.Tests.Controllers;
 
 public class CustomersControllerTests
 {
-    private readonly Mock<ICustomerService> _mockCustomerService;
+    private readonly Mock<IMediator> _mockMediator;
     private readonly Mock<ILogger<CustomersController>> _mockLogger;
     private readonly CustomersController _controller;
 
     public CustomersControllerTests()
     {
-        _mockCustomerService = new Mock<ICustomerService>();
+        _mockMediator = new Mock<IMediator>();
         _mockLogger = new Mock<ILogger<CustomersController>>();
-        _controller = new CustomersController(_mockCustomerService.Object, _mockLogger.Object);
+        _controller = new CustomersController(_mockMediator.Object, _mockLogger.Object);
     }
 
     [Fact]
@@ -30,7 +32,8 @@ public class CustomersControllerTests
             new CustomerDto { Id = 1, Name = "John Doe", Email = "john@example.com", Phone = "1234567890", Address = "123 Main St" },
             new CustomerDto { Id = 2, Name = "Jane Smith", Email = "jane@example.com", Phone = "0987654321", Address = "456 Oak Ave" }
         };
-        _mockCustomerService.Setup(s => s.GetAllCustomersAsync(null)).ReturnsAsync(customers);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetAllCustomersQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(customers);
 
         // Act
         var result = await _controller.GetCustomers();
@@ -50,7 +53,8 @@ public class CustomersControllerTests
         {
             new CustomerDto { Id = 1, Name = "John Doe", Email = "john@example.com", Phone = "1234567890", Address = "123 Main St" }
         };
-        _mockCustomerService.Setup(s => s.GetAllCustomersAsync(searchTerm)).ReturnsAsync(customers);
+        _mockMediator.Setup(m => m.Send(It.Is<GetAllCustomersQuery>(q => q.SearchTerm == searchTerm), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(customers);
 
         // Act
         var result = await _controller.GetCustomers(searchTerm);
@@ -65,7 +69,7 @@ public class CustomersControllerTests
     public async Task GetCustomers_ReturnsInternalServerError_WhenExceptionThrown()
     {
         // Arrange
-        _mockCustomerService.Setup(s => s.GetAllCustomersAsync(null))
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetAllCustomersQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -89,7 +93,8 @@ public class CustomersControllerTests
             Phone = "1234567890",
             Address = "123 Main St"
         };
-        _mockCustomerService.Setup(s => s.GetCustomerByIdAsync(customerId)).ReturnsAsync(customer);
+        _mockMediator.Setup(m => m.Send(It.Is<GetCustomerByIdQuery>(q => q.Id == customerId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(customer);
 
         // Act
         var result = await _controller.GetCustomer(customerId);
@@ -106,7 +111,8 @@ public class CustomersControllerTests
     {
         // Arrange
         var customerId = 999;
-        _mockCustomerService.Setup(s => s.GetCustomerByIdAsync(customerId)).ReturnsAsync((CustomerDto?)null);
+        _mockMediator.Setup(m => m.Send(It.Is<GetCustomerByIdQuery>(q => q.Id == customerId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((CustomerDto?)null);
 
         // Act
         var result = await _controller.GetCustomer(customerId);
@@ -120,7 +126,7 @@ public class CustomersControllerTests
     {
         // Arrange
         var customerId = 1;
-        _mockCustomerService.Setup(s => s.GetCustomerByIdAsync(customerId))
+        _mockMediator.Setup(m => m.Send(It.Is<GetCustomerByIdQuery>(q => q.Id == customerId), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -150,7 +156,8 @@ public class CustomersControllerTests
             Phone = customerRequest.Phone,
             Address = customerRequest.Address
         };
-        _mockCustomerService.Setup(s => s.CreateCustomerAsync(customerRequest)).ReturnsAsync(createdCustomer);
+        _mockMediator.Setup(m => m.Send(It.IsAny<CreateCustomerCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdCustomer);
 
         // Act
         var result = await _controller.CreateCustomer(customerRequest);
@@ -188,7 +195,7 @@ public class CustomersControllerTests
             Phone = "1112223333",
             Address = "999 New St"
         };
-        _mockCustomerService.Setup(s => s.CreateCustomerAsync(customerRequest))
+        _mockMediator.Setup(m => m.Send(It.IsAny<CreateCustomerCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -219,7 +226,8 @@ public class CustomersControllerTests
             Phone = customerRequest.Phone,
             Address = customerRequest.Address
         };
-        _mockCustomerService.Setup(s => s.UpdateCustomerAsync(customerId, customerRequest)).ReturnsAsync(updatedCustomer);
+        _mockMediator.Setup(m => m.Send(It.IsAny<UpdateCustomerCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedCustomer);
 
         // Act
         var result = await _controller.UpdateCustomer(customerId, customerRequest);
@@ -242,7 +250,8 @@ public class CustomersControllerTests
             Phone = "9999999999",
             Address = "Updated Address"
         };
-        _mockCustomerService.Setup(s => s.UpdateCustomerAsync(customerId, customerRequest)).ReturnsAsync((CustomerDto?)null);
+        _mockMediator.Setup(m => m.Send(It.IsAny<UpdateCustomerCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((CustomerDto?)null);
 
         // Act
         var result = await _controller.UpdateCustomer(customerId, customerRequest);
@@ -278,7 +287,7 @@ public class CustomersControllerTests
             Phone = "9999999999",
             Address = "Updated Address"
         };
-        _mockCustomerService.Setup(s => s.UpdateCustomerAsync(customerId, customerRequest))
+        _mockMediator.Setup(m => m.Send(It.IsAny<UpdateCustomerCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -294,7 +303,8 @@ public class CustomersControllerTests
     {
         // Arrange
         var customerId = 1;
-        _mockCustomerService.Setup(s => s.DeleteCustomerAsync(customerId)).ReturnsAsync(true);
+        _mockMediator.Setup(m => m.Send(It.Is<DeleteCustomerCommand>(c => c.Id == customerId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         // Act
         var result = await _controller.DeleteCustomer(customerId);
@@ -308,7 +318,8 @@ public class CustomersControllerTests
     {
         // Arrange
         var customerId = 999;
-        _mockCustomerService.Setup(s => s.DeleteCustomerAsync(customerId)).ReturnsAsync(false);
+        _mockMediator.Setup(m => m.Send(It.Is<DeleteCustomerCommand>(c => c.Id == customerId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // Act
         var result = await _controller.DeleteCustomer(customerId);
@@ -322,7 +333,7 @@ public class CustomersControllerTests
     {
         // Arrange
         var customerId = 1;
-        _mockCustomerService.Setup(s => s.DeleteCustomerAsync(customerId))
+        _mockMediator.Setup(m => m.Send(It.Is<DeleteCustomerCommand>(c => c.Id == customerId), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act

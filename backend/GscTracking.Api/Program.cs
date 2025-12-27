@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using GscTracking.Api.Data;
+using GscTracking.Infrastructure.Data;
 using GscTracking.Api.Services;
 using GscTracking.Api.Validators;
 using GscTracking.Api.Utils;
+using GscTracking.Application;
+using GscTracking.Infrastructure;
 using DotNetEnv;
 using System.Security.Claims;
 
@@ -112,34 +114,13 @@ if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreC
 {
     npgsqlConnectionString = ConnectionStringHelper.BuildNpgsqlConnectionString(connectionString);
 }
-    
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseNpgsql(npgsqlConnectionString, npgsqlOptions =>
-    {
-        // Enable retry on failure for transient errors
-        npgsqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 3,
-            maxRetryDelay: TimeSpan.FromSeconds(5),
-            errorCodesToAdd: null);
-        
-        // Set command timeout (30 seconds)
-        npgsqlOptions.CommandTimeout(30);
-    });
-    
-    // Enable detailed errors in development
-    if (builder.Environment.IsDevelopment())
-    {
-        options.EnableSensitiveDataLogging();
-        options.EnableDetailedErrors();
-    }
-});
 
-// Add services
-builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IJobService, JobService>();
-builder.Services.AddScoped<IJobUpdateService, JobUpdateService>();
-builder.Services.AddScoped<IExpenseService, ExpenseService>();
+// Add Clean Architecture layers
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration, npgsqlConnectionString, builder.Environment.IsDevelopment());
+
+// Legacy services are being phased out - using CQRS pattern instead
+// Keeping CSV service for now until migrated
 builder.Services.AddScoped<ICsvService, CsvService>();
 
 // Add CORS policy with pattern matching for Netlify deploy previews

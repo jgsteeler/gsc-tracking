@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using GscTracking.Api.DTOs;
-using GscTracking.Api.Services;
+using MediatR;
+using GscTracking.Application.DTOs;
+using GscTracking.Application.JobUpdates.Commands;
+using GscTracking.Application.JobUpdates.Queries;
 
 namespace GscTracking.Api.Controllers;
 
@@ -10,12 +12,12 @@ namespace GscTracking.Api.Controllers;
 [Authorize(Policy = "ReadAccess")] // Require read access for all endpoints
 public class JobUpdatesController : ControllerBase
 {
-    private readonly IJobUpdateService _jobUpdateService;
+    private readonly IMediator _mediator;
     private readonly ILogger<JobUpdatesController> _logger;
 
-    public JobUpdatesController(IJobUpdateService jobUpdateService, ILogger<JobUpdatesController> logger)
+    public JobUpdatesController(IMediator mediator, ILogger<JobUpdatesController> logger)
     {
-        _jobUpdateService = jobUpdateService;
+        _mediator = mediator;
         _logger = logger;
     }
 
@@ -29,7 +31,8 @@ public class JobUpdatesController : ControllerBase
     {
         try
         {
-            var updates = await _jobUpdateService.GetJobUpdatesAsync(jobId);
+            var query = new GetJobUpdatesQuery(jobId);
+            var updates = await _mediator.Send(query);
             return Ok(updates);
         }
         catch (Exception ex)
@@ -50,7 +53,8 @@ public class JobUpdatesController : ControllerBase
     {
         try
         {
-            var update = await _jobUpdateService.GetJobUpdateByIdAsync(id);
+            var query = new GetJobUpdateByIdQuery(id);
+            var update = await _mediator.Send(query);
             if (update == null)
             {
                 return NotFound(new { message = $"Job update with ID {id} not found." });
@@ -84,7 +88,8 @@ public class JobUpdatesController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-            var update = await _jobUpdateService.CreateJobUpdateAsync(jobId, updateRequest);
+            var command = new CreateJobUpdateCommand(jobId, updateRequest);
+            var update = await _mediator.Send(command);
             return CreatedAtAction(nameof(GetJobUpdate), new { jobId = update.JobId, id = update.Id }, update);
         }
         catch (ArgumentException ex)
@@ -112,7 +117,8 @@ public class JobUpdatesController : ControllerBase
         try
         {
             // Verify the update exists and belongs to the specified job in one operation
-            var update = await _jobUpdateService.GetJobUpdateByIdAsync(id);
+            var query = new GetJobUpdateByIdQuery(id);
+            var update = await _mediator.Send(query);
             if (update == null)
             {
                 return NotFound(new { message = $"Job update with ID {id} not found." });
@@ -123,7 +129,8 @@ public class JobUpdatesController : ControllerBase
             }
 
             // Attempt to delete - if it fails (already deleted), we'll return 404
-            var result = await _jobUpdateService.DeleteJobUpdateAsync(id);
+            var command = new DeleteJobUpdateCommand(id);
+            var result = await _mediator.Send(command);
             if (!result)
             {
                 return NotFound(new { message = $"Job update with ID {id} not found." });
