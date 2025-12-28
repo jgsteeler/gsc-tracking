@@ -1,7 +1,9 @@
 using FluentAssertions;
 using GscTracking.Api.Controllers;
-using GscTracking.Api.DTOs;
-using GscTracking.Api.Services;
+using GscTracking.Application.DTOs;
+using GscTracking.Application.JobUpdates.Commands;
+using GscTracking.Application.JobUpdates.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,15 +12,15 @@ namespace GscTracking.Api.Tests.Controllers;
 
 public class JobUpdatesControllerTests
 {
-    private readonly Mock<IJobUpdateService> _mockJobUpdateService;
+    private readonly Mock<IMediator> _mockMediator;
     private readonly Mock<ILogger<JobUpdatesController>> _mockLogger;
     private readonly JobUpdatesController _controller;
 
     public JobUpdatesControllerTests()
     {
-        _mockJobUpdateService = new Mock<IJobUpdateService>();
+        _mockMediator = new Mock<IMediator>();
         _mockLogger = new Mock<ILogger<JobUpdatesController>>();
-        _controller = new JobUpdatesController(_mockJobUpdateService.Object, _mockLogger.Object);
+        _controller = new JobUpdatesController(_mockMediator.Object, _mockLogger.Object);
     }
 
     [Fact]
@@ -31,7 +33,7 @@ public class JobUpdatesControllerTests
             new JobUpdateDto { Id = 1, JobId = 1, UpdateText = "Started diagnostics", CreatedAt = DateTime.UtcNow },
             new JobUpdateDto { Id = 2, JobId = 1, UpdateText = "Found oil leak", CreatedAt = DateTime.UtcNow }
         };
-        _mockJobUpdateService.Setup(s => s.GetJobUpdatesAsync(jobId)).ReturnsAsync(updates);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobUpdatesQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(updates);
 
         // Act
         var result = await _controller.GetJobUpdates(jobId);
@@ -46,7 +48,7 @@ public class JobUpdatesControllerTests
     public async Task GetJobUpdates_ReturnsInternalServerError_WhenExceptionThrown()
     {
         // Arrange
-        _mockJobUpdateService.Setup(s => s.GetJobUpdatesAsync(1))
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobUpdatesQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -64,7 +66,7 @@ public class JobUpdatesControllerTests
         var jobId = 1;
         var updateId = 1;
         var update = new JobUpdateDto { Id = 1, JobId = 1, UpdateText = "Test update", CreatedAt = DateTime.UtcNow };
-        _mockJobUpdateService.Setup(s => s.GetJobUpdateByIdAsync(updateId)).ReturnsAsync(update);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobUpdateByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(update);
 
         // Act
         var result = await _controller.GetJobUpdate(jobId, updateId);
@@ -79,7 +81,7 @@ public class JobUpdatesControllerTests
     public async Task GetJobUpdate_ReturnsNotFound_WhenUpdateDoesNotExist()
     {
         // Arrange
-        _mockJobUpdateService.Setup(s => s.GetJobUpdateByIdAsync(999)).ReturnsAsync((JobUpdateDto?)null);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobUpdateByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync((JobUpdateDto?)null);
 
         // Act
         var result = await _controller.GetJobUpdate(1, 999);
@@ -93,7 +95,7 @@ public class JobUpdatesControllerTests
     {
         // Arrange
         var update = new JobUpdateDto { Id = 1, JobId = 2, UpdateText = "Test update", CreatedAt = DateTime.UtcNow };
-        _mockJobUpdateService.Setup(s => s.GetJobUpdateByIdAsync(1)).ReturnsAsync(update);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobUpdateByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(update);
 
         // Act
         var result = await _controller.GetJobUpdate(1, 1);
@@ -109,7 +111,7 @@ public class JobUpdatesControllerTests
         var jobId = 1;
         var request = new JobUpdateRequestDto { UpdateText = "Test update" };
         var createdUpdate = new JobUpdateDto { Id = 1, JobId = 1, UpdateText = "Test update", CreatedAt = DateTime.UtcNow };
-        _mockJobUpdateService.Setup(s => s.CreateJobUpdateAsync(jobId, request)).ReturnsAsync(createdUpdate);
+        _mockMediator.Setup(m => m.Send(It.IsAny<CreateJobUpdateCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(createdUpdate);
 
         // Act
         var result = await _controller.CreateJobUpdate(jobId, request);
@@ -125,7 +127,7 @@ public class JobUpdatesControllerTests
     {
         // Arrange
         var request = new JobUpdateRequestDto { UpdateText = "Test update" };
-        _mockJobUpdateService.Setup(s => s.CreateJobUpdateAsync(999, request))
+        _mockMediator.Setup(m => m.Send(It.IsAny<CreateJobUpdateCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new ArgumentException("Job with ID 999 not found."));
 
         // Act
@@ -142,8 +144,8 @@ public class JobUpdatesControllerTests
         var jobId = 1;
         var updateId = 1;
         var update = new JobUpdateDto { Id = 1, JobId = 1, UpdateText = "Test update", CreatedAt = DateTime.UtcNow };
-        _mockJobUpdateService.Setup(s => s.GetJobUpdateByIdAsync(updateId)).ReturnsAsync(update);
-        _mockJobUpdateService.Setup(s => s.DeleteJobUpdateAsync(updateId)).ReturnsAsync(true);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobUpdateByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(update);
+        _mockMediator.Setup(m => m.Send(It.IsAny<DeleteJobUpdateCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
         // Act
         var result = await _controller.DeleteJobUpdate(jobId, updateId);
@@ -156,7 +158,7 @@ public class JobUpdatesControllerTests
     public async Task DeleteJobUpdate_ReturnsNotFound_WhenUpdateDoesNotExist()
     {
         // Arrange
-        _mockJobUpdateService.Setup(s => s.GetJobUpdateByIdAsync(999)).ReturnsAsync((JobUpdateDto?)null);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobUpdateByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync((JobUpdateDto?)null);
 
         // Act
         var result = await _controller.DeleteJobUpdate(1, 999);
@@ -170,7 +172,7 @@ public class JobUpdatesControllerTests
     {
         // Arrange
         var update = new JobUpdateDto { Id = 1, JobId = 2, UpdateText = "Test update", CreatedAt = DateTime.UtcNow };
-        _mockJobUpdateService.Setup(s => s.GetJobUpdateByIdAsync(1)).ReturnsAsync(update);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobUpdateByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(update);
 
         // Act
         var result = await _controller.DeleteJobUpdate(1, 1);

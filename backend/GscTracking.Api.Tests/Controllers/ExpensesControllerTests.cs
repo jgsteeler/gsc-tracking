@@ -1,7 +1,9 @@
 using FluentAssertions;
 using GscTracking.Api.Controllers;
-using GscTracking.Api.DTOs;
-using GscTracking.Api.Services;
+using GscTracking.Application.DTOs;
+using GscTracking.Application.Expenses.Commands;
+using GscTracking.Application.Expenses.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,15 +12,15 @@ namespace GscTracking.Api.Tests.Controllers;
 
 public class ExpensesControllerTests
 {
-    private readonly Mock<IExpenseService> _mockExpenseService;
+    private readonly Mock<IMediator> _mockMediator;
     private readonly Mock<ILogger<ExpensesController>> _mockLogger;
     private readonly ExpensesController _controller;
 
     public ExpensesControllerTests()
     {
-        _mockExpenseService = new Mock<IExpenseService>();
+        _mockMediator = new Mock<IMediator>();
         _mockLogger = new Mock<ILogger<ExpensesController>>();
-        _controller = new ExpensesController(_mockExpenseService.Object, _mockLogger.Object);
+        _controller = new ExpensesController(_mockMediator.Object, _mockLogger.Object);
     }
 
     [Fact]
@@ -45,8 +47,8 @@ public class ExpensesControllerTests
             Date = expenseRequest.Date,
             ReceiptReference = expenseRequest.ReceiptReference
         };
-        _mockExpenseService.Setup(s => s.GetExpenseByIdAsync(expenseId)).ReturnsAsync(new ExpenseDto { Id = expenseId, JobId = jobId });
-        _mockExpenseService.Setup(s => s.UpdateExpenseAsync(expenseId, expenseRequest)).ReturnsAsync(updatedExpense);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetExpenseByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ExpenseDto { Id = expenseId, JobId = jobId });
+        _mockMediator.Setup(m => m.Send(It.IsAny<UpdateExpenseCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(updatedExpense);
 
         // Act
         var result = await _controller.UpdateExpense(jobId, expenseId, expenseRequest);
@@ -71,8 +73,8 @@ public class ExpensesControllerTests
             Amount = 29.99m,
             Date = DateTime.UtcNow
         };
-        _mockExpenseService.Setup(s => s.GetExpenseByIdAsync(expenseId)).ReturnsAsync((ExpenseDto?)null);
-        _mockExpenseService.Setup(s => s.UpdateExpenseAsync(expenseId, expenseRequest)).ReturnsAsync((ExpenseDto?)null);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetExpenseByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync((ExpenseDto?)null);
+        _mockMediator.Setup(m => m.Send(It.IsAny<UpdateExpenseCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync((ExpenseDto?)null);
 
         // Act
         var result = await _controller.UpdateExpense(jobId, expenseId, expenseRequest);
@@ -103,8 +105,8 @@ public class ExpensesControllerTests
         // Arrange
         var jobId = 1;
         var expenseId = 1;
-        _mockExpenseService.Setup(s => s.GetExpenseByIdAsync(expenseId)).ThrowsAsync(new ArgumentException("Invalid expense"));
-        _mockExpenseService.Setup(s => s.DeleteExpenseAsync(expenseId)).ThrowsAsync(new ArgumentException("Invalid expense"));
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetExpenseByIdQuery>(), It.IsAny<CancellationToken>())).ThrowsAsync(new ArgumentException("Invalid expense"));
+        _mockMediator.Setup(m => m.Send(It.IsAny<DeleteExpenseCommand>(), It.IsAny<CancellationToken>())).ThrowsAsync(new ArgumentException("Invalid expense"));
 
         // Act
         var result = await _controller.DeleteExpense(jobId, expenseId);
@@ -126,8 +128,8 @@ public class ExpensesControllerTests
             Amount = 29.99m,
             Date = DateTime.UtcNow
         };
-        _mockExpenseService.Setup(s => s.GetExpenseByIdAsync(expenseId)).ReturnsAsync(new ExpenseDto { Id = expenseId, JobId = jobId });
-        _mockExpenseService.Setup(s => s.UpdateExpenseAsync(expenseId, expenseRequest))
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetExpenseByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ExpenseDto { Id = expenseId, JobId = jobId });
+        _mockMediator.Setup(m => m.Send(It.IsAny<UpdateExpenseCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -144,8 +146,8 @@ public class ExpensesControllerTests
         // Arrange
         var jobId = 1;
         var expenseId = 1;
-        _mockExpenseService.Setup(s => s.GetExpenseByIdAsync(expenseId)).ReturnsAsync(new ExpenseDto { Id = expenseId, JobId = jobId });
-        _mockExpenseService.Setup(s => s.DeleteExpenseAsync(expenseId)).ReturnsAsync(true);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetExpenseByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ExpenseDto { Id = expenseId, JobId = jobId });
+        _mockMediator.Setup(m => m.Send(It.IsAny<DeleteExpenseCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
         // Act
         var result = await _controller.DeleteExpense(jobId, expenseId);
@@ -160,8 +162,8 @@ public class ExpensesControllerTests
         // Arrange
         var jobId = 1;
         var expenseId = 999;
-        _mockExpenseService.Setup(s => s.GetExpenseByIdAsync(expenseId)).ReturnsAsync((ExpenseDto?)null);
-        _mockExpenseService.Setup(s => s.DeleteExpenseAsync(expenseId)).ReturnsAsync(false);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetExpenseByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync((ExpenseDto?)null);
+        _mockMediator.Setup(m => m.Send(It.IsAny<DeleteExpenseCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
 
         // Act
         var result = await _controller.DeleteExpense(jobId, expenseId);
@@ -176,8 +178,8 @@ public class ExpensesControllerTests
         // Arrange
         var jobId = 1;
         var expenseId = 1;
-        _mockExpenseService.Setup(s => s.GetExpenseByIdAsync(expenseId)).ReturnsAsync(new ExpenseDto { Id = expenseId, JobId = jobId });
-        _mockExpenseService.Setup(s => s.DeleteExpenseAsync(expenseId))
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetExpenseByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ExpenseDto { Id = expenseId, JobId = jobId });
+        _mockMediator.Setup(m => m.Send(It.IsAny<DeleteExpenseCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act

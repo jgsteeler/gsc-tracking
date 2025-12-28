@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using GscTracking.Api.DTOs;
-using GscTracking.Api.Services;
+using MediatR;
+using GscTracking.Application.DTOs;
+using GscTracking.Application.Expenses.Commands;
+using GscTracking.Application.Expenses.Queries;
 
 namespace GscTracking.Api.Controllers;
 
@@ -10,12 +12,12 @@ namespace GscTracking.Api.Controllers;
 [Authorize(Policy = "ReadAccess")] // Require read access for all endpoints
 public class ExpensesController : ControllerBase
 {
-    private readonly IExpenseService _expenseService;
+    private readonly IMediator _mediator;
     private readonly ILogger<ExpensesController> _logger;
 
-    public ExpensesController(IExpenseService expenseService, ILogger<ExpensesController> logger)
+    public ExpensesController(IMediator mediator, ILogger<ExpensesController> logger)
     {
-        _expenseService = expenseService;
+        _mediator = mediator;
         _logger = logger;
     }
 
@@ -29,7 +31,8 @@ public class ExpensesController : ControllerBase
     {
         try
         {
-            var expenses = await _expenseService.GetExpensesByJobIdAsync(jobId);
+            var query = new GetExpensesByJobIdQuery(jobId);
+            var expenses = await _mediator.Send(query);
             return Ok(expenses);
         }
         catch (Exception ex)
@@ -71,7 +74,8 @@ public class ExpensesController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-            var expense = await _expenseService.CreateExpenseAsync(jobId, expenseRequest);
+            var command = new CreateExpenseCommand(jobId, expenseRequest);
+            var expense = await _mediator.Send(command);
             return CreatedAtAction(nameof(GetExpenseById), new { jobId, id = expense.Id }, expense);
         }
         catch (ArgumentException ex)
@@ -97,7 +101,8 @@ public class ExpensesController : ControllerBase
     {
         try
         {
-            var expense = await _expenseService.GetExpenseByIdAsync(id);
+            var query = new GetExpenseByIdQuery(id);
+            var expense = await _mediator.Send(query);
             if (expense == null)
             {
                 return NotFound(new { message = $"Expense with ID {id} not found." });
@@ -153,7 +158,8 @@ public class ExpensesController : ControllerBase
             }
             
             // Verify the expense exists and belongs to the specified job
-            var existingExpense = await _expenseService.GetExpenseByIdAsync(id);
+            var query = new GetExpenseByIdQuery(id);
+            var existingExpense = await _mediator.Send(query);
             if (existingExpense == null)
             {
                 return NotFound(new { message = $"Expense with ID {id} not found." });
@@ -163,7 +169,8 @@ public class ExpensesController : ControllerBase
                 return BadRequest(new { message = "Expense does not belong to the specified job." });
             }
             
-            var expense = await _expenseService.UpdateExpenseAsync(id, expenseRequest);
+            var command = new UpdateExpenseCommand(id, expenseRequest);
+            var expense = await _mediator.Send(command);
             // This should not happen since we verified the expense exists above, but handle defensively
             if (expense == null)
             {
@@ -197,7 +204,8 @@ public class ExpensesController : ControllerBase
         try
         {
             // Verify the expense exists and belongs to the specified job
-            var expense = await _expenseService.GetExpenseByIdAsync(id);
+            var query = new GetExpenseByIdQuery(id);
+            var expense = await _mediator.Send(query);
             if (expense == null)
             {
                 return NotFound(new { message = $"Expense with ID {id} not found." });
@@ -208,10 +216,11 @@ public class ExpensesController : ControllerBase
             }
 
             // Attempt to delete - if it fails (already deleted), we'll return 404
-            var result = await _expenseService.DeleteExpenseAsync(id);
+            var command = new DeleteExpenseCommand(id);
+            var result = await _mediator.Send(command);
             if (!result)
             {
-                // This case should ideally not be hit if GetExpenseByIdAsync check passes
+                // This case should ideally not be hit if GetExpenseByIdQuery check passes
                 return NotFound(new { message = $"Expense with ID {id} not found for deletion." });
             }
 

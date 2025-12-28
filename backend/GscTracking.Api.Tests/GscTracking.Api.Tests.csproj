@@ -27,6 +27,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GscTracking.Api\GscTracking.Api.csproj" />
+    <ProjectReference Include="..\GscTracking.Application\GscTracking.Application.csproj" />
+    <ProjectReference Include="..\GscTracking.Infrastructure\GscTracking.Infrastructure.csproj" />
+    <ProjectReference Include="..\GscTracking.Core\GscTracking.Core.csproj" />
   </ItemGroup>
 
 </Project>
