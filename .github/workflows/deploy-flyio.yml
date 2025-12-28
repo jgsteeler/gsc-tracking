@@ -103,7 +103,7 @@ jobs:
       - name: Run Backend Smoke Tests
         run: |
           chmod +x .github/scripts/smoke-test.sh
-          API_URL="https://gsc-tracking-api.fly.dev" .github/scripts/smoke-test.sh
+          API_URL="${{ vars.PROD_API_URL || 'https://api.gibsonservice.co' }}" .github/scripts/smoke-test.sh
 
       - name: Deployment Summary
         run: |
@@ -113,5 +113,5 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **App Name:** gsc-tracking-api" >> $GITHUB_STEP_SUMMARY
           echo "- **Region:** iad (Northern Virginia)" >> $GITHUB_STEP_SUMMARY
-          echo "- **URL:** https://gsc-tracking-api.fly.dev" >> $GITHUB_STEP_SUMMARY
-          echo "- **Health Check:** https://gsc-tracking-api.fly.dev/api/hello" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL:** https://api.gibsonservice.co" >> $GITHUB_STEP_SUMMARY
+          echo "- **Health Check:** https://api.gibsonservice.co/api/hello" >> $GITHUB_STEP_SUMMARY

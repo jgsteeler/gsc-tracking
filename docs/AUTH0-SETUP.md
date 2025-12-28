@@ -43,7 +43,7 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 
 2. **Configure API Settings**
    - **Name**: `GSC Tracking API`
-   - **Identifier**: `https://api.gsc-tracking.com` (or your domain)
+   - **Identifier**: `https://api.gibsonservice.co` (or your domain)
      - This is your **Audience** value
      - Must be a valid URL format (but doesn't need to resolve)
    - **Signing Algorithm**: RS256 (default)
@@ -76,7 +76,7 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 
    ```
    http://localhost:5173,
-   https://gsc-tracking-ui.netlify.app,
+   https://track.gibsonservice.co,
    https://staging--gsc-tracking-ui.netlify.app
    ```
 
@@ -84,7 +84,7 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 
    ```
    http://localhost:5173,
-   https://gsc-tracking-ui.netlify.app,
+   https://track.gibsonservice.co,
    https://staging--gsc-tracking-ui.netlify.app
    ```
 
@@ -92,7 +92,7 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 
    ```
    http://localhost:5173,
-   https://gsc-tracking-ui.netlify.app,
+   https://track.gibsonservice.co,
    https://staging--gsc-tracking-ui.netlify.app
    ```
 
@@ -100,7 +100,7 @@ This guide walks you through setting up Auth0 authentication for the GSC Trackin
 
    ```
    http://localhost:5173,
-   https://gsc-tracking-ui.netlify.app,
+   https://track.gibsonservice.co,
    https://staging--gsc-tracking-ui.netlify.app
    ```
 
@@ -361,7 +361,7 @@ For staging and production environments, the backend uses environment variables 
    # Auth0 Configuration
    VITE_AUTH0_DOMAIN=your-tenant.auth0.com
    VITE_AUTH0_CLIENT_ID=your-client-id
-   VITE_AUTH0_AUDIENCE=https://api.gsc-tracking.com
+   VITE_AUTH0_AUDIENCE=https://api.gibsonservice.co
 
    # API URL
    VITE_API_URL=http://localhost:5091/api
@@ -378,7 +378,7 @@ For staging and production environments, the frontend uses environment variables
    - `VITE_AUTH0_DOMAIN`: `your-production-domain`
    - `VITE_AUTH0_CLIENT_ID`: `your-production-client-id`
    - `VITE_AUTH0_AUDIENCE`: `https://api.gsctracking.com`
-   - `VITE_API_URL`: `https://api.your-production-domain.com/api`
+   - `VITE_API_URL`: `https://api.gibsonservice.co/api`
 
 2. **Kubernetes**
 

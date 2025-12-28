@@ -7,6 +7,10 @@ React + TypeScript + Vite frontend for the GSC Small Engine Repair business mana
 - [Node.js](https://nodejs.org/) (v18 or higher)
 - [npm](https://www.npmjs.com/) (comes with Node.js)
 
+## Status
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/8217bab4-e220-45f5-bb8b-436083684de4/deploy-status)](https://app.netlify.com/projects/gsc-tracking-ui/deploys)
+
 ## Getting Started
 
 ### Install Dependencies

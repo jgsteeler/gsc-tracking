@@ -37,7 +37,7 @@
 # Uncomment if you want to proxy API requests through Netlify
 # [[redirects]]
 #   from = "/api/*"
-#   to = "https://gsc-tracking-api.fly.dev/api/:splat"
+#   to = "https://api.gibsonservice.co/api/:splat"
 #   status = 200
 #   force = true
 
