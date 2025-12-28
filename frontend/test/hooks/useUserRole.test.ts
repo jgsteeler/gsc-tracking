@@ -60,6 +60,81 @@ describe('useUserRole', () => {
     });
   });
 
+  it('should read permissions from namespaced claim', async () => {
+    const mockPayload = { 'https://gsc-tracking.com/permissions': ['admin'] };
+    const mockToken = createMockJWT(mockPayload);
+
+    const auth0Mock = {
+      isAuthenticated: true,
+      isLoading: false,
+      user: {},
+      getAccessTokenSilently: vi.fn().mockResolvedValue(mockToken),
+    } satisfies Partial<Auth0ContextInterface>;
+
+    vi.mocked(useAuth0).mockReturnValue(auth0Mock as Auth0ContextInterface);
+
+    const { result } = renderHook(() => useUserRole());
+
+    await waitFor(() => {
+      expect(result.current.roles).toEqual(['admin']);
+      expect(result.current.isAdmin).toBe(true);
+      expect(result.current.canWrite).toBe(true);
+      expect(result.current.canRead).toBe(true);
+      expect(result.current.isLoading).toBe(false);
+    });
+  });
+
+  it('should read roles from namespaced claim as fallback', async () => {
+    const mockPayload = { 'https://gsc-tracking.com/roles': ['tracker-admin', 'tracker-write'] };
+    const mockToken = createMockJWT(mockPayload);
+
+    const auth0Mock = {
+      isAuthenticated: true,
+      isLoading: false,
+      user: {},
+      getAccessTokenSilently: vi.fn().mockResolvedValue(mockToken),
+    } satisfies Partial<Auth0ContextInterface>;
+
+    vi.mocked(useAuth0).mockReturnValue(auth0Mock as Auth0ContextInterface);
+
+    const { result } = renderHook(() => useUserRole());
+
+    await waitFor(() => {
+      expect(result.current.roles).toEqual(['tracker-admin', 'tracker-write']);
+      expect(result.current.isAdmin).toBe(true);
+      expect(result.current.canWrite).toBe(true);
+      expect(result.current.canRead).toBe(true);
+      expect(result.current.isLoading).toBe(false);
+    });
+  });
+
+  it('should prioritize namespaced permissions over standard permissions', async () => {
+    const mockPayload = {
+      'https://gsc-tracking.com/permissions': ['admin'],
+      permissions: ['read'], // This should be ignored
+    };
+    const mockToken = createMockJWT(mockPayload);
+
+    const auth0Mock = {
+      isAuthenticated: true,
+      isLoading: false,
+      user: {},
+      getAccessTokenSilently: vi.fn().mockResolvedValue(mockToken),
+    } satisfies Partial<Auth0ContextInterface>;
+
+    vi.mocked(useAuth0).mockReturnValue(auth0Mock as Auth0ContextInterface);
+
+    const { result } = renderHook(() => useUserRole());
+
+    await waitFor(() => {
+      expect(result.current.roles).toEqual(['admin']);
+      expect(result.current.isAdmin).toBe(true);
+      expect(result.current.canWrite).toBe(true);
+      expect(result.current.canRead).toBe(true);
+      expect(result.current.isLoading).toBe(false);
+    });
+  });
+
   it('should handle token fetch errors gracefully', async () => {
     const auth0Mock = {
       isAuthenticated: true,

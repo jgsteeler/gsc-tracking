@@ -5,10 +5,14 @@ import { useEffect, useState } from 'react';
 /**
  * Custom hook to check if the current user has specific roles or permissions
  * 
- * Auth0 can send either permissions or roles in the token under a custom namespace claim.
- * This hook supports both approaches:
- * - Permissions: "admin", "write", "read" (recommended)
- * - Roles: "tracker-admin", "tracker-write", "tracker-read" (alternative)
+ * Auth0 sends permissions or roles in the token under a custom namespace claim.
+ * This hook checks for permissions/roles in the following order:
+ * 1. "https://gsc-tracking.com/permissions" - Namespaced permissions claim (recommended)
+ * 2. "permissions" - Standard permissions claim (for testing/fallback)
+ * 3. "https://gsc-tracking.com/roles" - Namespaced roles claim (alternative)
+ * 
+ * Supported permission values: "admin", "write", "read"
+ * Supported role values: "tracker-admin", "tracker-write", "tracker-read"
  * 
  * @returns An object containing:
  * - isAdmin: Whether the user has admin access (full permissions)
@@ -46,10 +50,22 @@ export const useUserRole = () => {
     const fetchAccessToken = async () => {
       try {
         const accessToken = await getAccessTokenSilently();
-        const decodedToken = jwtDecode<{ permissions?: string[] }>(accessToken);
-        if (decodedToken.permissions) {
-          setAsyncRoles(decodedToken.permissions);
-        }
+        const decodedToken = jwtDecode<{ 
+          permissions?: string[];
+          'https://gsc-tracking.com/permissions'?: string[];
+          'https://gsc-tracking.com/roles'?: string[];
+        }>(accessToken);
+        
+        // Check for permissions in order of preference:
+        // 1. Namespaced permissions claim (standard Auth0 format)
+        // 2. Standard permissions claim (for testing/fallback)
+        // 3. Namespaced roles claim (alternative Auth0 format)
+        const roles = decodedToken['https://gsc-tracking.com/permissions'] 
+          || decodedToken.permissions 
+          || decodedToken['https://gsc-tracking.com/roles']
+          || [];
+        
+        setAsyncRoles(roles);
       } catch (error) {
         console.error('Error fetching or decoding access token:', error);
       } finally {
