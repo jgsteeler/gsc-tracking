@@ -26,7 +26,9 @@ export const apiClient = {
     });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
+      const errorData = await response.json().catch(() => null);
+      const message = errorData?.message || response.statusText || 'Request failed';
+      throw new Error(message);
     }
 
     return response.json();
@@ -69,7 +71,9 @@ export const apiClient = {
     });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
+      const errorData = await response.json().catch(() => null);
+      const message = errorData?.message || response.statusText || 'Request failed';
+      throw new Error(message);
     }
   },
 };

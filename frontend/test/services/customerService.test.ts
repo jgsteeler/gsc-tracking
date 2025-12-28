@@ -6,10 +6,11 @@ import type { Customer, CustomerRequestDto } from '@/types/customer';
 const mockFetch = vi.fn();
 global.fetch = mockFetch as unknown as typeof fetch;
 
-function createFetchResponse(data: unknown, ok = true, status = 200) {
+function createFetchResponse(data: unknown, ok = true, status = 200, statusText = 'OK') {
   return {
     ok,
     status,
+    statusText,
     json: async () => data,
   } as Response;
 }
@@ -70,11 +71,11 @@ describe('customerService', () => {
 
     it('should throw error when fetch fails', async () => {
       mockFetch.mockResolvedValueOnce(
-        createFetchResponse(null, false, 500)
+        createFetchResponse(null, false, 500, 'Internal Server Error')
       );
 
       await expect(customerService.getAll()).rejects.toThrow(
-        'Failed to fetch customers'
+        'Internal Server Error'
       );
     });
   });
@@ -110,11 +111,11 @@ describe('customerService', () => {
 
     it('should throw error when customer not found', async () => {
       mockFetch.mockResolvedValueOnce(
-        createFetchResponse(null, false, 404)
+        createFetchResponse(null, false, 404, 'Not Found')
       );
 
       await expect(customerService.getById(999)).rejects.toThrow(
-        'Failed to fetch customer'
+        'Not Found'
       );
     });
   });
@@ -242,11 +243,11 @@ describe('customerService', () => {
 
     it('should throw error when delete fails', async () => {
       mockFetch.mockResolvedValueOnce(
-        createFetchResponse(null, false, 404)
+        createFetchResponse(null, false, 404, 'Not Found')
       );
 
       await expect(customerService.delete(999)).rejects.toThrow(
-        'Failed to delete customer'
+        'Not Found'
       );
     });
   });
