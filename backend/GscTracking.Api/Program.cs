@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +9,7 @@ using GscTracking.Infrastructure.Data;
 using GscTracking.Api.Services;
 using GscTracking.Api.Validators;
 using GscTracking.Api.Utils;
+using GscTracking.Api.Extensions;
 using GscTracking.Application;
 using GscTracking.Infrastructure;
 using DotNetEnv;
@@ -123,48 +123,8 @@ builder.Services.AddInfrastructure(builder.Configuration, npgsqlConnectionString
 // Keeping CSV service for now until migrated
 builder.Services.AddScoped<ICsvService, CsvService>();
 
-// Add CORS policy with pattern matching for Netlify deploy previews
-// Compile regex once for performance
-var netlifyPreviewRegex = new Regex(
-    @"^https:\/\/deploy-preview-\d+--gsc-tracking-ui\.netlify\.app$",
-    RegexOptions.Compiled | RegexOptions.IgnoreCase
-);
-
-// Parse allowed ports once
-var allowedLocalPorts = builder.Configuration["AllowedLocalPorts"]?.Split(',') ?? new[] { "5173" };
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.SetIsOriginAllowed(origin =>
-        {
-            // Allow configured localhost ports
-            foreach (var port in allowedLocalPorts)
-            {
-                if (origin == $"http://localhost:{port.Trim()}")
-                    return true;
-            }
-            
-            // Allow production
-            if (origin == "https://gsc-tracking-ui.netlify.app")
-                return true;
-            
-            // Allow staging
-            if (origin == "https://staging--gsc-tracking-ui.netlify.app")
-                return true;
-            
-            // Allow Netlify deploy previews with pattern matching
-            if (netlifyPreviewRegex.IsMatch(origin))
-                return true;
-            
-            return false;
-        })
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials();
-    });
-});
+// CORS is configured solely via CORS_ALLOWED_ORIGINS (comma-separated)
+builder.Services.AddGscCors();
 
 // Configure Auth0 Authentication
 // Only configure Auth0 if domain and audience are provided
@@ -331,7 +291,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     });
 }
 
-app.UseCors("AllowFrontend");
+app.UseCors(CorsExtensions.PolicyName);
 app.UseHttpsRedirection();
 
 // Add authentication and authorization middleware
