@@ -89,9 +89,11 @@ describe('jobService', () => {
     it('should throw error when fetch fails', async () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
+        statusText: 'Internal Server Error',
+        json: async () => null,
       } as Response)
 
-      await expect(jobService.getAll()).rejects.toThrow('Failed to fetch jobs')
+      await expect(jobService.getAll()).rejects.toThrow('Internal Server Error')
     })
   })
 
@@ -126,9 +128,11 @@ describe('jobService', () => {
     it('should throw error when job not found', async () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
+        statusText: 'Not Found',
+        json: async () => null,
       } as Response)
 
-      await expect(jobService.getById(999)).rejects.toThrow('Failed to fetch job')
+      await expect(jobService.getById(999)).rejects.toThrow('Not Found')
     })
   })
 
@@ -290,9 +294,11 @@ describe('jobService', () => {
     it('should throw error when deletion fails', async () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
+        statusText: 'Not Found',
+        json: async () => null,
       } as Response)
 
-      await expect(jobService.delete(999)).rejects.toThrow('Failed to delete job')
+      await expect(jobService.delete(999)).rejects.toThrow('Not Found')
     })
   })
 })
