@@ -341,8 +341,17 @@ app.UseAuthorization();
 // Map controllers
 app.MapControllers();
 
-// Hello World endpoint for GSC Tracking API (no authentication required)
-app.MapGet("/api/hello", () => 
+// Health check endpoint for monitoring (no authentication required)
+app.MapGet("/api/health", () => 
+{
+    return Results.Ok(new { status = "healthy" });
+})
+.WithName("GetHealth")
+.WithTags("System")
+.AllowAnonymous();
+
+// Version endpoint for admins to check API version
+app.MapGet("/api/version", () => 
 {
     var assembly = Assembly.GetExecutingAssembly();
     var version = assembly.GetName().Version?.ToString() ?? "unknown";
@@ -351,14 +360,14 @@ app.MapGet("/api/hello", () =>
         .InformationalVersion ?? version;
     
     return new { 
-        message = "Hello from GSC Tracking API!", 
+        message = "GSC Tracking API", 
         version = informationalVersion,
         assemblyVersion = version,
         timestamp = DateTime.UtcNow 
     };
 })
-.WithName("GetHello")
+.WithName("GetVersion")
 .WithTags("System")
-.AllowAnonymous();
+.RequireAuthorization("AdminOnly");
 
 app.Run();
