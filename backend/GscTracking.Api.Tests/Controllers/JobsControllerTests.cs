@@ -1,7 +1,9 @@
 using FluentAssertions;
 using GscTracking.Api.Controllers;
-using GscTracking.Api.DTOs;
-using GscTracking.Api.Services;
+using GscTracking.Application.DTOs;
+using GscTracking.Application.Jobs.Commands;
+using GscTracking.Application.Jobs.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,15 +12,15 @@ namespace GscTracking.Api.Tests.Controllers;
 
 public class JobsControllerTests
 {
-    private readonly Mock<IJobService> _mockJobService;
+    private readonly Mock<IMediator> _mockMediator;
     private readonly Mock<ILogger<JobsController>> _mockLogger;
     private readonly JobsController _controller;
 
     public JobsControllerTests()
     {
-        _mockJobService = new Mock<IJobService>();
+        _mockMediator = new Mock<IMediator>();
         _mockLogger = new Mock<ILogger<JobsController>>();
-        _controller = new JobsController(_mockJobService.Object, _mockLogger.Object);
+        _controller = new JobsController(_mockMediator.Object, _mockLogger.Object);
     }
 
     [Fact]
@@ -30,7 +32,7 @@ public class JobsControllerTests
             new JobDto { Id = 1, CustomerId = 1, CustomerName = "John Doe", EquipmentType = "Lawn Mower", EquipmentModel = "Honda HRX217", Description = "Oil change", Status = "Quote", DateReceived = DateTime.UtcNow },
             new JobDto { Id = 2, CustomerId = 1, CustomerName = "John Doe", EquipmentType = "Chainsaw", EquipmentModel = "Stihl MS271", Description = "Chain sharpening", Status = "InProgress", DateReceived = DateTime.UtcNow }
         };
-        _mockJobService.Setup(s => s.GetAllJobsAsync(null, null)).ReturnsAsync(jobs);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetAllJobsQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(jobs);
 
         // Act
         var result = await _controller.GetJobs();
@@ -51,7 +53,7 @@ public class JobsControllerTests
         {
             new JobDto { Id = 1, CustomerId = 1, CustomerName = "John Doe", EquipmentType = "Lawn Mower", EquipmentModel = "Honda HRX217", Description = "Oil change", Status = "Quote", DateReceived = DateTime.UtcNow }
         };
-        _mockJobService.Setup(s => s.GetAllJobsAsync(searchTerm, statusFilter)).ReturnsAsync(jobs);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetAllJobsQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(jobs);
 
         // Act
         var result = await _controller.GetJobs(searchTerm, statusFilter);
@@ -66,7 +68,7 @@ public class JobsControllerTests
     public async Task GetJobs_ReturnsInternalServerError_WhenExceptionThrown()
     {
         // Arrange
-        _mockJobService.Setup(s => s.GetAllJobsAsync(null, null))
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetAllJobsQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -93,7 +95,7 @@ public class JobsControllerTests
             Status = "Quote",
             DateReceived = DateTime.UtcNow
         };
-        _mockJobService.Setup(s => s.GetJobByIdAsync(jobId)).ReturnsAsync(job);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(job);
 
         // Act
         var result = await _controller.GetJob(jobId);
@@ -110,7 +112,7 @@ public class JobsControllerTests
     {
         // Arrange
         var jobId = 999;
-        _mockJobService.Setup(s => s.GetJobByIdAsync(jobId)).ReturnsAsync((JobDto?)null);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobByIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync((JobDto?)null);
 
         // Act
         var result = await _controller.GetJob(jobId);
@@ -124,7 +126,7 @@ public class JobsControllerTests
     {
         // Arrange
         var jobId = 1;
-        _mockJobService.Setup(s => s.GetJobByIdAsync(jobId))
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobByIdQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -145,7 +147,7 @@ public class JobsControllerTests
             new JobDto { Id = 1, CustomerId = customerId, CustomerName = "John Doe", EquipmentType = "Lawn Mower", EquipmentModel = "Honda HRX217", Description = "Oil change", Status = "Quote", DateReceived = DateTime.UtcNow },
             new JobDto { Id = 2, CustomerId = customerId, CustomerName = "John Doe", EquipmentType = "Chainsaw", EquipmentModel = "Stihl MS271", Description = "Chain sharpening", Status = "InProgress", DateReceived = DateTime.UtcNow }
         };
-        _mockJobService.Setup(s => s.GetJobsByCustomerIdAsync(customerId)).ReturnsAsync(jobs);
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobsByCustomerIdQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(jobs);
 
         // Act
         var result = await _controller.GetJobsByCustomer(customerId);
@@ -161,7 +163,7 @@ public class JobsControllerTests
     {
         // Arrange
         var customerId = 1;
-        _mockJobService.Setup(s => s.GetJobsByCustomerIdAsync(customerId))
+        _mockMediator.Setup(m => m.Send(It.IsAny<GetJobsByCustomerIdQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -198,7 +200,7 @@ public class JobsControllerTests
             DateReceived = jobRequest.DateReceived,
             EstimateAmount = jobRequest.EstimateAmount
         };
-        _mockJobService.Setup(s => s.CreateJobAsync(jobRequest)).ReturnsAsync(createdJob);
+        _mockMediator.Setup(m => m.Send(It.IsAny<CreateJobCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(createdJob);
 
         // Act
         var result = await _controller.CreateJob(jobRequest);
@@ -238,7 +240,7 @@ public class JobsControllerTests
             Status = "InvalidStatus",
             DateReceived = DateTime.UtcNow
         };
-        _mockJobService.Setup(s => s.CreateJobAsync(jobRequest))
+        _mockMediator.Setup(m => m.Send(It.IsAny<CreateJobCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new ArgumentException("Invalid status"));
 
         // Act
@@ -261,7 +263,7 @@ public class JobsControllerTests
             Status = "Quote",
             DateReceived = DateTime.UtcNow
         };
-        _mockJobService.Setup(s => s.CreateJobAsync(jobRequest))
+        _mockMediator.Setup(m => m.Send(It.IsAny<CreateJobCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -299,7 +301,7 @@ public class JobsControllerTests
             DateReceived = jobRequest.DateReceived,
             EstimateAmount = jobRequest.EstimateAmount
         };
-        _mockJobService.Setup(s => s.UpdateJobAsync(jobId, jobRequest)).ReturnsAsync(updatedJob);
+        _mockMediator.Setup(m => m.Send(It.IsAny<UpdateJobCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(updatedJob);
 
         // Act
         var result = await _controller.UpdateJob(jobId, jobRequest);
@@ -324,7 +326,7 @@ public class JobsControllerTests
             Status = "Quote",
             DateReceived = DateTime.UtcNow
         };
-        _mockJobService.Setup(s => s.UpdateJobAsync(jobId, jobRequest)).ReturnsAsync((JobDto?)null);
+        _mockMediator.Setup(m => m.Send(It.IsAny<UpdateJobCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync((JobDto?)null);
 
         // Act
         var result = await _controller.UpdateJob(jobId, jobRequest);
@@ -362,7 +364,7 @@ public class JobsControllerTests
             Status = "InvalidStatus",
             DateReceived = DateTime.UtcNow
         };
-        _mockJobService.Setup(s => s.UpdateJobAsync(jobId, jobRequest))
+        _mockMediator.Setup(m => m.Send(It.IsAny<UpdateJobCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new ArgumentException("Invalid status"));
 
         // Act
@@ -386,7 +388,7 @@ public class JobsControllerTests
             Status = "Quote",
             DateReceived = DateTime.UtcNow
         };
-        _mockJobService.Setup(s => s.UpdateJobAsync(jobId, jobRequest))
+        _mockMediator.Setup(m => m.Send(It.IsAny<UpdateJobCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
@@ -402,7 +404,7 @@ public class JobsControllerTests
     {
         // Arrange
         var jobId = 1;
-        _mockJobService.Setup(s => s.DeleteJobAsync(jobId)).ReturnsAsync(true);
+        _mockMediator.Setup(m => m.Send(It.IsAny<DeleteJobCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
         // Act
         var result = await _controller.DeleteJob(jobId);
@@ -416,7 +418,7 @@ public class JobsControllerTests
     {
         // Arrange
         var jobId = 999;
-        _mockJobService.Setup(s => s.DeleteJobAsync(jobId)).ReturnsAsync(false);
+        _mockMediator.Setup(m => m.Send(It.IsAny<DeleteJobCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
 
         // Act
         var result = await _controller.DeleteJob(jobId);
@@ -430,7 +432,7 @@ public class JobsControllerTests
     {
         // Arrange
         var jobId = 1;
-        _mockJobService.Setup(s => s.DeleteJobAsync(jobId))
+        _mockMediator.Setup(m => m.Send(It.IsAny<DeleteJobCommand>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
