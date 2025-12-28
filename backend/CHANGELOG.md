@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.4.0...backend-v2.5.0) (2025-12-28)
+
+
+### Features
+
+* **architecture:** implement clean architecture with CQRS and repository pattern ([#187](https://github.com/jgsteeler/gsc-tracking/issues/187)) ([65cc6a1](https://github.com/jgsteeler/gsc-tracking/commit/65cc6a155a9603206980b135c4d4f13c301df268))
+
 ## [2.4.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.3.0...backend-v2.4.0) (2025-12-26)
 
 
