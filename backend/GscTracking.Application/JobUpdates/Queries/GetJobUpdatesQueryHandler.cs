@@ -15,7 +15,7 @@ public class GetJobUpdatesQueryHandler : IRequestHandler<GetJobUpdatesQuery, IEn
 
     public async Task<IEnumerable<JobUpdateDto>> Handle(GetJobUpdatesQuery request, CancellationToken cancellationToken)
     {
-        var updates = await _jobUpdateRepository.GetUpdatesByJobIdAsync(request.JobId);
+        var updates = await _jobUpdateRepository.GetUpdatesByJobIdAsync(request.JobId, cancellationToken);
 
         return updates.Select(u => new JobUpdateDto
         {

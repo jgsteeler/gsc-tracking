@@ -14,6 +14,6 @@ public class DeleteExpenseCommandHandler : IRequestHandler<DeleteExpenseCommand,
 
     public async Task<bool> Handle(DeleteExpenseCommand request, CancellationToken cancellationToken)
     {
-        return await _expenseRepository.DeleteAsync(request.Id);
+        return await _expenseRepository.DeleteAsync(request.Id, cancellationToken);
     }
 }

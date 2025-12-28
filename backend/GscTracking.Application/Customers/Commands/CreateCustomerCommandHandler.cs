@@ -27,8 +27,8 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
             UpdatedAt = DateTime.UtcNow
         };
 
-        var createdCustomer = await _customerRepository.AddAsync(customer);
-        await _customerRepository.SaveChangesAsync();
+        var createdCustomer = await _customerRepository.AddAsync(customer, cancellationToken);
+        await _customerRepository.SaveChangesAsync(cancellationToken);
 
         return new CustomerDto
         {

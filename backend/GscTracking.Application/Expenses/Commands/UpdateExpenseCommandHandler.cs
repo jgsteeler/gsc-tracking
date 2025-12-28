@@ -16,7 +16,7 @@ public class UpdateExpenseCommandHandler : IRequestHandler<UpdateExpenseCommand,
 
     public async Task<ExpenseDto?> Handle(UpdateExpenseCommand request, CancellationToken cancellationToken)
     {
-        var expense = await _expenseRepository.GetByIdAsync(request.Id);
+        var expense = await _expenseRepository.GetByIdAsync(request.Id, cancellationToken);
         
         if (expense == null)
         {
@@ -36,7 +36,7 @@ public class UpdateExpenseCommandHandler : IRequestHandler<UpdateExpenseCommand,
         expense.UpdatedAt = DateTime.UtcNow;
 
         await _expenseRepository.UpdateAsync(expense);
-        await _expenseRepository.SaveChangesAsync();
+        await _expenseRepository.SaveChangesAsync(cancellationToken);
 
         return new ExpenseDto
         {

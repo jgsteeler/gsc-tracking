@@ -5,7 +5,7 @@ namespace GscTracking.Core.Interfaces;
 
 public interface IJobRepository : IRepository<Job>
 {
-    Task<IEnumerable<Job>> GetJobsByCustomerIdAsync(int customerId);
-    Task<IEnumerable<Job>> GetJobsByStatusAsync(JobStatus status);
-    Task<Job?> GetJobWithDetailsAsync(int id);
+    Task<IEnumerable<Job>> GetJobsByCustomerIdAsync(int customerId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Job>> GetJobsByStatusAsync(JobStatus status, CancellationToken cancellationToken = default);
+    Task<Job?> GetJobWithDetailsAsync(int id, CancellationToken cancellationToken = default);
 }

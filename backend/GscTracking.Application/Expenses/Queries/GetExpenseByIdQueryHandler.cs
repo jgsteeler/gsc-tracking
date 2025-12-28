@@ -15,7 +15,7 @@ public class GetExpenseByIdQueryHandler : IRequestHandler<GetExpenseByIdQuery, E
 
     public async Task<ExpenseDto?> Handle(GetExpenseByIdQuery request, CancellationToken cancellationToken)
     {
-        var expense = await _expenseRepository.GetByIdAsync(request.Id);
+        var expense = await _expenseRepository.GetByIdAsync(request.Id, cancellationToken);
         
         if (expense == null)
         {

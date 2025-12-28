@@ -15,19 +15,19 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet = context.Set<T>();
     }
 
-    public virtual async Task<T?> GetByIdAsync(int id)
+    public virtual async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await _dbSet.FindAsync(id);
+        return await _dbSet.FindAsync(new object[] { id }, cancellationToken);
     }
 
-    public virtual async Task<IEnumerable<T>> GetAllAsync()
+    public virtual async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbSet.ToListAsync();
+        return await _dbSet.ToListAsync(cancellationToken);
     }
 
-    public virtual async Task<T> AddAsync(T entity)
+    public virtual async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
     {
-        await _dbSet.AddAsync(entity);
+        await _dbSet.AddAsync(entity, cancellationToken);
         return entity;
     }
 
@@ -37,9 +37,9 @@ public class Repository<T> : IRepository<T> where T : class
         return Task.FromResult(entity);
     }
 
-    public virtual async Task<bool> DeleteAsync(int id)
+    public virtual async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        var entity = await GetByIdAsync(id);
+        var entity = await GetByIdAsync(id, cancellationToken);
         if (entity == null)
         {
             return false;
@@ -49,8 +49,8 @@ public class Repository<T> : IRepository<T> where T : class
         return true;
     }
 
-    public virtual async Task<int> SaveChangesAsync()
+    public virtual async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.SaveChangesAsync();
+        return await _context.SaveChangesAsync(cancellationToken);
     }
 }

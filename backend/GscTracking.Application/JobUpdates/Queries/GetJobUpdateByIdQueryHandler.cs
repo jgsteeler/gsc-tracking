@@ -15,7 +15,7 @@ public class GetJobUpdateByIdQueryHandler : IRequestHandler<GetJobUpdateByIdQuer
 
     public async Task<JobUpdateDto?> Handle(GetJobUpdateByIdQuery request, CancellationToken cancellationToken)
     {
-        var update = await _jobUpdateRepository.GetByIdAsync(request.Id);
+        var update = await _jobUpdateRepository.GetByIdAsync(request.Id, cancellationToken);
         
         if (update == null)
         {

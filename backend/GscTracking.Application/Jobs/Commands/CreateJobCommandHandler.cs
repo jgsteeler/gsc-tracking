@@ -40,11 +40,11 @@ public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, JobDto>
             UpdatedAt = DateTime.UtcNow
         };
 
-        var createdJob = await _jobRepository.AddAsync(job);
-        await _jobRepository.SaveChangesAsync();
+        var createdJob = await _jobRepository.AddAsync(job, cancellationToken);
+        await _jobRepository.SaveChangesAsync(cancellationToken);
 
         // Fetch the customer name
-        var customer = await _customerRepository.GetByIdAsync(createdJob.CustomerId);
+        var customer = await _customerRepository.GetByIdAsync(createdJob.CustomerId, cancellationToken);
 
         return new JobDto
         {

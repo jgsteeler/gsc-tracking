@@ -15,7 +15,7 @@ public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerComman
 
     public async Task<CustomerDto?> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
     {
-        var customer = await _customerRepository.GetByIdAsync(request.Id);
+        var customer = await _customerRepository.GetByIdAsync(request.Id, cancellationToken);
         
         if (customer == null)
         {
@@ -30,7 +30,7 @@ public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerComman
         customer.UpdatedAt = DateTime.UtcNow;
 
         await _customerRepository.UpdateAsync(customer);
-        await _customerRepository.SaveChangesAsync();
+        await _customerRepository.SaveChangesAsync(cancellationToken);
 
         return new CustomerDto
         {

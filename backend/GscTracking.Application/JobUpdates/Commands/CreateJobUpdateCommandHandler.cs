@@ -23,8 +23,8 @@ public class CreateJobUpdateCommandHandler : IRequestHandler<CreateJobUpdateComm
             CreatedAt = DateTime.UtcNow
         };
 
-        var createdUpdate = await _jobUpdateRepository.AddAsync(jobUpdate);
-        await _jobUpdateRepository.SaveChangesAsync();
+        var createdUpdate = await _jobUpdateRepository.AddAsync(jobUpdate, cancellationToken);
+        await _jobUpdateRepository.SaveChangesAsync(cancellationToken);
 
         return new JobUpdateDto
         {

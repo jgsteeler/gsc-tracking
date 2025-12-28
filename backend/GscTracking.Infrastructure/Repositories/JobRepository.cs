@@ -12,45 +12,48 @@ public class JobRepository : Repository<Job>, IJobRepository
     {
     }
 
-    public async Task<IEnumerable<Job>> GetJobsByCustomerIdAsync(int customerId)
+    public async Task<IEnumerable<Job>> GetJobsByCustomerIdAsync(int customerId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
             .Where(j => j.CustomerId == customerId)
             .Include(j => j.Customer)
+            .Include(j => j.Expenses)
             .OrderByDescending(j => j.DateReceived)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Job>> GetJobsByStatusAsync(JobStatus status)
+    public async Task<IEnumerable<Job>> GetJobsByStatusAsync(JobStatus status, CancellationToken cancellationToken = default)
     {
         return await _dbSet
             .Where(j => j.Status == status)
             .Include(j => j.Customer)
+            .Include(j => j.Expenses)
             .OrderByDescending(j => j.DateReceived)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<Job?> GetJobWithDetailsAsync(int id)
+    public async Task<Job?> GetJobWithDetailsAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _dbSet
             .Include(j => j.Customer)
             .Include(j => j.JobUpdates)
             .Include(j => j.Expenses)
-            .FirstOrDefaultAsync(j => j.Id == id);
+            .FirstOrDefaultAsync(j => j.Id == id, cancellationToken);
     }
 
-    public override async Task<Job?> GetByIdAsync(int id)
+    public override async Task<Job?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _dbSet
             .Include(j => j.Customer)
-            .FirstOrDefaultAsync(j => j.Id == id);
+            .FirstOrDefaultAsync(j => j.Id == id, cancellationToken);
     }
 
-    public override async Task<IEnumerable<Job>> GetAllAsync()
+    public override async Task<IEnumerable<Job>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await _dbSet
             .Include(j => j.Customer)
+            .Include(j => j.Expenses)
             .OrderByDescending(j => j.DateReceived)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

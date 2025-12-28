@@ -11,11 +11,11 @@ public class ExpenseRepository : Repository<Expense>, IExpenseRepository
     {
     }
 
-    public async Task<IEnumerable<Expense>> GetExpensesByJobIdAsync(int jobId)
+    public async Task<IEnumerable<Expense>> GetExpensesByJobIdAsync(int jobId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
             .Where(e => e.JobId == jobId)
             .OrderByDescending(e => e.Date)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

@@ -11,11 +11,11 @@ public class JobUpdateRepository : Repository<JobUpdate>, IJobUpdateRepository
     {
     }
 
-    public async Task<IEnumerable<JobUpdate>> GetUpdatesByJobIdAsync(int jobId)
+    public async Task<IEnumerable<JobUpdate>> GetUpdatesByJobIdAsync(int jobId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
             .Where(u => u.JobId == jobId)
             .OrderByDescending(u => u.CreatedAt)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

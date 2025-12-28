@@ -16,8 +16,8 @@ public class GetAllCustomersQueryHandler : IRequestHandler<GetAllCustomersQuery,
     public async Task<IEnumerable<CustomerDto>> Handle(GetAllCustomersQuery request, CancellationToken cancellationToken)
     {
         var customers = string.IsNullOrWhiteSpace(request.SearchTerm)
-            ? await _customerRepository.GetAllAsync()
-            : await _customerRepository.SearchAsync(request.SearchTerm);
+            ? await _customerRepository.GetAllAsync(cancellationToken)
+            : await _customerRepository.SearchAsync(request.SearchTerm, cancellationToken);
 
         return customers.Select(c => new CustomerDto
         {

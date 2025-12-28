@@ -16,7 +16,7 @@ public class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, JobDto?
 
     public async Task<JobDto?> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
-        var job = await _jobRepository.GetJobWithDetailsAsync(request.Id);
+        var job = await _jobRepository.GetJobWithDetailsAsync(request.Id, cancellationToken);
         
         if (job == null)
         {
@@ -40,7 +40,7 @@ public class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, JobDto?
         job.UpdatedAt = DateTime.UtcNow;
 
         await _jobRepository.UpdateAsync(job);
-        await _jobRepository.SaveChangesAsync();
+        await _jobRepository.SaveChangesAsync(cancellationToken);
 
         return new JobDto
         {

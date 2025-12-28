@@ -35,8 +35,8 @@ public class CreateExpenseCommandHandler : IRequestHandler<CreateExpenseCommand,
             UpdatedAt = DateTime.UtcNow
         };
 
-        var createdExpense = await _expenseRepository.AddAsync(expense);
-        await _expenseRepository.SaveChangesAsync();
+        var createdExpense = await _expenseRepository.AddAsync(expense, cancellationToken);
+        await _expenseRepository.SaveChangesAsync(cancellationToken);
 
         return new ExpenseDto
         {

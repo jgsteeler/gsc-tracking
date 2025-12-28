@@ -14,7 +14,7 @@ public class CalculateTotalCostQueryHandler : IRequestHandler<CalculateTotalCost
 
     public async Task<decimal> Handle(CalculateTotalCostQuery request, CancellationToken cancellationToken)
     {
-        var expenses = await _expenseRepository.GetExpensesByJobIdAsync(request.JobId);
+        var expenses = await _expenseRepository.GetExpensesByJobIdAsync(request.JobId, cancellationToken);
         return expenses.Sum(e => e.Amount);
     }
 }

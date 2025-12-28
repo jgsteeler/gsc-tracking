@@ -15,7 +15,7 @@ public class GetExpensesByJobIdQueryHandler : IRequestHandler<GetExpensesByJobId
 
     public async Task<IEnumerable<ExpenseDto>> Handle(GetExpensesByJobIdQuery request, CancellationToken cancellationToken)
     {
-        var expenses = await _expenseRepository.GetExpensesByJobIdAsync(request.JobId);
+        var expenses = await _expenseRepository.GetExpensesByJobIdAsync(request.JobId, cancellationToken);
 
         return expenses.Select(e => new ExpenseDto
         {

@@ -15,7 +15,7 @@ public class GetJobsByCustomerIdQueryHandler : IRequestHandler<GetJobsByCustomer
 
     public async Task<IEnumerable<JobDto>> Handle(GetJobsByCustomerIdQuery request, CancellationToken cancellationToken)
     {
-        var jobs = await _jobRepository.GetJobsByCustomerIdAsync(request.CustomerId);
+        var jobs = await _jobRepository.GetJobsByCustomerIdAsync(request.CustomerId, cancellationToken);
 
         return jobs.Select(j => new JobDto
         {

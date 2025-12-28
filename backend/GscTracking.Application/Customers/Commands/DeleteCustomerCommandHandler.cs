@@ -14,7 +14,7 @@ public class DeleteCustomerCommandHandler : IRequestHandler<DeleteCustomerComman
 
     public async Task<bool> Handle(DeleteCustomerCommand request, CancellationToken cancellationToken)
     {
-        var customer = await _customerRepository.GetByIdAsync(request.Id);
+        var customer = await _customerRepository.GetByIdAsync(request.Id, cancellationToken);
         
         if (customer == null)
         {
@@ -25,7 +25,7 @@ public class DeleteCustomerCommandHandler : IRequestHandler<DeleteCustomerComman
         customer.IsDeleted = true;
         customer.DeletedAt = DateTime.UtcNow;
         await _customerRepository.UpdateAsync(customer);
-        await _customerRepository.SaveChangesAsync();
+        await _customerRepository.SaveChangesAsync(cancellationToken);
 
         return true;
     }

@@ -11,7 +11,7 @@ public class CustomerRepository : Repository<Customer>, ICustomerRepository
     {
     }
 
-    public async Task<IEnumerable<Customer>> SearchAsync(string searchTerm)
+    public async Task<IEnumerable<Customer>> SearchAsync(string searchTerm, CancellationToken cancellationToken = default)
     {
         searchTerm = searchTerm.ToLower();
         return await _dbSet
@@ -21,6 +21,6 @@ public class CustomerRepository : Repository<Customer>, ICustomerRepository
                 (c.Phone != null && c.Phone.Contains(searchTerm)) ||
                 (c.Address != null && c.Address.ToLower().Contains(searchTerm)))
             .OrderBy(c => c.Name)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

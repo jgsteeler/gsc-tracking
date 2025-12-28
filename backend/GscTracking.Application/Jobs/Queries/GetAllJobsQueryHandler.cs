@@ -16,24 +16,10 @@ public class GetAllJobsQueryHandler : IRequestHandler<GetAllJobsQuery, IEnumerab
 
     public async Task<IEnumerable<JobDto>> Handle(GetAllJobsQuery request, CancellationToken cancellationToken)
     {
-        IEnumerable<GscTracking.Core.Entities.Job> jobs;
-
         // Filter by status if provided
-        if (!string.IsNullOrWhiteSpace(request.StatusFilter))
-        {
-            if (Enum.TryParse<JobStatus>(request.StatusFilter, true, out var status))
-            {
-                jobs = await _jobRepository.GetJobsByStatusAsync(status);
-            }
-            else
-            {
-                jobs = await _jobRepository.GetAllAsync();
-            }
-        }
-        else
-        {
-            jobs = await _jobRepository.GetAllAsync();
-        }
+        var jobs = !string.IsNullOrWhiteSpace(request.StatusFilter) && Enum.TryParse<JobStatus>(request.StatusFilter, true, out var status)
+            ? await _jobRepository.GetJobsByStatusAsync(status, cancellationToken)
+            : await _jobRepository.GetAllAsync(cancellationToken);
 
         // Apply search filter if provided
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))

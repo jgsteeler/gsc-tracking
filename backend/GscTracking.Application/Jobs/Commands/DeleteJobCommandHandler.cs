@@ -14,7 +14,7 @@ public class DeleteJobCommandHandler : IRequestHandler<DeleteJobCommand, bool>
 
     public async Task<bool> Handle(DeleteJobCommand request, CancellationToken cancellationToken)
     {
-        var job = await _jobRepository.GetByIdAsync(request.Id);
+        var job = await _jobRepository.GetByIdAsync(request.Id, cancellationToken);
         
         if (job == null)
         {
@@ -25,7 +25,7 @@ public class DeleteJobCommandHandler : IRequestHandler<DeleteJobCommand, bool>
         job.IsDeleted = true;
         job.DeletedAt = DateTime.UtcNow;
         await _jobRepository.UpdateAsync(job);
-        await _jobRepository.SaveChangesAsync();
+        await _jobRepository.SaveChangesAsync(cancellationToken);
 
         return true;
     }

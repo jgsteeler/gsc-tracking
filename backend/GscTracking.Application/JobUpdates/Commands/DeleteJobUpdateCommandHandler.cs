@@ -14,6 +14,6 @@ public class DeleteJobUpdateCommandHandler : IRequestHandler<DeleteJobUpdateComm
 
     public async Task<bool> Handle(DeleteJobUpdateCommand request, CancellationToken cancellationToken)
     {
-        return await _jobUpdateRepository.DeleteAsync(request.Id);
+        return await _jobUpdateRepository.DeleteAsync(request.Id, cancellationToken);
     }
 }
