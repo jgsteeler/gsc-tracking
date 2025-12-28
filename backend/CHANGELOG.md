@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.6.0...backend-v2.7.0) (2025-12-28)
+
+
+### Features
+
+* **cors:** implement CORS configuration using environment variable for allowed origins ([#212](https://github.com/jgsteeler/gsc-tracking/issues/212)) ([8575e0f](https://github.com/jgsteeler/gsc-tracking/commit/8575e0ff302fff832871ee1aadc1aad3f4260dd7))
+
 ## [2.6.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.5.0...backend-v2.6.0) (2025-12-28)
 
 

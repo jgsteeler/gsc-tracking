@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.6.1...frontend-v2.7.0) (2025-12-28)
+
+
+### Features
+
+* update API URLs and Auth0 audience to reflect new domain ([#214](https://github.com/jgsteeler/gsc-tracking/issues/214)) ([c56f943](https://github.com/jgsteeler/gsc-tracking/commit/c56f943b1778908053194bbd91ed6cfa6ccc505e))
+
 ## [2.6.1](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.6.0...frontend-v2.6.1) (2025-12-28)
 
 
