@@ -5,7 +5,7 @@
 set -e
 
 # Configuration
-API_URL="${API_URL:-https://gsc-tracking-api-staging.fly.dev}"
+API_URL="${API_URL:-${PROD_API_URL:-https://api.gibsonservice.co}}"
 MAX_RETRIES=30
 RETRY_DELAY=5
 

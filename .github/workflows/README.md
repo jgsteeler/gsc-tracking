@@ -174,7 +174,7 @@ The `deploy-flyio.yml` workflow deploys the backend API to Fly.io hosting platfo
 
 2. **Environments**:
    - **Staging**: `gsc-tracking-api-staging.fly.dev` (for PRs)
-   - **Production**: `gsc-tracking-api.fly.dev` (for main branch)
+   - **Production**: `api.gibsonservice.co` (for main branch)
 
 3. **What it does**:
    - Deploys backend to Fly.io using `flyctl`
@@ -228,7 +228,7 @@ Automated smoke tests verify basic functionality after deployment.
 API_URL="https://gsc-tracking-api-staging.fly.dev" ./backend/smoke-test.sh
 
 # Test production
-API_URL="https://gsc-tracking-api.fly.dev" ./backend/smoke-test.sh
+API_URL="https://api.gibsonservice.co" ./backend/smoke-test.sh
 ```
 
 See [Smoke Tests Documentation](../../docs/SMOKE-TESTS.md) for detailed information.
@@ -258,7 +258,7 @@ git push origin test-deploy
 ```bash
 # Merge PR to main - this triggers production deployment
 # Check Actions tab for workflow progress
-# Verify deployment at https://gsc-tracking-api.fly.dev/api/hello
+# Verify deployment at https://api.gibsonservice.co/api/hello
 ```
 
 ### Troubleshooting

@@ -5,8 +5,8 @@
 set -e
 
 # Configuration
-FRONTEND_URL="${FRONTEND_URL:-https://deploy-preview-staging--gsc-tracking.netlify.app}"
-API_URL="${API_URL:-https://gsc-tracking-api-staging.fly.dev}"
+FRONTEND_URL="${FRONTEND_URL:-${PROD_FE_URL:-https://track.gibsonservice.co}}"
+API_URL="${API_URL:-${PROD_API_URL:-https://api.gibsonservice.co}}"
 MAX_RETRIES=30
 RETRY_DELAY=5
 
