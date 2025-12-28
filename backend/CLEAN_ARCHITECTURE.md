@@ -138,7 +138,7 @@ GscTracking.Infrastructure/
 GscTracking.Api/
 ├── Controllers/
 │   ├── CustomersController.cs (✅ Migrated to MediatR)
-│   ├── JobsController.cs (⏳ To be migrated)
+│   ├── JobsController.cs (✅ Migrated to MediatR)
 │   ├── ExpensesController.cs (⏳ To be migrated)
 │   └── ... (other controllers)
 ├── Utils/
