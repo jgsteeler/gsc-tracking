@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.6.0...frontend-v2.6.1) (2025-12-28)
+
+
+### Bug Fixes
+
+* **auth:** read permissions from namespaced Auth0 claims ([#191](https://github.com/jgsteeler/gsc-tracking/issues/191)) ([1bfb80b](https://github.com/jgsteeler/gsc-tracking/commit/1bfb80bc69ef9c7c3c3285949c3ef689760ec044))
+
 ## [2.6.0](https://github.com/jgsteeler/gsc-tracking/compare/frontend-v2.5.0...frontend-v2.6.0) (2025-12-26)
 
 
