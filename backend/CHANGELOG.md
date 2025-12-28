@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.5.0...backend-v2.6.0) (2025-12-28)
+
+
+### Features
+
+* **api:** replace hello endpoint with health check and admin version endpoint ([#210](https://github.com/jgsteeler/gsc-tracking/issues/210)) ([2355646](https://github.com/jgsteeler/gsc-tracking/commit/23556469189dca5bc441d036aff30372a4fe5e46))
+
 ## [2.5.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.4.0...backend-v2.5.0) (2025-12-28)
 
 
