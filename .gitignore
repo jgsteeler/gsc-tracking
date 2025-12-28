@@ -52,3 +52,5 @@ gsctracking.db
 gsctracking.db-journal
 backend/GscTracking.Api/.env.production
 backend/GscTracking.Api/.env.staging
+
+.fake
