@@ -414,12 +414,12 @@ public async Task CreateCustomer_ReturnsCreatedAtAction()
 - Application layer with MediatR, DTOs, and DI configuration
 - Infrastructure layer with repositories and DbContext
 - CustomersController migrated to CQRS pattern
+- JobsController migrated to CQRS pattern
+- ExpensesController migrated to CQRS pattern
+- JobUpdatesController migrated to CQRS pattern
 - All tests updated and passing (318/318)
 
 ### Pending ⏳
-- Migrate JobsController to CQRS pattern
-- Migrate ExpensesController to CQRS pattern
-- Migrate JobUpdatesController to CQRS pattern
 - Migrate Import/Export Controllers to CQRS pattern
 - Add AutoMapper profiles for entity-to-DTO mapping
 - Add FluentValidation validators
