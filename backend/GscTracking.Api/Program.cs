@@ -291,6 +291,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     });
 }
 
+app.UseRouting();
 app.UseCors(CorsExtensions.PolicyName);
 app.UseHttpsRedirection();
 
