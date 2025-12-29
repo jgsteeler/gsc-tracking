@@ -291,9 +291,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     });
 }
 
-app.UseRouting();
 app.UseCors(CorsExtensions.PolicyName);
 app.UseHttpsRedirection();
+app.UseRouting();
 
 // Add authentication and authorization middleware
 app.UseAuthentication();
