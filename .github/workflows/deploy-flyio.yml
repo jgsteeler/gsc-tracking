@@ -103,7 +103,7 @@ jobs:
       - name: Run Backend Smoke Tests
         run: |
           chmod +x .github/scripts/smoke-test.sh
-          API_URL="${{ vars.PROD_API_URL || 'https://api.gibsonservice.co' }}" .github/scripts/smoke-test.sh
+          API_URL="${{ secrets.PROD_API_URL || 'https://api.gibsonservice.co' }}" .github/scripts/smoke-test.sh
 
       - name: Deployment Summary
         run: |
