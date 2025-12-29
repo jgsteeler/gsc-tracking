@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.7.0...backend-v2.8.0) (2025-12-29)
+
+
+### Features
+
+* add routing middleware to the application pipeline ([#216](https://github.com/jgsteeler/gsc-tracking/issues/216)) ([6c86fac](https://github.com/jgsteeler/gsc-tracking/commit/6c86fac95c4fd120c38a729e0c1dee3a97af6f9c))
+
 ## [2.7.0](https://github.com/jgsteeler/gsc-tracking/compare/backend-v2.6.0...backend-v2.7.0) (2025-12-28)
 
 
