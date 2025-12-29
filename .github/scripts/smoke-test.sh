@@ -23,9 +23,7 @@ test_endpoint() {
     echo "  Endpoint: $endpoint"
     
     # Make request and capture response
-    response=$(curl -s -w "\n%{http_code}" "$endpoint" 2>&1 || echo "FAILED
-000")
-    http_code=$(echo "$response" | tail -n 1)
+    response=$(curl -s -w "\n%{http_code}" "$endpoint" 2>&1 || echo "FAILED 000")
     body=$(echo "$response" | head -n -1)
     
     if [ "$http_code" = "$expected_status" ]; then
@@ -47,7 +45,7 @@ test_endpoint() {
 echo "⏳ Waiting for API to be available..."
 retry_count=0
 while [ $retry_count -lt $MAX_RETRIES ]; do
-    if curl -s -f -o /dev/null "$API_URL/api/hello" 2>/dev/null; then
+    if curl -s -f -o /dev/null "$API_URL/api/health" 2>/dev/null; then
         echo "✅ API is responding!"
         echo ""
         break
@@ -69,7 +67,7 @@ total_tests=0
 
 # Test 1: Health Check Endpoint
 total_tests=$((total_tests + 1))
-if test_endpoint "$API_URL/api/hello" 200 "Health Check Endpoint"; then
+if test_endpoint "$API_URL/api/health" 200 "Health Check Endpoint"; then
     :
 else
     failed_tests=$((failed_tests + 1))
