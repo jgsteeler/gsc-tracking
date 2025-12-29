@@ -22,9 +22,13 @@ test_endpoint() {
     echo "Testing: $description"
     echo "  Endpoint: $endpoint"
     
-    # Make request and capture response
-    response=$(curl -s -w "\n%{http_code}" "$endpoint" 2>&1 || echo "FAILED 000")
-    body=$(echo "$response" | head -n -1)
+    # Make request and capture status + response body
+    local tmp_body
+    tmp_body=$(mktemp)
+
+    http_code=$(curl -sS -o "$tmp_body" -w "%{http_code}" "$endpoint" || echo "000")
+    body=$(cat "$tmp_body")
+    rm -f "$tmp_body"
     
     if [ "$http_code" = "$expected_status" ]; then
         echo "  ✅ Status: $http_code (Expected: $expected_status)"
