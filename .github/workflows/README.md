@@ -154,16 +154,9 @@ The workflow uses these key features:
 - **Docker Buildx**: For multi-platform builds and caching
 - **GitHub Actions cache**: Speeds up builds with layer caching
 
-## Future Workflows
+## Deploy Backend to Fly.io Workflow
 
-Additional workflows can be added here for:
-- Testing
-- Linting
-- Deployment
-
-## Deploy to Fly.io Workflow
-
-The `deploy-flyio.yml` workflow deploys the backend API to Fly.io hosting platform.
+The `deploy-backend.yml` workflow deploys the backend API to Fly.io hosting platform.
 
 ### How It Works
 
@@ -171,6 +164,7 @@ The `deploy-flyio.yml` workflow deploys the backend API to Fly.io hosting platfo
    - Push to `main` branch (production deployment)
    - Pull requests to `main` branch (staging deployment)
    - Manual trigger via workflow_dispatch
+   - Only when backend files or workflow file changes
 
 2. **Environments**:
    - **Staging**: `gsc-tracking-api-staging.fly.dev` (for PRs)
@@ -277,3 +271,99 @@ git push origin test-deploy
 1. Verify endpoints manually
 2. Check application logs for runtime errors
 3. Increase stabilization wait time if needed
+
+## Deploy Frontend to Netlify Workflow
+
+The `deploy-frontend.yml` workflow deploys the frontend React application to Netlify hosting platform.
+
+### How It Works
+
+1. **Triggered on**:
+   - Push to `main` branch (production deployment)
+   - Pull requests to `main` branch (deploy preview)
+   - Manual trigger via workflow_dispatch
+   - Only when frontend files, workflow file, or netlify.toml changes
+
+2. **Environments**:
+   - **Deploy Preview**: Unique URL per PR (e.g., `pr-123--your-site.netlify.app`)
+   - **Production**: Your configured Netlify production URL
+
+3. **What it does**:
+   - Builds the frontend with appropriate environment variables
+   - Deploys to Netlify using the `nwtgck/actions-netlify` action
+   - Comments on PR with deploy preview URL (PR only)
+   - Creates production deployment on merge to main
+
+### Environment Variables
+
+The workflow configures these environment variables during the build process:
+
+**Configuration Variables (set in GitHub Settings → Variables → Actions):**
+- `VITE_AUTH0_DOMAIN` - Auth0 tenant domain (e.g., `your-tenant.auth0.com`)
+- `VITE_AUTH0_CLIENT_ID` - Auth0 application client ID
+- `VITE_AUTH0_AUDIENCE` - Auth0 API audience/identifier
+- `PROD_API_URL` - Production API URL (defaults to `https://api.gibsonservice.co/api`)
+
+**Note:** These are configuration values, not secrets, so they are stored as repository variables, not secrets.
+
+### Required Secrets
+
+Configure in GitHub repository settings (Settings → Secrets → Actions):
+- `NETLIFY_AUTH_TOKEN` - Netlify personal access token
+- `NETLIFY_SITE_ID` - Netlify site ID (found in site settings)
+
+### Setting Up Netlify Integration
+
+1. **Create Netlify Site:**
+   - Go to Netlify dashboard
+   - Create a new site (manual setup, not Git-based)
+   - Note the Site ID from site settings
+
+2. **Generate Access Token:**
+   - Go to User Settings → Applications → Personal access tokens
+   - Create a new access token with appropriate permissions
+   - Add as `NETLIFY_AUTH_TOKEN` secret in GitHub
+
+3. **Configure GitHub Variables:**
+   - Go to repository Settings → Secrets and variables → Actions → Variables
+   - Add `VITE_AUTH0_DOMAIN`, `VITE_AUTH0_CLIENT_ID`, `VITE_AUTH0_AUDIENCE`
+   - Add `PROD_API_URL` if different from default
+
+### Testing the Workflow
+
+**Test deploy preview:**
+```bash
+# Make a frontend change
+git checkout -b test-frontend-deploy
+echo "// Test change" >> frontend/src/App.tsx
+git add frontend/
+git commit -m "feat(frontend): test deployment workflow"
+git push origin test-frontend-deploy
+
+# Create PR to main - this triggers deploy preview
+# Check PR comments for preview URL
+```
+
+**Test production deployment:**
+```bash
+# Merge PR to main - this triggers production deployment
+# Check Actions tab for workflow progress
+# Verify deployment at your Netlify production URL
+```
+
+### Troubleshooting
+
+**Deployment Failures:**
+1. Check workflow logs in GitHub Actions
+2. Verify Netlify secrets are configured correctly
+3. Check Netlify dashboard for deployment logs
+
+**Build Failures:**
+1. Verify all environment variables are set correctly
+2. Test build locally: `cd frontend && npm run build`
+3. Check for TypeScript or linting errors
+
+**Auth0 Configuration Issues:**
+1. Verify Auth0 variables match your Auth0 application settings
+2. Check Auth0 dashboard for correct domain, client ID, and audience
+3. Ensure Auth0 application has correct callback URLs configured
